@@ -12,7 +12,7 @@ import Dashboard from "@/pages/admin/Dashboard";
 import ProductsManagement from "@/pages/admin/ProductsManagement";
 import OrdersManagement from "@/pages/admin/OrdersManagement";
 import StoreSettings from "@/pages/admin/StoreSettings";
-import ProductEditor from "@/pages/admin/ProductEditor";
+import ProductEditorSimple from "@/pages/admin/ProductEditorSimple";
 import NotFound from "@/pages/not-found";
 
 function Router() {

@@ -14,37 +14,17 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { 
   Package, 
-  Upload, 
   X, 
   Plus, 
   Save,
   ArrowLeft,
-  Star,
   Image as ImageIcon,
   Tag,
   DollarSign
 } from "lucide-react";
 import { Link, useParams, useLocation } from "wouter";
 
-interface ProductFeature {
-  id: string;
-  name: string;
-  nameAr: string;
-  nameFr: string;
-  value: string;
-  valueAr: string;
-  valueFr: string;
-}
-
-interface ProductReview {
-  id: string;
-  customerName: string;
-  rating: number;
-  comment: string;
-  date: string;
-}
-
-export default function ProductEditor() {
+export default function ProductEditorSimple() {
   const { id } = useParams();
   const [, setLocation] = useLocation();
   const { t, language } = useI18n();
@@ -80,9 +60,8 @@ export default function ProductEditor() {
     tags: [] as string[],
   });
 
-  const [features, setFeatures] = useState<ProductFeature[]>([]);
-  const [reviews, setReviews] = useState<ProductReview[]>([]);
   const [newTag, setNewTag] = useState("");
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
 
   useEffect(() => {
     if (product && isEdit) {
@@ -109,13 +88,10 @@ export default function ProductEditor() {
         brandFr: product.brandFr || "",
         tags: Array.isArray(product.tags) ? product.tags : [],
       });
-
-      // Charger les caractéristiques et avis depuis la base de données
-      if (product.features && Array.isArray(product.features)) {
-        setFeatures(product.features as ProductFeature[]);
-      }
-      if (product.reviews && Array.isArray(product.reviews)) {
-        setReviews(product.reviews as ProductReview[]);
+      
+      // Initialiser les URLs d'images
+      if (Array.isArray(product.images)) {
+        setImageUrls(product.images);
       }
     }
   }, [product, isEdit]);
@@ -129,6 +105,7 @@ export default function ProductEditor() {
       const reader = new FileReader();
       reader.onload = (e) => {
         const imageUrl = e.target?.result as string;
+        setImageUrls(prev => [...prev, imageUrl]);
         setProductData(prev => ({
           ...prev,
           images: [...prev.images, imageUrl]
@@ -139,33 +116,21 @@ export default function ProductEditor() {
   };
 
   const removeImage = (index: number) => {
+    setImageUrls(prev => prev.filter((_, i) => i !== index));
     setProductData(prev => ({
       ...prev,
       images: prev.images.filter((_, i) => i !== index)
     }));
   };
 
-  const addFeature = () => {
-    const newFeature: ProductFeature = {
-      id: Date.now().toString(),
-      name: "",
-      nameAr: "",
-      nameFr: "",
-      value: "",
-      valueAr: "",
-      valueFr: ""
-    };
-    setFeatures([...features, newFeature]);
-  };
-
-  const updateFeature = (id: string, field: string, value: string) => {
-    setFeatures(features.map(feature => 
-      feature.id === id ? { ...feature, [field]: value } : feature
-    ));
-  };
-
-  const removeFeature = (id: string) => {
-    setFeatures(features.filter(feature => feature.id !== id));
+  const addImageUrl = (url: string) => {
+    if (url.trim()) {
+      setImageUrls(prev => [...prev, url.trim()]);
+      setProductData(prev => ({
+        ...prev,
+        images: [...prev.images, url.trim()]
+      }));
+    }
   };
 
   const addTag = () => {
@@ -193,10 +158,8 @@ export default function ProductEditor() {
         salePrice: productData.salePrice ? parseFloat(productData.salePrice) : null,
         stock: parseInt(productData.stock) || 0,
         categoryId: parseInt(productData.categoryId) || null,
-        images: JSON.stringify(productData.images),
-        tags: JSON.stringify(productData.tags),
-        features: JSON.stringify(features),
-        reviews: JSON.stringify(reviews),
+        images: productData.images,
+        tags: productData.tags,
       };
 
       if (isEdit) {
@@ -393,29 +356,61 @@ export default function ProductEditor() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label htmlFor="images">Ajouter des images</Label>
+                  <Label htmlFor="images">Uploader des images</Label>
                   <Input
                     id="images"
                     type="file"
                     multiple
                     accept="image/*"
                     onChange={(e) => e.target.files && handleImageUpload(e.target.files)}
+                    className="mb-2"
                   />
+                  <p className="text-sm text-gray-500">Formats supportés: JPG, PNG, WebP</p>
                 </div>
 
-                {productData.images.length > 0 && (
+                <Separator />
+
+                <div>
+                  <Label>Ou ajouter une URL d'image</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="https://example.com/image.jpg"
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                          addImageUrl(e.currentTarget.value);
+                          e.currentTarget.value = '';
+                        }
+                      }}
+                    />
+                    <Button 
+                      type="button"
+                      onClick={(e) => {
+                        const input = e.currentTarget.previousElementSibling as HTMLInputElement;
+                        addImageUrl(input.value);
+                        input.value = '';
+                      }}
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+
+                {imageUrls.length > 0 && (
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {productData.images.map((image, index) => (
+                    {imageUrls.map((image, index) => (
                       <div key={index} className="relative group">
                         <img
                           src={image}
                           alt={`Product ${index + 1}`}
-                          className="w-full h-32 object-cover rounded-lg"
+                          className="w-full h-32 object-cover rounded-lg border"
+                          onError={(e) => {
+                            e.currentTarget.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIG5vbiBkaXNwb25pYmxlPC90ZXh0Pjwvc3ZnPg==";
+                          }}
                         />
                         <Button
                           variant="destructive"
                           size="sm"
-                          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 p-0"
                           onClick={() => removeImage(index)}
                         >
                           <X className="h-4 w-4" />
@@ -424,63 +419,6 @@ export default function ProductEditor() {
                     ))}
                   </div>
                 )}
-              </CardContent>
-            </Card>
-
-            {/* Caractéristiques */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Caractéristiques du produit</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {features.map((feature) => (
-                  <div key={feature.id} className="grid md:grid-cols-7 gap-2 p-4 border rounded-lg">
-                    <Input
-                      placeholder="Nom (EN)"
-                      value={feature.name}
-                      onChange={(e) => updateFeature(feature.id, 'name', e.target.value)}
-                    />
-                    <Input
-                      placeholder="Nom (FR)"
-                      value={feature.nameFr}
-                      onChange={(e) => updateFeature(feature.id, 'nameFr', e.target.value)}
-                    />
-                    <Input
-                      placeholder="الاسم (AR)"
-                      value={feature.nameAr}
-                      onChange={(e) => updateFeature(feature.id, 'nameAr', e.target.value)}
-                      dir="rtl"
-                    />
-                    <Input
-                      placeholder="Valeur (EN)"
-                      value={feature.value}
-                      onChange={(e) => updateFeature(feature.id, 'value', e.target.value)}
-                    />
-                    <Input
-                      placeholder="Valeur (FR)"
-                      value={feature.valueFr}
-                      onChange={(e) => updateFeature(feature.id, 'valueFr', e.target.value)}
-                    />
-                    <Input
-                      placeholder="القيمة (AR)"
-                      value={feature.valueAr}
-                      onChange={(e) => updateFeature(feature.id, 'valueAr', e.target.value)}
-                      dir="rtl"
-                    />
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => removeFeature(feature.id)}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ))}
-                
-                <Button onClick={addFeature} variant="outline">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Ajouter une caractéristique
-                </Button>
               </CardContent>
             </Card>
           </div>
@@ -502,7 +440,7 @@ export default function ProductEditor() {
                     <SelectContent>
                       {categories.map((category) => (
                         <SelectItem key={category.id} value={category.id.toString()}>
-                          {category.name}
+                          {language === 'ar' ? category.nameAr : language === 'fr' ? category.nameFr : category.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
