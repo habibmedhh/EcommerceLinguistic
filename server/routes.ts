@@ -239,7 +239,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const createOrderSchema = z.object({
     customerName: z.string().min(1),
     customerPhone: z.string().min(1),
-    customerEmail: z.string().email().optional(),
+    customerEmail: z.string().email().optional().or(z.literal("")),
     deliveryAddress: z.string().min(1),
     items: z.array(z.object({
       productId: z.number(),
