@@ -601,19 +601,30 @@ export default function ProductDetails() {
         </Card>
       </div>
 
-      {/* Boutons flottants pour mobile */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t shadow-lg md:hidden z-50">
+      {/* Bouton de commande flottant animé pour mobile */}
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-white to-white/95 backdrop-blur-sm border-t shadow-2xl md:hidden z-50">
         <div className="flex gap-3">
           <Button 
             onClick={handleSubmitOrder}
-            className="flex-1 purple-gradient text-white font-bold py-3"
+            className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-4 rounded-2xl shadow-lg animate-pulse relative overflow-hidden"
             disabled={createOrder.isPending}
+            style={{
+              animation: 'order-pulse 2s ease-in-out infinite, float 3s ease-in-out infinite',
+              boxShadow: '0 0 25px rgba(168, 85, 247, 0.6), 0 0 50px rgba(236, 72, 153, 0.4), 0 8px 30px rgba(0, 0, 0, 0.3)'
+            }}
           >
-            Commander
+            <div className="flex items-center justify-center gap-2">
+              <span className="text-2xl animate-bounce" style={{ animation: 'bounce 1s infinite' }}>🛒</span>
+              <span className="font-bold">{t.products.order}</span>
+              <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-orange-400/20 rounded-2xl animate-ping"></div>
+            </div>
           </Button>
           <Button 
             onClick={handleWhatsAppOrder}
-            className="px-4 bg-green-500 hover:bg-green-600 text-white"
+            className="px-4 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-2xl shadow-lg"
+            style={{
+              boxShadow: '0 0 15px rgba(34, 197, 94, 0.5)'
+            }}
           >
             <MessageCircle className="h-5 w-5" />
           </Button>
