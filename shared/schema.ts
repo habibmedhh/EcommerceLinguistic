@@ -34,6 +34,8 @@ export const products = pgTable("products", {
   descriptionFr: text("description_fr"),
   price: decimal("price", { precision: 10, scale: 2 }).notNull(),
   salePrice: decimal("sale_price", { precision: 10, scale: 2 }),
+  costPrice: decimal("cost_price", { precision: 10, scale: 2 }),
+  profitMargin: decimal("profit_margin", { precision: 5, scale: 2 }),
   sku: text("sku").unique(),
   stock: integer("stock").default(0),
   categoryId: integer("category_id").references(() => categories.id),

@@ -45,6 +45,8 @@ export default function ProductEditorSimple() {
     descriptionFr: "",
     price: "",
     salePrice: "",
+    costPrice: "",
+    profitMargin: "",
     sku: "",
     stock: "",
     categoryId: "",
@@ -74,6 +76,8 @@ export default function ProductEditorSimple() {
         descriptionFr: product.descriptionFr || "",
         price: product.price || "",
         salePrice: product.salePrice || "",
+        costPrice: product.costPrice || "",
+        profitMargin: product.profitMargin || "",
         sku: product.sku || "",
         stock: product.stock?.toString() || "",
         categoryId: product.categoryId?.toString() || "",
@@ -156,6 +160,8 @@ export default function ProductEditorSimple() {
         ...productData,
         price: parseFloat(productData.price) || 0,
         salePrice: productData.salePrice ? parseFloat(productData.salePrice) : null,
+        costPrice: productData.costPrice ? parseFloat(productData.costPrice) : null,
+        profitMargin: productData.profitMargin ? parseFloat(productData.profitMargin) : null,
         stock: parseInt(productData.stock) || 0,
         categoryId: parseInt(productData.categoryId) || null,
         images: productData.images,
@@ -300,9 +306,9 @@ export default function ProductEditorSimple() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid md:grid-cols-4 gap-4">
+                <div className="grid md:grid-cols-3 gap-4">
                   <div>
-                    <Label htmlFor="price">Prix (€) *</Label>
+                    <Label htmlFor="price">Prix de vente (€) *</Label>
                     <Input
                       id="price"
                       type="number"
@@ -312,6 +318,33 @@ export default function ProductEditorSimple() {
                       placeholder="29.99"
                     />
                   </div>
+                  <div>
+                    <Label htmlFor="costPrice">Prix de revient (€)</Label>
+                    <Input
+                      id="costPrice"
+                      type="number"
+                      step="0.01"
+                      value={productData.costPrice}
+                      onChange={(e) => handleInputChange('costPrice', e.target.value)}
+                      placeholder="15.00"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">Coût d'achat ou de production</p>
+                  </div>
+                  <div>
+                    <Label htmlFor="profitMargin">Marge bénéficiaire (%)</Label>
+                    <Input
+                      id="profitMargin"
+                      type="number"
+                      step="0.01"
+                      value={productData.profitMargin}
+                      onChange={(e) => handleInputChange('profitMargin', e.target.value)}
+                      placeholder="50.00"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">Pourcentage de marge</p>
+                  </div>
+                </div>
+
+                <div className="grid md:grid-cols-3 gap-4">
                   <div>
                     <Label htmlFor="salePrice">Prix en promotion (€)</Label>
                     <Input
@@ -343,6 +376,33 @@ export default function ProductEditorSimple() {
                     />
                   </div>
                 </div>
+
+                {/* Calcul automatique du bénéfice */}
+                {productData.price && productData.costPrice && (
+                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4 border border-green-200">
+                    <h4 className="font-semibold text-green-800 mb-2">💰 Analyse des bénéfices</h4>
+                    <div className="grid md:grid-cols-3 gap-4 text-sm">
+                      <div>
+                        <span className="text-gray-600">Bénéfice unitaire:</span>
+                        <div className="font-bold text-green-700">
+                          {(parseFloat(productData.price) - parseFloat(productData.costPrice || "0")).toFixed(2)} €
+                        </div>
+                      </div>
+                      <div>
+                        <span className="text-gray-600">Marge calculée:</span>
+                        <div className="font-bold text-green-700">
+                          {productData.costPrice ? (((parseFloat(productData.price) - parseFloat(productData.costPrice)) / parseFloat(productData.price)) * 100).toFixed(2) : 0}%
+                        </div>
+                      </div>
+                      <div>
+                        <span className="text-gray-600">ROI:</span>
+                        <div className="font-bold text-green-700">
+                          {productData.costPrice ? (((parseFloat(productData.price) - parseFloat(productData.costPrice)) / parseFloat(productData.costPrice)) * 100).toFixed(2) : 0}%
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
