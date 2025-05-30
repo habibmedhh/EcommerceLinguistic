@@ -680,75 +680,105 @@ export default function ProductDetails() {
         </div>
       </div>
 
-      {/* Modal de formulaire de commande pour mobile */}
+      {/* Modal de formulaire de commande stylé pour mobile */}
       <Dialog open={isOrderFormOpen} onOpenChange={setIsOrderFormOpen}>
-        <DialogContent className="sm:max-w-[425px] mx-4">
-          <DialogHeader>
-            <DialogTitle className="text-center text-xl font-bold">{t.order.title}</DialogTitle>
-          </DialogHeader>
+        <DialogContent className="sm:max-w-[480px] mx-4 p-0 gap-0 bg-gradient-to-br from-purple-50 via-white to-blue-50">
+          <div className="bg-gradient-to-r from-purple-600 to-pink-600 p-6 rounded-t-lg">
+            <DialogHeader>
+              <DialogTitle className="text-center text-2xl font-bold text-white flex items-center justify-center gap-2">
+                <span className="text-2xl">🛒</span>
+                {t.order.title}
+              </DialogTitle>
+            </DialogHeader>
+          </div>
           
-          <div className="space-y-4 mt-4">
-            <div>
-              <Label htmlFor="modal-customerName" className="flex items-center gap-2">
-                <User className="h-4 w-4" />
-                {t.order.name} *
-              </Label>
-              <Input
-                id="modal-customerName"
-                value={orderForm.customerName}
-                onChange={(e) => handleOrderFormChange('customerName', e.target.value)}
-                placeholder={t.order.name}
-                className="mt-1"
-              />
-            </div>
-            
-            <div>
-              <Label htmlFor="modal-customerPhone" className="flex items-center gap-2">
-                <Phone className="h-4 w-4" />
-                {t.order.phone} *
-              </Label>
-              <Input
-                id="modal-customerPhone"
-                value={orderForm.customerPhone}
-                onChange={(e) => handleOrderFormChange('customerPhone', e.target.value)}
-                placeholder={t.order.phone}
-                className="mt-1"
-              />
-            </div>
-            
-            <div>
-              <Label htmlFor="modal-deliveryAddress" className="flex items-center gap-2">
-                <MapPin className="h-4 w-4" />
-                {t.order.address} *
-              </Label>
-              <Textarea
-                id="modal-deliveryAddress"
-                value={orderForm.deliveryAddress}
-                onChange={(e) => handleOrderFormChange('deliveryAddress', e.target.value)}
-                placeholder={t.order.address}
-                className="mt-1"
-                rows={3}
-              />
+          <div className="p-6 space-y-6">
+            {/* Résumé de la commande */}
+            <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-xl p-4">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                    <span className="text-white text-sm">📱</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-800">{getLocalizedText('name')}</h4>
+                    <p className="text-sm text-gray-600">Quantité: {quantity}</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-purple-600">
+                    {(discountedPrice ? discountedPrice * quantity : originalPrice * quantity).toFixed(2)}€
+                  </div>
+                  {discountedPrice && (
+                    <div className="text-sm text-gray-500 line-through">
+                      {(originalPrice * quantity).toFixed(2)}€
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
 
-            <Separator />
-            
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span>{getLocalizedText('name')}</span>
-                <span>x{quantity}</span>
+            {/* Formulaire */}
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="modal-customerName" className="flex items-center gap-2 text-gray-700 font-medium mb-2">
+                  <div className="w-6 h-6 bg-gradient-to-r from-blue-400 to-purple-500 rounded-lg flex items-center justify-center">
+                    <User className="h-3 w-3 text-white" />
+                  </div>
+                  {t.order.name} *
+                </Label>
+                <Input
+                  id="modal-customerName"
+                  value={orderForm.customerName}
+                  onChange={(e) => handleOrderFormChange('customerName', e.target.value)}
+                  placeholder={t.order.name}
+                  className="h-12 border-2 border-purple-200 rounded-xl focus:border-purple-500 transition-colors"
+                />
               </div>
-              <div className="flex justify-between text-lg font-bold">
-                <span>Total:</span>
-                <span>{(discountedPrice ? discountedPrice * quantity : originalPrice * quantity).toFixed(2)}€</span>
+              
+              <div>
+                <Label htmlFor="modal-customerPhone" className="flex items-center gap-2 text-gray-700 font-medium mb-2">
+                  <div className="w-6 h-6 bg-gradient-to-r from-green-400 to-blue-500 rounded-lg flex items-center justify-center">
+                    <Phone className="h-3 w-3 text-white" />
+                  </div>
+                  {t.order.phone} *
+                </Label>
+                <Input
+                  id="modal-customerPhone"
+                  value={orderForm.customerPhone}
+                  onChange={(e) => handleOrderFormChange('customerPhone', e.target.value)}
+                  placeholder={t.order.phone}
+                  className="h-12 border-2 border-purple-200 rounded-xl focus:border-purple-500 transition-colors"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="modal-deliveryAddress" className="flex items-center gap-2 text-gray-700 font-medium mb-2">
+                  <div className="w-6 h-6 bg-gradient-to-r from-orange-400 to-red-500 rounded-lg flex items-center justify-center">
+                    <MapPin className="h-3 w-3 text-white" />
+                  </div>
+                  {t.order.address} *
+                </Label>
+                <Textarea
+                  id="modal-deliveryAddress"
+                  value={orderForm.deliveryAddress}
+                  onChange={(e) => handleOrderFormChange('deliveryAddress', e.target.value)}
+                  placeholder={t.order.address}
+                  className="border-2 border-purple-200 rounded-xl focus:border-purple-500 transition-colors resize-none"
+                  rows={3}
+                />
               </div>
             </div>
             
             <Button 
               onClick={handleSubmitOrder}
-              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-3"
+              className="w-full h-14 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-2"
               disabled={createOrder.isPending}
+              style={{
+                boxShadow: '0 8px 30px rgba(168, 85, 247, 0.3)'
+              }}
             >
+              <span className="text-xl">🚀</span>
               {createOrder.isPending ? t.order.processing : t.order.submit}
             </Button>
           </div>
