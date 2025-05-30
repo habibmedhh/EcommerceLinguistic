@@ -158,10 +158,10 @@ export default function ProductEditorSimple() {
     try {
       const saveData = {
         ...productData,
-        price: parseFloat(productData.price) || 0,
-        salePrice: productData.salePrice ? parseFloat(productData.salePrice) : null,
-        costPrice: productData.costPrice ? parseFloat(productData.costPrice) : null,
-        profitMargin: productData.profitMargin ? parseFloat(productData.profitMargin) : null,
+        price: productData.price.toString(),
+        salePrice: productData.salePrice || null,
+        costPrice: productData.costPrice || null,
+        profitMargin: productData.profitMargin || null,
         stock: parseInt(productData.stock) || 0,
         categoryId: parseInt(productData.categoryId) || null,
         images: productData.images,
