@@ -57,11 +57,12 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
   const discount = salePrice ? Math.round(((price - salePrice) / price) * 100) : 0;
 
   return (
-    <Card 
-      ref={animationRef}
-      className="group overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:scale-105 bg-white"
-    >
-      <div className="relative overflow-hidden">
+    <Link href={`/product/${product.id}`} className="block">
+      <Card 
+        ref={animationRef}
+        className="group overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:scale-105 bg-white cursor-pointer"
+      >
+        <div className="relative overflow-hidden">
         {/* Badges */}
         <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
           {product.onSale && (
@@ -170,6 +171,7 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
           </Button>
         </div>
       </div>
-    </Card>
+      </Card>
+    </Link>
   );
 }
