@@ -1,0 +1,362 @@
+import type { Express } from "express";
+import { createServer, type Server } from "http";
+import { storage } from "./storage";
+import { insertProductSchema, insertCategorySchema, insertOrderSchema, insertPromotionSchema } from "@shared/schema";
+import { z } from "zod";
+
+export async function registerRoutes(app: Express): Promise<Server> {
+  // Categories
+  app.get("/api/categories", async (req, res) => {
+    try {
+      const categories = await storage.getCategories();
+      res.json(categories);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch categories" });
+    }
+  });
+
+  app.post("/api/categories", async (req, res) => {
+    try {
+      const categoryData = insertCategorySchema.parse(req.body);
+      const category = await storage.createCategory(categoryData);
+      res.status(201).json(category);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ error: "Invalid category data", details: error.errors });
+      } else {
+        res.status(500).json({ error: "Failed to create category" });
+      }
+    }
+  });
+
+  app.put("/api/categories/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const categoryData = insertCategorySchema.partial().parse(req.body);
+      const category = await storage.updateCategory(id, categoryData);
+      
+      if (!category) {
+        res.status(404).json({ error: "Category not found" });
+        return;
+      }
+      
+      res.json(category);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ error: "Invalid category data", details: error.errors });
+      } else {
+        res.status(500).json({ error: "Failed to update category" });
+      }
+    }
+  });
+
+  app.delete("/api/categories/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const deleted = await storage.deleteCategory(id);
+      
+      if (!deleted) {
+        res.status(404).json({ error: "Category not found" });
+        return;
+      }
+      
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete category" });
+    }
+  });
+
+  // Products
+  app.get("/api/products", async (req, res) => {
+    try {
+      const {
+        categoryId,
+        featured,
+        onSale,
+        search,
+        limit = "20",
+        offset = "0"
+      } = req.query;
+
+      const filters = {
+        categoryId: categoryId ? parseInt(categoryId as string) : undefined,
+        featured: featured === "true" ? true : featured === "false" ? false : undefined,
+        onSale: onSale === "true" ? true : onSale === "false" ? false : undefined,
+        search: search as string,
+        limit: parseInt(limit as string),
+        offset: parseInt(offset as string)
+      };
+
+      const result = await storage.getProducts(filters);
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch products" });
+    }
+  });
+
+  app.get("/api/products/featured", async (req, res) => {
+    try {
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 8;
+      const products = await storage.getFeaturedProducts(limit);
+      res.json(products);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch featured products" });
+    }
+  });
+
+  app.get("/api/products/sale", async (req, res) => {
+    try {
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 6;
+      const products = await storage.getSaleProducts(limit);
+      res.json(products);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch sale products" });
+    }
+  });
+
+  app.get("/api/products/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const product = await storage.getProduct(id);
+      
+      if (!product) {
+        res.status(404).json({ error: "Product not found" });
+        return;
+      }
+      
+      res.json(product);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch product" });
+    }
+  });
+
+  app.post("/api/products", async (req, res) => {
+    try {
+      const productData = insertProductSchema.parse(req.body);
+      const product = await storage.createProduct(productData);
+      res.status(201).json(product);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ error: "Invalid product data", details: error.errors });
+      } else {
+        res.status(500).json({ error: "Failed to create product" });
+      }
+    }
+  });
+
+  app.put("/api/products/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const productData = insertProductSchema.partial().parse(req.body);
+      const product = await storage.updateProduct(id, productData);
+      
+      if (!product) {
+        res.status(404).json({ error: "Product not found" });
+        return;
+      }
+      
+      res.json(product);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ error: "Invalid product data", details: error.errors });
+      } else {
+        res.status(500).json({ error: "Failed to update product" });
+      }
+    }
+  });
+
+  app.delete("/api/products/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const deleted = await storage.deleteProduct(id);
+      
+      if (!deleted) {
+        res.status(404).json({ error: "Product not found" });
+        return;
+      }
+      
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete product" });
+    }
+  });
+
+  // Orders
+  app.get("/api/orders", async (req, res) => {
+    try {
+      const {
+        status,
+        dateFrom,
+        dateTo,
+        limit = "20",
+        offset = "0"
+      } = req.query;
+
+      const filters = {
+        status: status as string,
+        dateFrom: dateFrom ? new Date(dateFrom as string) : undefined,
+        dateTo: dateTo ? new Date(dateTo as string) : undefined,
+        limit: parseInt(limit as string),
+        offset: parseInt(offset as string)
+      };
+
+      const result = await storage.getOrders(filters);
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch orders" });
+    }
+  });
+
+  app.get("/api/orders/stats", async (req, res) => {
+    try {
+      const stats = await storage.getOrderStats();
+      res.json(stats);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch order statistics" });
+    }
+  });
+
+  app.get("/api/orders/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const order = await storage.getOrder(id);
+      
+      if (!order) {
+        res.status(404).json({ error: "Order not found" });
+        return;
+      }
+      
+      res.json(order);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch order" });
+    }
+  });
+
+  const createOrderSchema = z.object({
+    customerName: z.string().min(1),
+    customerPhone: z.string().min(1),
+    customerEmail: z.string().email().optional(),
+    deliveryAddress: z.string().min(1),
+    items: z.array(z.object({
+      productId: z.number(),
+      quantity: z.number().min(1),
+      price: z.string(),
+      productName: z.string()
+    })).min(1),
+    totalAmount: z.string()
+  });
+
+  app.post("/api/orders", async (req, res) => {
+    try {
+      const orderData = createOrderSchema.parse(req.body);
+      const { items, ...orderInfo } = orderData;
+      
+      const order = await storage.createOrder(orderInfo, items);
+      res.status(201).json(order);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ error: "Invalid order data", details: error.errors });
+      } else {
+        res.status(500).json({ error: "Failed to create order" });
+      }
+    }
+  });
+
+  app.put("/api/orders/:id/status", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { status } = z.object({ status: z.string() }).parse(req.body);
+      
+      const order = await storage.updateOrderStatus(id, status);
+      
+      if (!order) {
+        res.status(404).json({ error: "Order not found" });
+        return;
+      }
+      
+      res.json(order);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ error: "Invalid status data", details: error.errors });
+      } else {
+        res.status(500).json({ error: "Failed to update order status" });
+      }
+    }
+  });
+
+  app.delete("/api/orders/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const deleted = await storage.deleteOrder(id);
+      
+      if (!deleted) {
+        res.status(404).json({ error: "Order not found" });
+        return;
+      }
+      
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete order" });
+    }
+  });
+
+  // Promotions
+  app.get("/api/promotions", async (req, res) => {
+    try {
+      const promotions = await storage.getActivePromotions();
+      res.json(promotions);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch promotions" });
+    }
+  });
+
+  app.post("/api/promotions", async (req, res) => {
+    try {
+      const promotionData = insertPromotionSchema.parse(req.body);
+      const promotion = await storage.createPromotion(promotionData);
+      res.status(201).json(promotion);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ error: "Invalid promotion data", details: error.errors });
+      } else {
+        res.status(500).json({ error: "Failed to create promotion" });
+      }
+    }
+  });
+
+  // Settings
+  app.get("/api/settings", async (req, res) => {
+    try {
+      const settings = await storage.getSettings();
+      res.json(settings);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch settings" });
+    }
+  });
+
+  app.get("/api/settings/:key", async (req, res) => {
+    try {
+      const setting = await storage.getSetting(req.params.key);
+      if (!setting) {
+        res.status(404).json({ error: "Setting not found" });
+        return;
+      }
+      res.json(setting);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch setting" });
+    }
+  });
+
+  app.put("/api/settings/:key", async (req, res) => {
+    try {
+      const { value, description } = req.body;
+      const setting = await storage.setSetting(req.params.key, value, description);
+      res.json(setting);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update setting" });
+    }
+  });
+
+  const httpServer = createServer(app);
+  return httpServer;
+}
