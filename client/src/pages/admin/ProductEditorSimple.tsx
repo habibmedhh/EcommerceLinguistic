@@ -411,72 +411,120 @@ export default function ProductEditorSimple() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <ImageIcon className="h-5 w-5" />
-                  Images du produit
+                  Galerie d'images du produit
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-6">
+                {/* Image principale */}
                 <div>
-                  <Label htmlFor="images">Uploader des images</Label>
-                  <Input
-                    id="images"
-                    type="file"
-                    multiple
-                    accept="image/*"
-                    onChange={(e) => e.target.files && handleImageUpload(e.target.files)}
-                    className="mb-2"
-                  />
-                  <p className="text-sm text-gray-500">Formats supportés: JPG, PNG, WebP</p>
+                  <Label className="text-lg font-semibold">Image principale *</Label>
+                  <div className="mt-2">
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => e.target.files && handleImageUpload(e.target.files)}
+                      className="mb-2"
+                    />
+                    <p className="text-sm text-gray-500">Cette image sera affichée en premier dans la liste des produits</p>
+                  </div>
                 </div>
 
                 <Separator />
 
+                {/* Images détaillées */}
                 <div>
-                  <Label>Ou ajouter une URL d'image</Label>
-                  <div className="flex gap-2">
-                    <Input
-                      placeholder="https://example.com/image.jpg"
-                      onKeyPress={(e) => {
-                        if (e.key === 'Enter') {
-                          addImageUrl(e.currentTarget.value);
-                          e.currentTarget.value = '';
-                        }
-                      }}
-                    />
-                    <Button 
-                      type="button"
-                      onClick={(e) => {
-                        const input = e.currentTarget.previousElementSibling as HTMLInputElement;
-                        addImageUrl(input.value);
-                        input.value = '';
-                      }}
-                    >
-                      <Plus className="h-4 w-4" />
-                    </Button>
+                  <Label className="text-lg font-semibold">Images détaillées</Label>
+                  <p className="text-sm text-gray-600 mb-3">Ajoutez plusieurs photos pour montrer différents angles et détails du produit</p>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="detailImages">Uploader plusieurs images</Label>
+                      <Input
+                        id="detailImages"
+                        type="file"
+                        multiple
+                        accept="image/*"
+                        onChange={(e) => e.target.files && handleImageUpload(e.target.files)}
+                        className="mb-2"
+                      />
+                      <p className="text-sm text-gray-500">Formats: JPG, PNG, WebP - Max 10MB par image</p>
+                    </div>
+
+                    <div>
+                      <Label>Ou ajouter une URL d'image</Label>
+                      <div className="flex gap-2">
+                        <Input
+                          placeholder="https://example.com/product-detail.jpg"
+                          onKeyPress={(e) => {
+                            if (e.key === 'Enter') {
+                              addImageUrl(e.currentTarget.value);
+                              e.currentTarget.value = '';
+                            }
+                          }}
+                        />
+                        <Button 
+                          type="button"
+                          onClick={(e) => {
+                            const input = e.currentTarget.previousElementSibling as HTMLInputElement;
+                            addImageUrl(input.value);
+                            input.value = '';
+                          }}
+                        >
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
+                {/* Galerie d'images */}
                 {imageUrls.length > 0 && (
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {imageUrls.map((image, index) => (
-                      <div key={index} className="relative group">
-                        <img
-                          src={image}
-                          alt={`Product ${index + 1}`}
-                          className="w-full h-32 object-cover rounded-lg border"
-                          onError={(e) => {
-                            e.currentTarget.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIG5vbiBkaXNwb25pYmxlPC90ZXh0Pjwvc3ZnPg==";
-                          }}
-                        />
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 p-0"
-                          onClick={() => removeImage(index)}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ))}
+                  <div>
+                    <Label className="text-lg font-semibold">Aperçu de la galerie ({imageUrls.length} images)</Label>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-3">
+                      {imageUrls.map((image, index) => (
+                        <div key={index} className="relative group">
+                          <div className="relative">
+                            <img
+                              src={image}
+                              alt={`Product ${index + 1}`}
+                              className="w-full h-32 object-cover rounded-lg border border-gray-200"
+                              onError={(e) => {
+                                e.currentTarget.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIG5vbiBkaXNwb25pYmxlPC90ZXh0Pjwvc3ZnPg==";
+                              }}
+                            />
+                            {index === 0 && (
+                              <div className="absolute top-2 left-2 bg-green-500 text-white text-xs px-2 py-1 rounded">
+                                Principale
+                              </div>
+                            )}
+                          </div>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 p-0"
+                            onClick={() => removeImage(index)}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                          <p className="text-xs text-center mt-1 text-gray-500">Image {index + 1}</p>
+                        </div>
+                      ))}
+                    </div>
+                    
+                    {imageUrls.length > 6 && (
+                      <p className="text-sm text-amber-600 mt-2">
+                        💡 Conseil: Trop d'images peuvent ralentir le chargement. Considérez garder les 6 meilleures images.
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {imageUrls.length === 0 && (
+                  <div className="text-center py-8 border-2 border-dashed border-gray-300 rounded-lg">
+                    <ImageIcon className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+                    <p className="text-gray-500 mb-2">Aucune image ajoutée</p>
+                    <p className="text-sm text-gray-400">Ajoutez au moins une image pour votre produit</p>
                   </div>
                 )}
               </CardContent>

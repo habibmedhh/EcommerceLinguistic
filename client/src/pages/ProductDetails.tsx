@@ -791,6 +791,105 @@ export default function ProductDetails() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Galerie d'images détaillées */}
+      {productImages.length > 1 && (
+        <Card className="mt-8">
+          <CardContent className="p-6">
+            <h3 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+              Galerie d'images détaillées
+            </h3>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {productImages.map((image, index) => (
+                <div 
+                  key={index} 
+                  className="group relative overflow-hidden rounded-lg cursor-pointer hover:scale-105 transition-transform duration-300"
+                  onClick={() => setSelectedImage(index)}
+                >
+                  <div className="aspect-square">
+                    <img
+                      src={image}
+                      alt={`${getLocalizedText('name')} - Image ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  
+                  {/* Overlay avec indicateur */}
+                  <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
+                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <div className="bg-white rounded-full p-2 shadow-lg">
+                        <svg className="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Badge pour l'image principale */}
+                  {index === 0 && (
+                    <div className="absolute top-2 left-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs px-2 py-1 rounded-full font-semibold">
+                      Principale
+                    </div>
+                  )}
+                  
+                  {/* Numéro de l'image */}
+                  <div className="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded">
+                    {index + 1}/{productImages.length}
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            {/* Image sélectionnée en grand */}
+            <div className="mt-8 bg-gray-50 rounded-lg p-4">
+              <h4 className="text-lg font-semibold text-gray-800 mb-4 text-center">
+                Aperçu agrandi - Image {selectedImage + 1}
+              </h4>
+              <div className="max-w-2xl mx-auto">
+                <div className="aspect-video bg-white rounded-lg overflow-hidden shadow-lg">
+                  <img
+                    src={productImages[selectedImage]}
+                    alt={`${getLocalizedText('name')} - Vue détaillée ${selectedImage + 1}`}
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+                
+                {/* Navigation entre images */}
+                <div className="flex justify-center items-center gap-4 mt-4">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setSelectedImage(Math.max(0, selectedImage - 1))}
+                    disabled={selectedImage === 0}
+                    className="flex items-center gap-2"
+                  >
+                    <ArrowLeft className="h-4 w-4" />
+                    Précédente
+                  </Button>
+                  
+                  <span className="text-sm text-gray-600 font-medium">
+                    {selectedImage + 1} / {productImages.length}
+                  </span>
+                  
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setSelectedImage(Math.min(productImages.length - 1, selectedImage + 1))}
+                    disabled={selectedImage === productImages.length - 1}
+                    className="flex items-center gap-2"
+                  >
+                    Suivante
+                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
