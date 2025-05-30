@@ -25,8 +25,8 @@ function Router() {
       <Route path="/admin" component={Dashboard} />
       <Route path="/admin/dashboard" component={Dashboard} />
       <Route path="/admin/products" component={ProductsManagement} />
-      <Route path="/admin/products/new" component={ProductEditor} />
-      <Route path="/admin/products/edit/:id" component={ProductEditor} />
+      <Route path="/admin/products/new" component={ProductEditorSimple} />
+      <Route path="/admin/products/edit/:id" component={ProductEditorSimple} />
       <Route path="/admin/orders" component={OrdersManagement} />
       <Route path="/admin/settings" component={StoreSettings} />
       <Route component={NotFound} />
