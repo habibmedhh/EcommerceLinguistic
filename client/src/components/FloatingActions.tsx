@@ -51,14 +51,22 @@ export function FloatingActions() {
       <Button
         ref={cartRef}
         size="lg"
-        className="w-14 h-14 rounded-full bg-purple-500 hover:bg-purple-600 shadow-lg hover:shadow-xl transition-all duration-300 p-0 relative"
+        className="w-14 h-14 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 shadow-lg hover:shadow-xl transition-all duration-300 p-0 relative animate-pulse"
         title="Cart"
+        style={{
+          animation: 'cart-glow 2s ease-in-out infinite alternate, float 3s ease-in-out infinite',
+          boxShadow: '0 0 20px rgba(168, 85, 247, 0.5), 0 0 40px rgba(236, 72, 153, 0.3), 0 4px 20px rgba(0, 0, 0, 0.3)'
+        }}
       >
-        <ShoppingCart className="h-6 w-6 text-white" />
+        <div className="relative">
+          <span className="text-2xl animate-bounce" style={{ animation: 'bounce 1s infinite' }}>🛒</span>
+          <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full opacity-20 animate-ping"></div>
+        </div>
         {cart.count > 0 && (
           <Badge 
             variant="destructive" 
-            className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0 text-xs flex items-center justify-center"
+            className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0 text-xs flex items-center justify-center animate-pulse"
+            style={{ boxShadow: '0 0 10px rgba(239, 68, 68, 0.8)' }}
           >
             {cart.count}
           </Badge>

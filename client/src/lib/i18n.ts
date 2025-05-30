@@ -38,6 +38,8 @@ export interface Translation {
     priceRange: string;
     brand: string;
     applyFilters: string;
+    order: string;
+    buyNow: string;
   };
   // Order form
   order: {
@@ -148,7 +150,9 @@ export const translations: Record<string, Translation> = {
       sortBy: "Sort by",
       priceRange: "Price Range",
       brand: "Brand",
-      applyFilters: "Apply Filters"
+      applyFilters: "Apply Filters",
+      order: "Order",
+      buyNow: "Buy Now"
     },
     order: {
       title: "Order Now",
@@ -252,7 +256,9 @@ export const translations: Record<string, Translation> = {
       sortBy: "Trier par",
       priceRange: "Gamme de prix",
       brand: "Marque",
-      applyFilters: "Appliquer les filtres"
+      applyFilters: "Appliquer les filtres",
+      order: "Commander",
+      buyNow: "Acheter maintenant"
     },
     order: {
       title: "Commander maintenant",
@@ -356,7 +362,9 @@ export const translations: Record<string, Translation> = {
       sortBy: "ترتيب حسب",
       priceRange: "نطاق السعر",
       brand: "العلامة التجارية",
-      applyFilters: "تطبيق المرشحات"
+      applyFilters: "تطبيق المرشحات",
+      order: "اطلب",
+      buyNow: "اشتري الآن"
     },
     order: {
       title: "اطلب الآن",
