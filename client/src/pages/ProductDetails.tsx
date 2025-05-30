@@ -105,17 +105,37 @@ export default function ProductDetails() {
     setOrderForm(prev => ({ ...prev, [field]: value }));
   };
 
+  const isFormComplete = () => {
+    return orderForm.customerName.trim() && 
+           orderForm.customerPhone.trim() && 
+           orderForm.deliveryAddress.trim();
+  };
+
   const handleSubmitOrder = async () => {
-    if (!orderForm.customerName || !orderForm.customerPhone || !orderForm.deliveryAddress) {
+    // Si le formulaire n'est pas complet, afficher un message et faire défiler vers le formulaire
+    if (!isFormComplete()) {
       toast({
-        title: "Informations manquantes",
-        description: "Veuillez remplir tous les champs requis",
-        variant: "destructive",
+        title: t.order.ready,
+        description: t.order.fillForm,
+        className: "bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0",
       });
+      
+      // Faire défiler vers le formulaire sur desktop ou afficher sur mobile
+      const formElement = document.querySelector('.order-form');
+      if (formElement) {
+        formElement.scrollIntoView({ behavior: 'smooth' });
+      }
       return;
     }
 
     try {
+      // Afficher le message de traitement
+      toast({
+        title: t.order.processing,
+        description: "",
+        className: "bg-gradient-to-r from-blue-500 to-purple-500 text-white border-0",
+      });
+
       const orderData = {
         customerName: orderForm.customerName,
         customerPhone: orderForm.customerPhone,
@@ -132,9 +152,11 @@ export default function ProductDetails() {
 
       await createOrder.mutateAsync(orderData);
       
+      // Afficher le message de confirmation avec couleurs sympas
       toast({
-        title: "Commande confirmée !",
-        description: "Votre commande a été enregistrée avec succès",
+        title: t.order.confirmed,
+        description: t.order.success,
+        className: "bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0",
       });
       
       // Réinitialiser le formulaire
@@ -142,7 +164,7 @@ export default function ProductDetails() {
       setIsOrderFormOpen(false);
     } catch (error) {
       toast({
-        title: "Erreur",
+        title: "❌ " + t.common.error,
         description: "Une erreur est survenue lors de l'enregistrement de votre commande",
         variant: "destructive",
       });
@@ -501,16 +523,16 @@ export default function ProductDetails() {
         </Card>
 
         {/* Formulaire de commande intégré - masqué sur mobile */}
-        <Card className="backdrop-blur-sm bg-white/80 border-0 shadow-xl mt-8 hidden md:block">
+        <Card className="backdrop-blur-sm bg-white/80 border-0 shadow-xl mt-8 hidden md:block order-form">
           <CardContent className="p-6">
-            <h3 className="text-2xl font-bold text-gray-800 mb-6 text-center">Commander ce produit</h3>
+            <h3 className="text-2xl font-bold text-gray-800 mb-6 text-center">{t.order.title}</h3>
             
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div>
                   <Label htmlFor="customerName" className="flex items-center gap-2">
                     <User className="h-4 w-4" />
-                    Nom complet *
+                    {t.order.name} *
                   </Label>
                   <Input
                     id="customerName"

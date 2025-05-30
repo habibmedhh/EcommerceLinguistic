@@ -49,6 +49,10 @@ export interface Translation {
     address: string;
     submit: string;
     success: string;
+    ready: string;
+    fillForm: string;
+    processing: string;
+    confirmed: string;
   };
   // Newsletter
   newsletter: {
@@ -160,7 +164,11 @@ export const translations: Record<string, Translation> = {
       phone: "Phone Number",
       address: "Delivery Address",
       submit: "Place Order",
-      success: "Order placed successfully!"
+      success: "Order placed successfully!",
+      ready: "Great! Your order is ready 🤩",
+      fillForm: "Please fill in your information to complete the order",
+      processing: "Processing your order... 🛒",
+      confirmed: "Order confirmed! Thank you 🎉"
     },
     newsletter: {
       title: "Stay Updated",
@@ -266,7 +274,11 @@ export const translations: Record<string, Translation> = {
       phone: "Numéro de téléphone",
       address: "Adresse de livraison",
       submit: "Passer la commande",
-      success: "Commande passée avec succès!"
+      success: "Commande passée avec succès!",
+      ready: "Très bien ! Votre commande est prête 🤩",
+      fillForm: "Remplissez vos informations pour finaliser la commande",
+      processing: "Traitement de votre commande... 🛒",
+      confirmed: "Commande confirmée ! Merci beaucoup 🎉"
     },
     newsletter: {
       title: "Restez Informé",
@@ -372,7 +384,11 @@ export const translations: Record<string, Translation> = {
       phone: "رقم الهاتف",
       address: "عنوان التوصيل",
       submit: "إرسال الطلب",
-      success: "تم إرسال الطلب بنجاح!"
+      success: "تم إرسال الطلب بنجاح!",
+      ready: "ممتاز! طلبك جاهز 🤩",
+      fillForm: "يرجى ملء بياناتك لإتمام الطلب",
+      processing: "جاري معالجة طلبك... 🛒",
+      confirmed: "تم تأكيد الطلب! شكراً لك 🎉"
     },
     newsletter: {
       title: "ابق على اطلاع",
