@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "wouter";
 import { useI18n } from "@/providers/I18nProvider";
 import { useCart } from "@/hooks/useCart";
 import { useScrollAnimation } from "@/hooks/useAnimations";
@@ -93,14 +94,15 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
         {/* Hover Overlay */}
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
           <div className="transform translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300 flex gap-2">
-            <Button
-              size="sm"
-              variant="secondary"
-              className="rounded-full"
-              onClick={handleQuickView}
-            >
-              <Eye className="h-4 w-4" />
-            </Button>
+            <Link href={`/product/${product.id}`}>
+              <Button
+                size="sm"
+                variant="secondary"
+                className="rounded-full"
+              >
+                <Eye className="h-4 w-4" />
+              </Button>
+            </Link>
             <Button
               size="sm"
               variant="secondary"

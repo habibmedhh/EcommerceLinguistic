@@ -25,7 +25,10 @@ import {
   Truck,
   Shield,
   RotateCcw,
-  MessageCircle
+  MessageCircle,
+  Phone,
+  MapPin,
+  User
 } from "lucide-react";
 
 export default function ProductDetails() {
@@ -34,10 +37,20 @@ export default function ProductDetails() {
   const { t, language } = useI18n();
   const { data: product, isLoading } = useProduct(productId);
   const { addToCart } = useCart();
+  const createOrder = useCreateOrder();
+  const { toast } = useToast();
+  
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
   const [isOrderFormOpen, setIsOrderFormOpen] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
+  
+  // États du formulaire de commande
+  const [orderForm, setOrderForm] = useState({
+    customerName: '',
+    customerPhone: '',
+    deliveryAddress: ''
+  });
 
   if (isLoading) {
     return (
@@ -86,6 +99,60 @@ export default function ProductDetails() {
 
   const handleBuyNow = () => {
     setIsOrderFormOpen(true);
+  };
+
+  const handleOrderFormChange = (field: string, value: string) => {
+    setOrderForm(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmitOrder = async () => {
+    if (!orderForm.customerName || !orderForm.customerPhone || !orderForm.deliveryAddress) {
+      toast({
+        title: "Informations manquantes",
+        description: "Veuillez remplir tous les champs requis",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const orderData = {
+        customerName: orderForm.customerName,
+        customerPhone: orderForm.customerPhone,
+        customerEmail: '',
+        deliveryAddress: orderForm.deliveryAddress,
+        items: [{
+          productId: product.id,
+          quantity,
+          price: discountedPrice ? discountedPrice.toString() : product.price,
+          productName: getLocalizedText('name')
+        }],
+        totalAmount: (discountedPrice ? discountedPrice * quantity : originalPrice * quantity).toFixed(2)
+      };
+
+      await createOrder.mutateAsync(orderData);
+      
+      toast({
+        title: "Commande confirmée !",
+        description: "Votre commande a été enregistrée avec succès",
+      });
+      
+      // Réinitialiser le formulaire
+      setOrderForm({ customerName: '', customerPhone: '', deliveryAddress: '' });
+      setIsOrderFormOpen(false);
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue lors de l'enregistrement de votre commande",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleWhatsAppOrder = () => {
+    const message = `Bonjour, je souhaite commander:\n\n${getLocalizedText('name')}\nQuantité: ${quantity}\nPrix: ${discountedPrice ? discountedPrice * quantity : originalPrice * quantity}€`;
+    const whatsappUrl = `https://wa.me/+33123456789?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
   };
 
   const productImages = Array.isArray(product.images) ? product.images : ['https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=600&h=600&fit=crop'];
@@ -373,20 +440,126 @@ export default function ProductDetails() {
             </Tabs>
           </CardContent>
         </Card>
+
+        {/* Formulaire de commande intégré */}
+        <Card className="backdrop-blur-sm bg-white/80 border-0 shadow-xl mt-8">
+          <CardContent className="p-6">
+            <h3 className="text-2xl font-bold text-gray-800 mb-6 text-center">Commander ce produit</h3>
+            
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="customerName" className="flex items-center gap-2">
+                    <User className="h-4 w-4" />
+                    Nom complet *
+                  </Label>
+                  <Input
+                    id="customerName"
+                    value={orderForm.customerName}
+                    onChange={(e) => handleOrderFormChange('customerName', e.target.value)}
+                    placeholder="Votre nom complet"
+                    className="mt-1"
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="customerPhone" className="flex items-center gap-2">
+                    <Phone className="h-4 w-4" />
+                    Téléphone *
+                  </Label>
+                  <Input
+                    id="customerPhone"
+                    value={orderForm.customerPhone}
+                    onChange={(e) => handleOrderFormChange('customerPhone', e.target.value)}
+                    placeholder="+33 6 12 34 56 78"
+                    className="mt-1"
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="deliveryAddress" className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4" />
+                    Adresse de livraison *
+                  </Label>
+                  <Textarea
+                    id="deliveryAddress"
+                    value={orderForm.deliveryAddress}
+                    onChange={(e) => handleOrderFormChange('deliveryAddress', e.target.value)}
+                    placeholder="Adresse complète de livraison"
+                    className="mt-1"
+                    rows={3}
+                  />
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <h4 className="font-semibold mb-3">Résumé de la commande</h4>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span>Produit:</span>
+                      <span className="font-medium">{getLocalizedText('name')}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Quantité:</span>
+                      <span className="font-medium">{quantity}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Prix unitaire:</span>
+                      <span className="font-medium">{discountedPrice ? `${discountedPrice}€` : `${originalPrice}€`}</span>
+                    </div>
+                    <Separator />
+                    <div className="flex justify-between text-lg font-bold">
+                      <span>Total:</span>
+                      <span>{(discountedPrice ? discountedPrice * quantity : originalPrice * quantity).toFixed(2)}€</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="space-y-3">
+                  <Button 
+                    onClick={handleSubmitOrder}
+                    className="w-full purple-gradient text-white hover:scale-105 transition-transform"
+                    size="lg"
+                    disabled={createOrder.isPending}
+                  >
+                    {createOrder.isPending ? "Traitement..." : "Commander maintenant"}
+                  </Button>
+                  
+                  <Button 
+                    onClick={handleWhatsAppOrder}
+                    variant="outline"
+                    className="w-full border-green-500 text-green-600 hover:bg-green-50"
+                    size="lg"
+                  >
+                    <MessageCircle className="h-4 w-4 mr-2" />
+                    Commander via WhatsApp
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Order Form Modal */}
-      <OrderForm
-        open={isOrderFormOpen}
-        onClose={() => setIsOrderFormOpen(false)}
-        initialItems={[{
-          productId: product.id,
-          quantity,
-          price: discountedPrice ? discountedPrice.toString() : product.price,
-          productName: getLocalizedText('name')
-        }]}
-        totalAmount={(discountedPrice ? discountedPrice * quantity : originalPrice * quantity).toFixed(2)}
-      />
+      {/* Boutons flottants pour mobile */}
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t shadow-lg md:hidden z-50">
+        <div className="flex gap-3">
+          <Button 
+            onClick={handleSubmitOrder}
+            className="flex-1 purple-gradient text-white font-bold py-3"
+            disabled={createOrder.isPending}
+          >
+            Commander
+          </Button>
+          <Button 
+            onClick={handleWhatsAppOrder}
+            className="px-4 bg-green-500 hover:bg-green-600 text-white"
+          >
+            <MessageCircle className="h-5 w-5" />
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }
