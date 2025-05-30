@@ -58,34 +58,19 @@ export default function Categories() {
       {/* Hero Section */}
       <section className="pt-20 pb-12 px-4">
         <div className="container mx-auto">
-          <div className="flex items-center gap-4 mb-8">
-            <Link href="/">
-              <Button variant="ghost" size="sm">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                {t.nav.home}
-              </Button>
-            </Link>
+          <div className="text-center mb-8">
             <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
               {t.categories.title}
             </h1>
           </div>
 
-          {/* Breadcrumb */}
-          <div className="flex items-center gap-2 text-sm text-gray-600 mb-8">
-            <Link href="/" className="hover:text-purple-600 transition-colors">
-              {t.nav.home}
-            </Link>
-            <span>/</span>
-            <span>{t.categories.title}</span>
-            {selectedCategory && (
-              <>
-                <span>/</span>
-                <span className="text-purple-600 font-medium">
-                  {getLocalizedName(selectedCategory)}
-                </span>
-              </>
-            )}
-          </div>
+          {selectedCategory && (
+            <div className="text-center text-sm text-gray-600 mt-2">
+              <span className="text-purple-600 font-medium">
+                {getLocalizedName(selectedCategory)}
+              </span>
+            </div>
+          )}
         </div>
       </section>
 

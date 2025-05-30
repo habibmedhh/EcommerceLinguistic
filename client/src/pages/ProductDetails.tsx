@@ -169,30 +169,7 @@ export default function ProductDetails() {
       <Header />
       
       <div className="container mx-auto px-4 pt-24 pb-16">
-        {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-sm text-gray-600 mb-8">
-          <Link href="/" className="hover:text-purple-600 transition-colors">
-            {t.nav.home}
-          </Link>
-          <span>/</span>
-          <Link href="/products" className="hover:text-purple-600 transition-colors">
-            {t.products.title}
-          </Link>
-          <span>/</span>
-          <span className="text-purple-600 font-medium">
-            {getLocalizedText('name')}
-          </span>
-        </div>
 
-        {/* Back Button */}
-        <div className="mb-8">
-          <Link href="/products">
-            <Button variant="ghost" size="sm">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Products
-            </Button>
-          </Link>
-        </div>
 
         {/* Product Details */}
         <div className="grid lg:grid-cols-2 gap-12 mb-12">
@@ -523,8 +500,8 @@ export default function ProductDetails() {
           </CardContent>
         </Card>
 
-        {/* Formulaire de commande intégré */}
-        <Card className="backdrop-blur-sm bg-white/80 border-0 shadow-xl mt-8">
+        {/* Formulaire de commande intégré - masqué sur mobile */}
+        <Card className="backdrop-blur-sm bg-white/80 border-0 shadow-xl mt-8 hidden md:block">
           <CardContent className="p-6">
             <h3 className="text-2xl font-bold text-gray-800 mb-6 text-center">Commander ce produit</h3>
             
