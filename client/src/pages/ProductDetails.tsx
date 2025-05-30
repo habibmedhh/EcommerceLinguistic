@@ -35,7 +35,7 @@ import {
 export default function ProductDetails() {
   const { id } = useParams();
   const productId = parseInt(id || "0");
-  const { t, language } = useI18n();
+  const { t, language, direction } = useI18n();
   const { data: product, isLoading } = useProduct(productId);
   const { addToCart } = useCart();
   const createOrder = useCreateOrder();
@@ -682,7 +682,7 @@ export default function ProductDetails() {
 
       {/* Modal de formulaire de commande stylé pour mobile */}
       <Dialog open={isOrderFormOpen} onOpenChange={setIsOrderFormOpen}>
-        <DialogContent className="sm:max-w-[480px] mx-4 p-0 gap-0 bg-gradient-to-br from-purple-50 via-white to-blue-50">
+        <DialogContent className="sm:max-w-[480px] mx-2 my-4 p-0 gap-0 bg-gradient-to-br from-purple-50 via-white to-blue-50 max-h-[90vh] overflow-y-auto" dir={direction}>
           <div className="bg-gradient-to-r from-purple-600 to-pink-600 p-6 rounded-t-lg">
             <DialogHeader>
               <DialogTitle className="text-center text-2xl font-bold text-white flex items-center justify-center gap-2">
@@ -692,25 +692,29 @@ export default function ProductDetails() {
             </DialogHeader>
           </div>
           
-          <div className="p-6 space-y-6">
+          <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
             {/* Résumé de la commande */}
-            <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-xl p-4">
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+            <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-xl p-3 sm:p-4">
+              <div className={`flex items-center justify-between mb-2 ${direction === 'rtl' ? 'flex-row-reverse' : ''}`}>
+                <div className={`flex items-center gap-2 ${direction === 'rtl' ? 'flex-row-reverse' : ''}`}>
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
                     <span className="text-white text-sm">📱</span>
                   </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-800">{getLocalizedText('name')}</h4>
-                    <p className="text-sm text-gray-600">Quantité: {quantity}</p>
+                  <div className={direction === 'rtl' ? 'text-right' : 'text-left'}>
+                    <h4 className="font-semibold text-gray-800 text-sm sm:text-base">{getLocalizedText('name')}</h4>
+                    <p className="text-xs sm:text-sm text-gray-600">
+                      {language === 'ar' ? `الكمية: ${quantity}` : 
+                       language === 'fr' ? `Quantité: ${quantity}` : 
+                       `Quantity: ${quantity}`}
+                    </p>
                   </div>
                 </div>
-                <div className="text-right">
-                  <div className="text-2xl font-bold text-purple-600">
+                <div className={`${direction === 'rtl' ? 'text-left' : 'text-right'}`}>
+                  <div className="text-xl sm:text-2xl font-bold text-purple-600">
                     {(discountedPrice ? discountedPrice * quantity : originalPrice * quantity).toFixed(2)}€
                   </div>
                   {discountedPrice && (
-                    <div className="text-sm text-gray-500 line-through">
+                    <div className="text-xs sm:text-sm text-gray-500 line-through">
                       {(originalPrice * quantity).toFixed(2)}€
                     </div>
                   )}
@@ -719,10 +723,10 @@ export default function ProductDetails() {
             </div>
 
             {/* Formulaire */}
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               <div>
-                <Label htmlFor="modal-customerName" className="flex items-center gap-2 text-gray-700 font-medium mb-2">
-                  <div className="w-6 h-6 bg-gradient-to-r from-blue-400 to-purple-500 rounded-lg flex items-center justify-center">
+                <Label htmlFor="modal-customerName" className={`flex items-center gap-2 text-gray-700 font-medium mb-2 ${direction === 'rtl' ? 'flex-row-reverse' : ''}`}>
+                  <div className="w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-r from-blue-400 to-purple-500 rounded-lg flex items-center justify-center">
                     <User className="h-3 w-3 text-white" />
                   </div>
                   {t.order.name} *
@@ -732,13 +736,14 @@ export default function ProductDetails() {
                   value={orderForm.customerName}
                   onChange={(e) => handleOrderFormChange('customerName', e.target.value)}
                   placeholder={t.order.name}
-                  className="h-12 border-2 border-purple-200 rounded-xl focus:border-purple-500 transition-colors"
+                  className={`h-10 sm:h-12 border-2 border-purple-200 rounded-xl focus:border-purple-500 transition-colors ${direction === 'rtl' ? 'text-right' : 'text-left'}`}
+                  dir={direction}
                 />
               </div>
               
               <div>
-                <Label htmlFor="modal-customerPhone" className="flex items-center gap-2 text-gray-700 font-medium mb-2">
-                  <div className="w-6 h-6 bg-gradient-to-r from-green-400 to-blue-500 rounded-lg flex items-center justify-center">
+                <Label htmlFor="modal-customerPhone" className={`flex items-center gap-2 text-gray-700 font-medium mb-2 ${direction === 'rtl' ? 'flex-row-reverse' : ''}`}>
+                  <div className="w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-r from-green-400 to-blue-500 rounded-lg flex items-center justify-center">
                     <Phone className="h-3 w-3 text-white" />
                   </div>
                   {t.order.phone} *
@@ -748,13 +753,14 @@ export default function ProductDetails() {
                   value={orderForm.customerPhone}
                   onChange={(e) => handleOrderFormChange('customerPhone', e.target.value)}
                   placeholder={t.order.phone}
-                  className="h-12 border-2 border-purple-200 rounded-xl focus:border-purple-500 transition-colors"
+                  className={`h-10 sm:h-12 border-2 border-purple-200 rounded-xl focus:border-purple-500 transition-colors ${direction === 'rtl' ? 'text-right' : 'text-left'}`}
+                  dir={direction}
                 />
               </div>
               
               <div>
-                <Label htmlFor="modal-deliveryAddress" className="flex items-center gap-2 text-gray-700 font-medium mb-2">
-                  <div className="w-6 h-6 bg-gradient-to-r from-orange-400 to-red-500 rounded-lg flex items-center justify-center">
+                <Label htmlFor="modal-deliveryAddress" className={`flex items-center gap-2 text-gray-700 font-medium mb-2 ${direction === 'rtl' ? 'flex-row-reverse' : ''}`}>
+                  <div className="w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-r from-orange-400 to-red-500 rounded-lg flex items-center justify-center">
                     <MapPin className="h-3 w-3 text-white" />
                   </div>
                   {t.order.address} *
@@ -764,8 +770,9 @@ export default function ProductDetails() {
                   value={orderForm.deliveryAddress}
                   onChange={(e) => handleOrderFormChange('deliveryAddress', e.target.value)}
                   placeholder={t.order.address}
-                  className="border-2 border-purple-200 rounded-xl focus:border-purple-500 transition-colors resize-none"
+                  className={`border-2 border-purple-200 rounded-xl focus:border-purple-500 transition-colors resize-none ${direction === 'rtl' ? 'text-right' : 'text-left'}`}
                   rows={3}
+                  dir={direction}
                 />
               </div>
             </div>
