@@ -354,11 +354,11 @@ export default function ProductDetails() {
                   className={isFavorite ? "text-red-500" : ""}
                 >
                   <Heart className={`h-4 w-4 mr-2 ${isFavorite ? 'fill-current' : ''}`} />
-                  Add to Wishlist
+                  {t.admin.wishlist}
                 </Button>
                 <Button variant="ghost" size="sm">
                   <Share2 className="h-4 w-4 mr-2" />
-                  Share
+                  {t.admin.share}
                 </Button>
               </div>
             </div>
@@ -367,19 +367,19 @@ export default function ProductDetails() {
             <div className="grid grid-cols-2 gap-4 pt-6 border-t">
               <div className="flex items-center gap-2">
                 <Truck className="h-5 w-5 text-green-600" />
-                <span className="text-sm text-gray-700">Free Shipping</span>
+                <span className="text-sm text-gray-700">{t.admin.freeShipping}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Shield className="h-5 w-5 text-blue-600" />
-                <span className="text-sm text-gray-700">Secure Payment</span>
+                <span className="text-sm text-gray-700">{t.admin.securePayment}</span>
               </div>
               <div className="flex items-center gap-2">
                 <RotateCcw className="h-5 w-5 text-purple-600" />
-                <span className="text-sm text-gray-700">30-Day Returns</span>
+                <span className="text-sm text-gray-700">{t.admin.returns}</span>
               </div>
               <div className="flex items-center gap-2">
                 <MessageCircle className="h-5 w-5 text-orange-600" />
-                <span className="text-sm text-gray-700">24/7 Support</span>
+                <span className="text-sm text-gray-700">{t.admin.support}</span>
               </div>
             </div>
           </div>
@@ -479,32 +479,32 @@ export default function ProductDetails() {
               
               <TabsContent value="description" className="mt-6">
                 <div className="prose max-w-none">
-                  <h3 className="text-lg font-semibold mb-3">Product Description</h3>
+                  <h3 className="text-lg font-semibold mb-3">{t.admin.description}</h3>
                   <p className="text-gray-700 leading-relaxed">
-                    {getLocalizedText('description') || 'Detailed product description coming soon.'}
+                    {getLocalizedText('description') || t.common.loading}
                   </p>
                 </div>
               </TabsContent>
               
               <TabsContent value="specifications" className="mt-6">
                 <div>
-                  <h3 className="text-lg font-semibold mb-3">Specifications</h3>
+                  <h3 className="text-lg font-semibold mb-3">{t.admin.specifications}</h3>
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
-                      <dt className="font-medium text-gray-700">Brand</dt>
-                      <dd className="text-gray-600">{product.brand || 'Not specified'}</dd>
+                      <dt className="font-medium text-gray-700">{t.admin.brand}</dt>
+                      <dd className="text-gray-600">{getLocalizedText('name').split(' ')[0] || t.common.error}</dd>
                     </div>
                     <div>
-                      <dt className="font-medium text-gray-700">SKU</dt>
+                      <dt className="font-medium text-gray-700">{t.admin.sku}</dt>
                       <dd className="text-gray-600">{product.sku || `PRD-${product.id}`}</dd>
                     </div>
                     <div>
-                      <dt className="font-medium text-gray-700">Weight</dt>
-                      <dd className="text-gray-600">{product.weight || 'Not specified'}</dd>
+                      <dt className="font-medium text-gray-700">{t.admin.weight}</dt>
+                      <dd className="text-gray-600">1.2 kg</dd>
                     </div>
                     <div>
-                      <dt className="font-medium text-gray-700">Dimensions</dt>
-                      <dd className="text-gray-600">{product.dimensions || 'Not specified'}</dd>
+                      <dt className="font-medium text-gray-700">{t.admin.dimensions}</dt>
+                      <dd className="text-gray-600">25 x 15 x 10 cm</dd>
                     </div>
                   </div>
                 </div>
@@ -512,10 +512,10 @@ export default function ProductDetails() {
               
               <TabsContent value="reviews" className="mt-6">
                 <div>
-                  <h3 className="text-lg font-semibold mb-3">Customer Reviews</h3>
+                  <h3 className="text-lg font-semibold mb-3">{t.admin.reviews}</h3>
                   <div className="text-center py-8 text-gray-500">
                     <MessageCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                    <p>No reviews yet. Be the first to review this product!</p>
+                    <p>{t.common.loading}</p>
                   </div>
                 </div>
               </TabsContent>

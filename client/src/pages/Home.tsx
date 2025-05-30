@@ -186,16 +186,7 @@ export default function Home() {
             ))}
           </div>
           
-          <div className="text-center mt-12">
-            <Link href="/categories">
-              <Button 
-                size="lg"
-                className="purple-gradient text-white px-12 py-6 text-lg font-bold rounded-2xl shadow-lg hover:scale-105 transition-transform"
-              >
-                View All Categories
-              </Button>
-            </Link>
-          </div>
+
         </div>
       </section>
 
@@ -299,16 +290,7 @@ export default function Home() {
             ))}
           </div>
           
-          <div className="text-center mt-12">
-            <Link href="/products">
-              <Button 
-                size="lg"
-                className="purple-gradient text-white px-12 py-6 text-lg font-bold rounded-2xl shadow-lg hover:scale-105 transition-transform"
-              >
-                View All Products
-              </Button>
-            </Link>
-          </div>
+
         </div>
       </section>
 
