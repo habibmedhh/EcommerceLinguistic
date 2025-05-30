@@ -192,10 +192,12 @@ export default function ProductsManagement() {
               <h1 className="text-2xl font-bold">Products Management</h1>
             </div>
             
-            <Button onClick={() => setIsProductDialogOpen(true)}>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Product
-            </Button>
+            <Link href="/admin/products/new">
+              <Button>
+                <Plus className="h-4 w-4 mr-2" />
+                Nouveau produit
+              </Button>
+            </Link>
           </div>
         </div>
       </header>
@@ -291,14 +293,15 @@ export default function ProductsManagement() {
                 </div>
                 
                 <div className="flex gap-2">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => openEditDialog(product)}
-                    className="flex-1"
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
+                  <Link href={`/admin/products/edit/${product.id}`} className="flex-1">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="w-full"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  </Link>
                   <Button
                     size="sm"
                     variant="outline"
