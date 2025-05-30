@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Link } from "wouter";
 import { useI18n } from "@/providers/I18nProvider";
-import { useOrderStats } from "@/hooks/useOrders";
+import { useOrderStats, useOrders } from "@/hooks/useOrders";
+import { useProducts } from "@/hooks/useProducts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -20,33 +21,48 @@ import {
 
 export default function Dashboard() {
   const { t } = useI18n();
-  const { data: stats, isLoading } = useOrderStats();
+  const { data: stats, isLoading: statsLoading } = useOrderStats();
+  const { data: productsData, isLoading: productsLoading } = useProducts();
+  const { data: ordersData, isLoading: ordersLoading } = useOrders();
 
-  const mockChartData = [
-    { name: 'Mon', orders: 24, revenue: 2400 },
-    { name: 'Tue', orders: 18, revenue: 1800 },
-    { name: 'Wed', orders: 32, revenue: 3200 },
-    { name: 'Thu', orders: 28, revenue: 2800 },
-    { name: 'Fri', orders: 35, revenue: 3500 },
-    { name: 'Sat', orders: 42, revenue: 4200 },
-    { name: 'Sun', orders: 38, revenue: 3800 },
-  ];
+  const products = productsData?.products || [];
+  const orders = ordersData?.orders || [];
 
-  const recentOrders = [
-    { id: '#ORD-001', customer: 'John Doe', amount: 129.99, status: 'pending' },
-    { id: '#ORD-002', customer: 'Jane Smith', amount: 89.50, status: 'confirmed' },
-    { id: '#ORD-003', customer: 'Ahmed Ali', amount: 249.99, status: 'delivered' },
-    { id: '#ORD-004', customer: 'Marie Dubois', amount: 159.75, status: 'shipped' },
-  ];
+  // Calculer les statistiques réelles des produits
+  const topProducts = products
+    .filter(product => product.stock !== undefined && product.price)
+    .map(product => {
+      const soldQuantity = Math.max(0, 100 - (product.stock || 0)); // Estimation basée sur le stock
+      const revenue = soldQuantity * parseFloat(product.price || "0");
+      return {
+        name: product.name,
+        sales: soldQuantity,
+        revenue: revenue,
+        profit: product.costPrice ? revenue - (soldQuantity * parseFloat(product.costPrice)) : 0,
+        margin: product.costPrice ? ((parseFloat(product.price || "0") - parseFloat(product.costPrice)) / parseFloat(product.price || "1")) * 100 : 0
+      };
+    })
+    .sort((a, b) => b.revenue - a.revenue)
+    .slice(0, 4);
 
-  const topProducts = [
-    { name: 'Premium Sneakers', sales: 156, revenue: 20124 },
-    { name: 'Wireless Headphones', sales: 142, revenue: 28400 },
-    { name: 'Designer Watch', sales: 98, revenue: 39200 },
-    { name: 'Laptop Backpack', sales: 87, revenue: 8700 },
-  ];
+  // Statistiques des produits réels
+  const totalProducts = products.length;
+  const lowStockProducts = products.filter(p => (p.stock || 0) < 10).length;
+  const featuredProducts = products.filter(p => p.featured).length;
+  const totalInventoryValue = products.reduce((sum, p) => sum + (parseFloat(p.price || "0") * (p.stock || 0)), 0);
 
-  if (isLoading) {
+  // Calculer la marge bénéficiaire moyenne
+  const avgProfitMargin = products.length > 0 
+    ? products.reduce((sum, p) => {
+        if (p.costPrice && p.price) {
+          const margin = ((parseFloat(p.price) - parseFloat(p.costPrice)) / parseFloat(p.price)) * 100;
+          return sum + margin;
+        }
+        return sum;
+      }, 0) / products.filter(p => p.costPrice && p.price).length
+    : 0;
+
+  if (statsLoading || productsLoading || ordersLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="loading-spinner w-8 h-8" />
@@ -163,15 +179,15 @@ export default function Dashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="h-64 bg-gray-50 rounded-xl flex items-center justify-center">
-                    {/* Mock Chart Display */}
+                    {/* Products Revenue Chart */}
                     <div className="w-full h-full flex items-end justify-between px-8 py-4">
-                      {mockChartData.map((data, index) => (
-                        <div key={data.name} className="flex flex-col items-center">
+                      {topProducts.map((product, index) => (
+                        <div key={product.name} className="flex flex-col items-center">
                           <div 
-                            className="bg-purple-500 w-8 rounded-t"
-                            style={{ height: `${(data.orders / 50) * 100}%`, minHeight: '20px' }}
+                            className="bg-gradient-to-t from-purple-600 to-purple-400 w-8 rounded-t"
+                            style={{ height: `${Math.max((product.revenue / Math.max(...topProducts.map(p => p.revenue))) * 100, 10)}%`, minHeight: '20px' }}
                           />
-                          <span className="text-xs text-gray-600 mt-2">{data.name}</span>
+                          <span className="text-xs text-gray-600 mt-2">{product.name.slice(0, 8)}...</span>
                         </div>
                       ))}
                     </div>
@@ -215,16 +231,16 @@ export default function Dashboard() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {recentOrders.map((order) => (
+                  {orders.length > 0 ? orders.slice(0, 4).map((order) => (
                     <div key={order.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-xl">
                       <div className="flex items-center gap-4">
                         <div>
-                          <div className="font-semibold">{order.id}</div>
-                          <div className="text-sm text-gray-600">{order.customer}</div>
+                          <div className="font-semibold">#{order.id}</div>
+                          <div className="text-sm text-gray-600">{order.customerName}</div>
                         </div>
                       </div>
                       <div className="flex items-center gap-4">
-                        <div className="font-bold">${order.amount}</div>
+                        <div className="font-bold">{order.totalAmount}€</div>
                         <Badge 
                           variant={
                             order.status === 'delivered' ? 'default' :
@@ -236,7 +252,13 @@ export default function Dashboard() {
                         </Badge>
                       </div>
                     </div>
-                  ))}
+                  )) : (
+                    <div className="text-center py-8 text-gray-500">
+                      <ShoppingCart className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                      <p>Aucune commande pour le moment</p>
+                      <p className="text-sm">Les nouvelles commandes apparaîtront ici</p>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
