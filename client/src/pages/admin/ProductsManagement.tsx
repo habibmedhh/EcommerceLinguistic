@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "wouter";
-import { useI18n } from "@/lib/i18n";
+import { useI18n } from "@/providers/I18nProvider";
 import { useProducts, useCreateProduct, useUpdateProduct, useDeleteProduct } from "@/hooks/useProducts";
 import { useCategories } from "@/hooks/useCategories";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

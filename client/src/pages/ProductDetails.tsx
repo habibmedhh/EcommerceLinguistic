@@ -1,0 +1,389 @@
+import { useState } from "react";
+import { Link, useParams } from "wouter";
+import { useI18n } from "@/providers/I18nProvider";
+import { useProduct } from "@/hooks/useProducts";
+import { useCart } from "@/hooks/useCart";
+import { Header } from "@/components/Header";
+import { OrderForm } from "@/components/OrderForm";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
+import { 
+  ArrowLeft, 
+  Heart, 
+  Share2, 
+  ShoppingCart, 
+  Star, 
+  Plus, 
+  Minus,
+  Truck,
+  Shield,
+  RotateCcw,
+  MessageCircle
+} from "lucide-react";
+
+export default function ProductDetails() {
+  const { id } = useParams();
+  const productId = parseInt(id || "0");
+  const { t, language } = useI18n();
+  const { data: product, isLoading } = useProduct(productId);
+  const { addToCart } = useCart();
+  const [quantity, setQuantity] = useState(1);
+  const [selectedImage, setSelectedImage] = useState(0);
+  const [isOrderFormOpen, setIsOrderFormOpen] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
+        <Header />
+        <div className="container mx-auto px-4 pt-24 pb-16">
+          <div className="animate-pulse">
+            <div className="grid lg:grid-cols-2 gap-12 mb-12">
+              <div className="bg-gray-200 h-96 rounded-2xl"></div>
+              <div className="space-y-4">
+                <div className="bg-gray-200 h-8 rounded w-3/4"></div>
+                <div className="bg-gray-200 h-4 rounded w-1/2"></div>
+                <div className="bg-gray-200 h-6 rounded w-1/4"></div>
+                <div className="bg-gray-200 h-20 rounded"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
+        <Header />
+        <div className="container mx-auto px-4 pt-24 pb-16 text-center">
+          <h1 className="text-2xl font-bold text-gray-800 mb-4">Product not found</h1>
+          <Link href="/products">
+            <Button>Back to Products</Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const getLocalizedText = (field: string) => {
+    if (language === 'ar') return (product as any)[`${field}Ar`] || (product as any)[field];
+    if (language === 'fr') return (product as any)[`${field}Fr`] || (product as any)[field];
+    return (product as any)[field];
+  };
+
+  const handleAddToCart = () => {
+    addToCart(product, quantity);
+  };
+
+  const handleBuyNow = () => {
+    setIsOrderFormOpen(true);
+  };
+
+  const productImages = product.images ? product.images.split(',') : [product.image].filter(Boolean);
+  const currentImage = productImages[selectedImage] || '/placeholder-image.jpg';
+
+  const discountedPrice = product.salePrice ? parseFloat(product.salePrice) : null;
+  const originalPrice = parseFloat(product.price);
+  const discountPercentage = discountedPrice 
+    ? Math.round(((originalPrice - discountedPrice) / originalPrice) * 100)
+    : 0;
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
+      <Header />
+      
+      <div className="container mx-auto px-4 pt-24 pb-16">
+        {/* Breadcrumb */}
+        <div className="flex items-center gap-2 text-sm text-gray-600 mb-8">
+          <Link href="/" className="hover:text-purple-600 transition-colors">
+            {t.nav.home}
+          </Link>
+          <span>/</span>
+          <Link href="/products" className="hover:text-purple-600 transition-colors">
+            {t.products.title}
+          </Link>
+          <span>/</span>
+          <span className="text-purple-600 font-medium">
+            {getLocalizedText('name')}
+          </span>
+        </div>
+
+        {/* Back Button */}
+        <div className="mb-8">
+          <Link href="/products">
+            <Button variant="ghost" size="sm">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Products
+            </Button>
+          </Link>
+        </div>
+
+        {/* Product Details */}
+        <div className="grid lg:grid-cols-2 gap-12 mb-12">
+          {/* Product Images */}
+          <div className="space-y-4">
+            <Card className="overflow-hidden backdrop-blur-sm bg-white/80 border-0 shadow-xl">
+              <div className="aspect-square relative">
+                <img
+                  src={currentImage}
+                  alt={getLocalizedText('name')}
+                  className="w-full h-full object-cover"
+                />
+                {product.salePrice && (
+                  <Badge className="absolute top-4 left-4 bg-red-500">
+                    -{discountPercentage}%
+                  </Badge>
+                )}
+                {product.featured && (
+                  <Badge className="absolute top-4 right-4 bg-yellow-500">
+                    Featured
+                  </Badge>
+                )}
+              </div>
+            </Card>
+            
+            {/* Thumbnail Images */}
+            {productImages.length > 1 && (
+              <div className="grid grid-cols-4 gap-2">
+                {productImages.map((image, index) => (
+                  <Card
+                    key={index}
+                    className={`cursor-pointer overflow-hidden transition-all ${
+                      selectedImage === index 
+                        ? 'ring-2 ring-purple-500' 
+                        : 'hover:ring-2 hover:ring-purple-300'
+                    }`}
+                    onClick={() => setSelectedImage(index)}
+                  >
+                    <div className="aspect-square">
+                      <img
+                        src={image}
+                        alt={`${getLocalizedText('name')} ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Product Info */}
+          <div className="space-y-6">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                {getLocalizedText('name')}
+              </h1>
+              <p className="text-gray-600 mb-4">
+                SKU: {product.sku || `PRD-${product.id}`}
+              </p>
+              
+              {/* Rating */}
+              <div className="flex items-center gap-2 mb-4">
+                <div className="flex items-center">
+                  {[...Array(5)].map((_, i) => (
+                    <Star
+                      key={i}
+                      className={`h-4 w-4 ${
+                        i < Math.floor(parseFloat(product.rating || "0"))
+                          ? "text-yellow-400 fill-current"
+                          : "text-gray-300"
+                      }`}
+                    />
+                  ))}
+                </div>
+                <span className="text-sm text-gray-600">
+                  ({product.reviewCount || 0} reviews)
+                </span>
+              </div>
+
+              {/* Price */}
+              <div className="flex items-center gap-3 mb-6">
+                {discountedPrice ? (
+                  <>
+                    <span className="text-3xl font-bold text-purple-600">
+                      ${discountedPrice.toFixed(2)}
+                    </span>
+                    <span className="text-xl text-gray-500 line-through">
+                      ${originalPrice.toFixed(2)}
+                    </span>
+                  </>
+                ) : (
+                  <span className="text-3xl font-bold text-purple-600">
+                    ${originalPrice.toFixed(2)}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Description */}
+            <div>
+              <p className="text-gray-700 leading-relaxed">
+                {getLocalizedText('description') || 'No description available.'}
+              </p>
+            </div>
+
+            {/* Quantity and Actions */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-4">
+                <label className="font-medium text-gray-700">Quantity:</label>
+                <div className="flex items-center border rounded-lg">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    disabled={quantity <= 1}
+                  >
+                    <Minus className="h-4 w-4" />
+                  </Button>
+                  <Input
+                    type="number"
+                    value={quantity}
+                    onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                    className="w-20 text-center border-0 focus:ring-0"
+                    min="1"
+                  />
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setQuantity(quantity + 1)}
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <Button 
+                  onClick={handleAddToCart}
+                  className="flex-1"
+                  variant="outline"
+                >
+                  <ShoppingCart className="h-4 w-4 mr-2" />
+                  {t.products.addToCart}
+                </Button>
+                <Button 
+                  onClick={handleBuyNow}
+                  className="flex-1"
+                >
+                  {t.products.orderNow}
+                </Button>
+              </div>
+
+              <div className="flex gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsFavorite(!isFavorite)}
+                  className={isFavorite ? "text-red-500" : ""}
+                >
+                  <Heart className={`h-4 w-4 mr-2 ${isFavorite ? 'fill-current' : ''}`} />
+                  Add to Wishlist
+                </Button>
+                <Button variant="ghost" size="sm">
+                  <Share2 className="h-4 w-4 mr-2" />
+                  Share
+                </Button>
+              </div>
+            </div>
+
+            {/* Features */}
+            <div className="grid grid-cols-2 gap-4 pt-6 border-t">
+              <div className="flex items-center gap-2">
+                <Truck className="h-5 w-5 text-green-600" />
+                <span className="text-sm text-gray-700">Free Shipping</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Shield className="h-5 w-5 text-blue-600" />
+                <span className="text-sm text-gray-700">Secure Payment</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <RotateCcw className="h-5 w-5 text-purple-600" />
+                <span className="text-sm text-gray-700">30-Day Returns</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <MessageCircle className="h-5 w-5 text-orange-600" />
+                <span className="text-sm text-gray-700">24/7 Support</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Product Details Tabs */}
+        <Card className="backdrop-blur-sm bg-white/80 border-0 shadow-xl">
+          <CardContent className="p-6">
+            <Tabs defaultValue="description" className="w-full">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="description">Description</TabsTrigger>
+                <TabsTrigger value="specifications">Specifications</TabsTrigger>
+                <TabsTrigger value="reviews">Reviews</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="description" className="mt-6">
+                <div className="prose max-w-none">
+                  <h3 className="text-lg font-semibold mb-3">Product Description</h3>
+                  <p className="text-gray-700 leading-relaxed">
+                    {getLocalizedText('description') || 'Detailed product description coming soon.'}
+                  </p>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="specifications" className="mt-6">
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Specifications</h3>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <dt className="font-medium text-gray-700">Brand</dt>
+                      <dd className="text-gray-600">{product.brand || 'Not specified'}</dd>
+                    </div>
+                    <div>
+                      <dt className="font-medium text-gray-700">SKU</dt>
+                      <dd className="text-gray-600">{product.sku || `PRD-${product.id}`}</dd>
+                    </div>
+                    <div>
+                      <dt className="font-medium text-gray-700">Weight</dt>
+                      <dd className="text-gray-600">{product.weight || 'Not specified'}</dd>
+                    </div>
+                    <div>
+                      <dt className="font-medium text-gray-700">Dimensions</dt>
+                      <dd className="text-gray-600">{product.dimensions || 'Not specified'}</dd>
+                    </div>
+                  </div>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="reviews" className="mt-6">
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Customer Reviews</h3>
+                  <div className="text-center py-8 text-gray-500">
+                    <MessageCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p>No reviews yet. Be the first to review this product!</p>
+                  </div>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Order Form Modal */}
+      <OrderForm
+        open={isOrderFormOpen}
+        onClose={() => setIsOrderFormOpen(false)}
+        initialItems={[{
+          productId: product.id,
+          quantity,
+          price: discountedPrice ? discountedPrice.toString() : product.price,
+          productName: getLocalizedText('name')
+        }]}
+        totalAmount={(discountedPrice ? discountedPrice * quantity : originalPrice * quantity).toFixed(2)}
+      />
+    </div>
+  );
+}
