@@ -75,9 +75,37 @@ export default function Categories() {
       </section>
 
       <div className="container mx-auto px-4 pb-16">
+        {/* Mobile Categories Filter */}
+        <div className="block lg:hidden mb-6">
+          <Card className="p-4 backdrop-blur-sm bg-gradient-to-r from-purple-50 to-pink-50 border-0 shadow-xl">
+            <h3 className="font-semibold text-lg mb-3 text-center text-gray-800">
+              📂 {t.categories.title}
+            </h3>
+            <div className="grid grid-cols-2 gap-2">
+              <Button
+                variant={selectedCategoryId === undefined ? "default" : "outline"}
+                className="text-sm py-2 px-3 rounded-xl"
+                onClick={() => setSelectedCategoryId(undefined)}
+              >
+                🌟 Tout
+              </Button>
+              {categories.map((category) => (
+                <Button
+                  key={category.id}
+                  variant={selectedCategoryId === category.id ? "default" : "outline"}
+                  className="text-sm py-2 px-3 rounded-xl"
+                  onClick={() => handleCategorySelect(category.id)}
+                >
+                  {getLocalizedName(category)}
+                </Button>
+              ))}
+            </div>
+          </Card>
+        </div>
+
         <div className="grid lg:grid-cols-4 gap-8">
-          {/* Sidebar */}
-          <div className="lg:col-span-1 space-y-6">
+          {/* Desktop Sidebar */}
+          <div className="hidden lg:block lg:col-span-1 space-y-6">
             {/* Categories Filter */}
             <Card className="p-6 backdrop-blur-sm bg-white/80 border-0 shadow-xl">
               <h3 className="font-semibold text-lg mb-4 text-gray-800">
@@ -100,7 +128,7 @@ export default function Categories() {
                   >
                     {getLocalizedName(category)}
                     <Badge variant="secondary" className="ml-auto">
-                      {category.productCount || 0}
+                      0
                     </Badge>
                   </Button>
                 ))}
@@ -145,18 +173,33 @@ export default function Categories() {
 
           {/* Main Content */}
           <div className="lg:col-span-3">
+            {/* Mobile Search Bar */}
+            <div className="block lg:hidden mb-4">
+              <Card className="p-3 backdrop-blur-sm bg-white/80 border-0 shadow-lg">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Input
+                    placeholder={`🔍 ${t.common.search}...`}
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10 rounded-xl border-2 border-purple-200 focus:border-purple-500"
+                  />
+                </div>
+              </Card>
+            </div>
+
             {/* Results Header */}
             <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-4">
-                <h2 className="text-2xl font-bold text-gray-800">
-                  {selectedCategory ? getLocalizedName(selectedCategory) : "All Products"}
+              <div className="flex items-center gap-2 md:gap-4">
+                <h2 className="text-lg md:text-2xl font-bold text-gray-800">
+                  {selectedCategory ? getLocalizedName(selectedCategory) : t.products.title}
                 </h2>
-                <Badge variant="secondary" className="text-lg px-3 py-1">
-                  {products.length} {products.length === 1 ? "product" : "products"}
+                <Badge variant="secondary" className="text-sm md:text-base px-2 md:px-3 py-1">
+                  {products.length}
                 </Badge>
               </div>
               
-              <div className="flex items-center gap-2">
+              <div className="hidden md:flex items-center gap-2">
                 <Button
                   variant={viewMode === "grid" ? "default" : "ghost"}
                   size="sm"
@@ -189,7 +232,7 @@ export default function Categories() {
             ) : (
               <div className={
                 viewMode === "grid" 
-                  ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
+                  ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6"
                   : "space-y-4"
               }>
                 {products.map((product) => (

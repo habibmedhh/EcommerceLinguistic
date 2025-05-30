@@ -78,24 +78,59 @@ export function Header() {
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side={direction === 'rtl' ? 'left' : 'right'} className="w-64">
-                <nav className="flex flex-col space-y-4 mt-8">
-                  <Link href="/" className="text-gray-700 hover:text-purple-600 transition-colors font-medium py-2">
-                    {t.nav.home}
-                  </Link>
-                  <Link href="#categories" className="text-gray-700 hover:text-purple-600 transition-colors font-medium py-2">
-                    {t.nav.categories}
-                  </Link>
-                  <Link href="#products" className="text-gray-700 hover:text-purple-600 transition-colors font-medium py-2">
-                    {t.nav.products}
-                  </Link>
-                  <Link href="#contact" className="text-gray-700 hover:text-purple-600 transition-colors font-medium py-2">
-                    {t.nav.contact}
-                  </Link>
-                  <Link href="/admin" className="text-gray-700 hover:text-purple-600 transition-colors font-medium py-2">
-                    {t.nav.admin}
-                  </Link>
-                </nav>
+              <SheetContent side={direction === 'rtl' ? 'left' : 'right'} className="w-80 bg-gradient-to-b from-purple-50 to-white">
+                <div className="mt-8">
+                  <div className="text-center mb-8">
+                    <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                      <ShoppingCart className="h-8 w-8 text-white" />
+                    </div>
+                    <h2 className="text-xl font-bold text-gray-800">ModernShop</h2>
+                  </div>
+                  
+                  <nav className="space-y-2">
+                    <Link href="/" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/50 hover:bg-white transition-all duration-200 group">
+                      <div className="w-8 h-8 bg-gradient-to-r from-blue-400 to-purple-500 rounded-lg flex items-center justify-center">
+                        <span className="text-white text-sm">🏠</span>
+                      </div>
+                      <span className="font-medium text-gray-700 group-hover:text-purple-600">{t.nav.home}</span>
+                    </Link>
+                    
+                    <Link href="/categories" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/50 hover:bg-white transition-all duration-200 group">
+                      <div className="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-lg flex items-center justify-center">
+                        <span className="text-white text-sm">📂</span>
+                      </div>
+                      <span className="font-medium text-gray-700 group-hover:text-purple-600">{t.nav.categories}</span>
+                    </Link>
+                    
+                    <Link href="/products" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/50 hover:bg-white transition-all duration-200 group">
+                      <div className="w-8 h-8 bg-gradient-to-r from-orange-400 to-red-500 rounded-lg flex items-center justify-center">
+                        <span className="text-white text-sm">🛍️</span>
+                      </div>
+                      <span className="font-medium text-gray-700 group-hover:text-purple-600">{t.nav.products}</span>
+                    </Link>
+                    
+                    <Link href="#contact" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/50 hover:bg-white transition-all duration-200 group">
+                      <div className="w-8 h-8 bg-gradient-to-r from-pink-400 to-purple-500 rounded-lg flex items-center justify-center">
+                        <span className="text-white text-sm">📞</span>
+                      </div>
+                      <span className="font-medium text-gray-700 group-hover:text-purple-600">{t.nav.contact}</span>
+                    </Link>
+                    
+                    <Link href="/admin" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/50 hover:bg-white transition-all duration-200 group">
+                      <div className="w-8 h-8 bg-gradient-to-r from-gray-400 to-gray-600 rounded-lg flex items-center justify-center">
+                        <span className="text-white text-sm">⚙️</span>
+                      </div>
+                      <span className="font-medium text-gray-700 group-hover:text-purple-600">{t.nav.admin}</span>
+                    </Link>
+                  </nav>
+                  
+                  <div className="mt-8 px-4">
+                    <div className="bg-white rounded-xl p-4 shadow-lg">
+                      <h3 className="font-semibold text-gray-800 mb-2">🎯 Navigation rapide</h3>
+                      <p className="text-sm text-gray-600">Explorez nos catégories et découvrez nos produits exclusifs</p>
+                    </div>
+                  </div>
+                </div>
               </SheetContent>
             </Sheet>
           </div>

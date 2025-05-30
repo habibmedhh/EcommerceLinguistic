@@ -71,30 +71,70 @@ export default function Products() {
       <Header />
       
       {/* Hero Section */}
-      <section className="pt-20 pb-12 px-4">
+      <section className="pt-20 pb-8 px-4">
         <div className="container mx-auto">
-          <div className="flex items-center gap-4 mb-8">
-            <Link href="/">
-              <Button variant="ghost" size="sm">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                {t.nav.home}
-              </Button>
-            </Link>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+          <div className="text-center mb-6">
+            <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-4">
               {t.products.title}
             </h1>
+            <p className="text-gray-600 text-sm md:text-base">Découvrez notre collection exclusive</p>
           </div>
 
-          {/* Mobile Filter Toggle */}
-          <div className="lg:hidden mb-6">
-            <Button
-              variant="outline"
-              onClick={() => setShowFilters(!showFilters)}
-              className="w-full"
-            >
-              <SlidersHorizontal className="h-4 w-4 mr-2" />
-              {t.products.filters}
-            </Button>
+          {/* Mobile Quick Filters */}
+          <div className="block lg:hidden mb-6">
+            <Card className="p-4 backdrop-blur-sm bg-gradient-to-r from-purple-50 to-pink-50 border-0 shadow-xl">
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Input
+                    placeholder="🔍 Rechercher..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10 rounded-xl border-2 border-purple-200 focus:border-purple-500"
+                  />
+                </div>
+                <Select value={selectedCategoryId?.toString() || ""} onValueChange={(value) => setSelectedCategoryId(value ? parseInt(value) : undefined)}>
+                  <SelectTrigger className="rounded-xl border-2 border-purple-200">
+                    <SelectValue placeholder="📂 Catégorie" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">Toutes les catégories</SelectItem>
+                    {categories.map((category) => (
+                      <SelectItem key={category.id} value={category.id.toString()}>
+                        {getLocalizedName(category)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="flex gap-2">
+                <Button
+                  variant={featuredOnly ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setFeaturedOnly(!featuredOnly)}
+                  className="flex-1 rounded-xl text-xs"
+                >
+                  ⭐ Vedettes
+                </Button>
+                <Button
+                  variant={onSaleOnly ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setOnSaleOnly(!onSaleOnly)}
+                  className="flex-1 rounded-xl text-xs"
+                >
+                  🔥 Promo
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="px-3 rounded-xl"
+                >
+                  <SlidersHorizontal className="h-4 w-4" />
+                </Button>
+              </div>
+            </Card>
           </div>
         </div>
       </section>
@@ -218,17 +258,17 @@ export default function Products() {
           {/* Main Content */}
           <div className="lg:col-span-3">
             {/* Results Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-              <div className="flex items-center gap-4">
-                <h2 className="text-2xl font-bold text-gray-800">
-                  Products
+            <div className="flex items-center justify-between gap-4 mb-6">
+              <div className="flex items-center gap-2 md:gap-4">
+                <h2 className="text-lg md:text-2xl font-bold text-gray-800">
+                  {t.products.title}
                 </h2>
-                <Badge variant="secondary" className="text-lg px-3 py-1">
-                  {totalProducts} {totalProducts === 1 ? "product" : "products"}
+                <Badge variant="secondary" className="text-sm md:text-base px-2 md:px-3 py-1">
+                  {totalProducts}
                 </Badge>
               </div>
               
-              <div className="flex items-center gap-4">
+              <div className="hidden md:flex items-center gap-4">
                 {/* Sort Controls */}
                 <div className="flex items-center gap-2">
                   <Select value={sortBy} onValueChange={setSortBy}>
@@ -236,10 +276,10 @@ export default function Products() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="name">Name</SelectItem>
-                      <SelectItem value="price">Price</SelectItem>
-                      <SelectItem value="created">Newest</SelectItem>
-                      <SelectItem value="rating">Rating</SelectItem>
+                      <SelectItem value="name">Nom</SelectItem>
+                      <SelectItem value="price">Prix</SelectItem>
+                      <SelectItem value="created">Nouveau</SelectItem>
+                      <SelectItem value="rating">Note</SelectItem>
                     </SelectContent>
                   </Select>
                   
@@ -302,7 +342,7 @@ export default function Products() {
             ) : !isLoading && (
               <div className={
                 viewMode === "grid" 
-                  ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
+                  ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6"
                   : "space-y-4"
               }>
                 {products.map((product) => (
