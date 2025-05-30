@@ -11,6 +11,8 @@ import ProductDetails from "@/pages/ProductDetails";
 import Dashboard from "@/pages/admin/Dashboard";
 import ProductsManagement from "@/pages/admin/ProductsManagement";
 import OrdersManagement from "@/pages/admin/OrdersManagement";
+import StoreSettings from "@/pages/admin/StoreSettings";
+import ProductEditor from "@/pages/admin/ProductEditor";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -23,7 +25,10 @@ function Router() {
       <Route path="/admin" component={Dashboard} />
       <Route path="/admin/dashboard" component={Dashboard} />
       <Route path="/admin/products" component={ProductsManagement} />
+      <Route path="/admin/products/new" component={ProductEditor} />
+      <Route path="/admin/products/edit/:id" component={ProductEditor} />
       <Route path="/admin/orders" component={OrdersManagement} />
+      <Route path="/admin/settings" component={StoreSettings} />
       <Route component={NotFound} />
     </Switch>
   );
