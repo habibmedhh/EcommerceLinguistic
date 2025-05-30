@@ -32,10 +32,10 @@ export function Header() {
             <Link href="/" className="text-gray-700 hover:text-purple-600 transition-colors font-medium">
               {t.nav.home}
             </Link>
-            <Link href="#categories" className="text-gray-700 hover:text-purple-600 transition-colors font-medium">
+            <Link href="/categories" className="text-gray-700 hover:text-purple-600 transition-colors font-medium">
               {t.nav.categories}
             </Link>
-            <Link href="#products" className="text-gray-700 hover:text-purple-600 transition-colors font-medium">
+            <Link href="/products" className="text-gray-700 hover:text-purple-600 transition-colors font-medium">
               {t.nav.products}
             </Link>
             <Link href="#contact" className="text-gray-700 hover:text-purple-600 transition-colors font-medium">

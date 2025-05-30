@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "wouter";
 import { useI18n } from "@/providers/I18nProvider";
 import { useCategories } from "@/hooks/useCategories";
 import { useFeaturedProducts, useSaleProducts } from "@/hooks/useProducts";
@@ -184,6 +185,17 @@ export default function Home() {
               </div>
             ))}
           </div>
+          
+          <div className="text-center mt-12">
+            <Link href="/categories">
+              <Button 
+                size="lg"
+                className="purple-gradient text-white px-12 py-6 text-lg font-bold rounded-2xl shadow-lg hover:scale-105 transition-transform"
+              >
+                View All Categories
+              </Button>
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -288,12 +300,14 @@ export default function Home() {
           </div>
           
           <div className="text-center mt-12">
-            <Button 
-              size="lg"
-              className="purple-gradient text-white px-12 py-6 text-lg font-bold rounded-2xl shadow-lg hover:scale-105 transition-transform"
-            >
-              Load More Products
-            </Button>
+            <Link href="/products">
+              <Button 
+                size="lg"
+                className="purple-gradient text-white px-12 py-6 text-lg font-bold rounded-2xl shadow-lg hover:scale-105 transition-transform"
+              >
+                View All Products
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
