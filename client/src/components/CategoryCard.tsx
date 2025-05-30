@@ -1,4 +1,4 @@
-import { useI18n } from "@/lib/i18n";
+import { useI18n } from "@/providers/I18nProvider";
 import { useScrollAnimation } from "@/hooks/useAnimations";
 import { Card } from "@/components/ui/card";
 import type { Category } from "@/types";

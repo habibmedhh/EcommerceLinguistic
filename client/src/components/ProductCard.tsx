@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useI18n } from "@/lib/i18n";
+import { useI18n } from "@/providers/I18nProvider";
 import { useCart } from "@/hooks/useCart";
 import { useScrollAnimation } from "@/hooks/useAnimations";
 import { Card } from "@/components/ui/card";

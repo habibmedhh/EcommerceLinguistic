@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useI18n } from "@/lib/i18n";
+import { useI18n } from "@/providers/I18nProvider";
 import { useCreateOrder } from "@/hooks/useOrders";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";

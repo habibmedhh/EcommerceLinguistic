@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useI18n } from "@/lib/i18n";
+import { useI18n } from "@/providers/I18nProvider";
 import { useCategories } from "@/hooks/useCategories";
 import { useFeaturedProducts, useSaleProducts } from "@/hooks/useProducts";
 import { useScrollAnimation, useParallax } from "@/hooks/useAnimations";
