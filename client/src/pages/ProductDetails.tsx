@@ -3,14 +3,17 @@ import { Link, useParams } from "wouter";
 import { useI18n } from "@/providers/I18nProvider";
 import { useProduct } from "@/hooks/useProducts";
 import { useCart } from "@/hooks/useCart";
+import { useCreateOrder } from "@/hooks/useOrders";
 import { Header } from "@/components/Header";
-import { OrderForm } from "@/components/OrderForm";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
+import { useToast } from "@/hooks/use-toast";
 import { 
   ArrowLeft, 
   Heart, 
@@ -85,7 +88,7 @@ export default function ProductDetails() {
     setIsOrderFormOpen(true);
   };
 
-  const productImages = product.images ? product.images.split(',') : [product.image].filter(Boolean);
+  const productImages = Array.isArray(product.images) ? product.images : ['https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=600&h=600&fit=crop'];
   const currentImage = productImages[selectedImage] || '/placeholder-image.jpg';
 
   const discountedPrice = product.salePrice ? parseFloat(product.salePrice) : null;
