@@ -93,12 +93,12 @@ export default function Products() {
                     className="pl-10 rounded-xl border-2 border-purple-200 focus:border-purple-500"
                   />
                 </div>
-                <Select value={selectedCategoryId?.toString() || ""} onValueChange={(value) => setSelectedCategoryId(value ? parseInt(value) : undefined)}>
+                <Select value={selectedCategoryId?.toString() || "all"} onValueChange={(value) => setSelectedCategoryId(value === "all" ? undefined : parseInt(value))}>
                   <SelectTrigger className="rounded-xl border-2 border-purple-200">
                     <SelectValue placeholder="📂 Catégorie" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Toutes les catégories</SelectItem>
+                    <SelectItem value="all">Toutes les catégories</SelectItem>
                     {categories.map((category) => (
                       <SelectItem key={category.id} value={category.id.toString()}>
                         {getLocalizedName(category)}
