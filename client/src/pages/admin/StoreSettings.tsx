@@ -69,6 +69,48 @@ export default function StoreSettings() {
 
   const handleSaveSettings = async () => {
     try {
+      // Sauvegarder chaque paramètre individuellement
+      const settingsToSave = [
+        { key: 'store_name', value: storeSettings.storeName },
+        { key: 'store_name_ar', value: storeSettings.storeNameAr },
+        { key: 'store_name_fr', value: storeSettings.storeNameFr },
+        { key: 'store_description', value: storeSettings.description },
+        { key: 'store_description_ar', value: storeSettings.descriptionAr },
+        { key: 'store_description_fr', value: storeSettings.descriptionFr },
+        { key: 'store_logo', value: storeSettings.logo },
+        { key: 'contact_email', value: storeSettings.email },
+        { key: 'contact_phone', value: storeSettings.phone },
+        { key: 'contact_whatsapp', value: storeSettings.whatsapp },
+        { key: 'contact_address', value: storeSettings.address },
+        { key: 'contact_address_ar', value: storeSettings.addressAr },
+        { key: 'contact_address_fr', value: storeSettings.addressFr },
+        { key: 'currency', value: storeSettings.currency },
+        { key: 'currency_symbol', value: storeSettings.currencySymbol },
+        { key: 'tax_rate', value: storeSettings.taxRate },
+        { key: 'shipping_cost', value: storeSettings.shippingCost },
+        { key: 'free_shipping_threshold', value: storeSettings.freeShippingThreshold },
+        { key: 'primary_color', value: storeSettings.primaryColor },
+        { key: 'secondary_color', value: storeSettings.secondaryColor },
+        { key: 'accent_color', value: storeSettings.accentColor },
+        { key: 'meta_title', value: storeSettings.metaTitle },
+        { key: 'meta_description', value: storeSettings.metaDescription },
+        { key: 'meta_keywords', value: storeSettings.keywords },
+      ];
+
+      // Utiliser fetch pour sauvegarder chaque paramètre
+      for (const setting of settingsToSave) {
+        await fetch(`/api/settings/${setting.key}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            value: setting.value,
+            description: `Store setting: ${setting.key}`
+          }),
+        });
+      }
+
       toast({
         title: "✅ Paramètres sauvegardés",
         description: "Les paramètres du store ont été mis à jour avec succès",
