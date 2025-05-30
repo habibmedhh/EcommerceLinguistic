@@ -1,0 +1,99 @@
+🎯 Prompt à utiliser :
+Crée-moi un site e-commerce complet, rapide et ultra moderne avec un design "never seen before", utilisant des animations CSS et JavaScript modernes et fluides. Le site doit être totalement responsive, léger et optimisé pour le SEO et le chargement rapide.
+
+⚙️ Détails des pages à créer :
+🏠 Page d'accueil :
+Une bannière publicitaire animée en haut avec effet "parallax" ou "reveal on scroll".
+
+Section catégories animées avec des transitions dynamiques (ex: flip, fade, slide).
+
+Grille de produits avec animation au survol (zoom, rotation, ombre).
+
+Carrousel de promotions flash animées et mises en avant visuellement avec couleurs vives (ex: rouge/or).
+
+Bandeau en bas contenant :
+
+Informations de contact, heures d’ouverture
+
+Liens réseaux sociaux
+
+Numéro WhatsApp cliquable
+
+Newsletter intégrée avec animation d’apparition
+
+🔍 Page des filtres des catégories :
+Système de filtres interactifs (checkbox, range slider, dropdown animés).
+
+Animation lors du tri ou du filtrage (ex: produits qui se repositionnent avec effet fluide type "Masonry").
+
+Bouton de réinitialisation dynamique des filtres.
+
+Affichage des produits sans rechargement (type Ajax ou transitions douces).
+
+🛍️ Page de détail produit :
+Galerie multi-photos animée (carrousel zoomable, effet loupe).
+
+Design épuré et ultra moderne avec animations au scroll.
+
+Formulaire de commande simple avec 3 champs :
+
+Nom
+
+Téléphone
+
+Adresse
+
+Bouton "Commander maintenant" dupliqué en plusieurs sections (haut, après description, après photos, en bas) avec animation "pulse" ou "shake".
+
+Icônes flottantes :
+
+WhatsApp
+
+Panier
+
+Commander maintenant
+
+Badge de promotion animé si le produit est en solde.
+
+🔧 Section Admin (Dashboard) :
+Gestion des commandes :
+
+Voir/modifier/supprimer les commandes
+
+Importer/exporter commandes (CSV/Excel)
+
+Filtres par date, statut, ville, type de livraison
+
+Changer le statut (en attente, confirmé, livré, annulé)
+
+Gestion des produits :
+
+Ajouter/modifier/supprimer (photos multiples, stock, caractéristiques)
+
+Gestion de l'interface client :
+
+Personnalisation des couleurs, logo, numéro WhatsApp
+
+Gestion des offres & bannières
+
+Statistiques avancées :
+
+Bénéfices par jour/semaine/mois
+
+Nombre total de ventes
+
+Panier moyen
+
+Dashboard avec animations professionnelles (ex: graphiques animés, transitions fluides)
+
+🛠️ Technologies à utiliser :
+Front-End : HTML5, Tailwind CSS ou SCSS, JavaScript (Vanilla ou framework léger type Alpine.js, GSAP pour animations)
+
+Back-End : Node.js ou PHP avec base de données MySQL / MongoDB
+
+Admin Panel : avec une UI moderne (React.js ou Vue.js recommandé)
+
+Animations : GSAP, AOS.js, Framer Motion
+
+Performance : Lazy loading des images, minification des fichiers, animations non-bloquantes, LCP optimisé
+
