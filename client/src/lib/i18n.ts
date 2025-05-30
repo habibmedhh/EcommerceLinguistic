@@ -77,6 +77,20 @@ export interface Translation {
     totalRevenue: string;
     avgOrder: string;
     pendingOrders: string;
+    description: string;
+    specifications: string;
+    reviews: string;
+    features: string;
+    brand: string;
+    weight: string;
+    dimensions: string;
+    sku: string;
+    wishlist: string;
+    share: string;
+    freeShipping: string;
+    securePayment: string;
+    returns: string;
+    support: string;
   };
   // Common
   common: {
@@ -169,7 +183,21 @@ export const translations: Record<string, Translation> = {
       totalOrders: "Total Orders",
       totalRevenue: "Total Revenue",
       avgOrder: "Avg Order",
-      pendingOrders: "Pending Orders"
+      pendingOrders: "Pending Orders",
+      description: "Description",
+      specifications: "Specifications", 
+      reviews: "Reviews",
+      features: "Features",
+      brand: "Brand",
+      weight: "Weight",
+      dimensions: "Dimensions",
+      sku: "SKU",
+      wishlist: "Add to Wishlist",
+      share: "Share",
+      freeShipping: "Free Shipping",
+      securePayment: "Secure Payment",
+      returns: "30-Day Returns",
+      support: "24/7 Support"
     },
     common: {
       loading: "Loading...",
@@ -259,7 +287,21 @@ export const translations: Record<string, Translation> = {
       totalOrders: "Total Commandes",
       totalRevenue: "Chiffre d'affaires",
       avgOrder: "Commande moy.",
-      pendingOrders: "En attente"
+      pendingOrders: "En attente",
+      description: "Description",
+      specifications: "Spécifications",
+      reviews: "Avis",
+      features: "Caractéristiques",
+      brand: "Marque",
+      weight: "Poids",
+      dimensions: "Dimensions",
+      sku: "SKU",
+      wishlist: "Ajouter aux favoris",
+      share: "Partager",
+      freeShipping: "Livraison gratuite",
+      securePayment: "Paiement sécurisé",
+      returns: "Retours 30 jours",
+      support: "Support 24/7"
     },
     common: {
       loading: "Chargement...",
@@ -349,7 +391,21 @@ export const translations: Record<string, Translation> = {
       totalOrders: "إجمالي الطلبات",
       totalRevenue: "إجمالي الإيرادات",
       avgOrder: "متوسط الطلب",
-      pendingOrders: "الطلبات المعلقة"
+      pendingOrders: "الطلبات المعلقة",
+      description: "الوصف",
+      specifications: "المواصفات",
+      reviews: "التقييمات",
+      features: "الميزات",
+      brand: "العلامة التجارية",
+      weight: "الوزن",
+      dimensions: "الأبعاد",
+      sku: "رمز المنتج",
+      wishlist: "إضافة للمفضلة",
+      share: "مشاركة",
+      freeShipping: "شحن مجاني",
+      securePayment: "دفع آمن",
+      returns: "إرجاع 30 يوم",
+      support: "دعم 24/7"
     },
     common: {
       loading: "جاري التحميل...",

@@ -385,14 +385,96 @@ export default function ProductDetails() {
           </div>
         </div>
 
+        {/* Formulaire de commande pour mobile - avant les tabs */}
+        <div className="block md:hidden">
+          <Card className="backdrop-blur-sm bg-gradient-to-r from-purple-50 to-pink-50 border-0 shadow-xl mb-6">
+            <CardContent className="p-6">
+              <div className="text-center mb-6">
+                <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
+                  🛒 {t.order.title}
+                </h3>
+                <div className="w-16 h-1 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto rounded-full"></div>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="relative">
+                  <Input
+                    placeholder={`👤 ${t.order.name}`}
+                    value={orderForm.customerName}
+                    onChange={(e) => handleOrderFormChange('customerName', e.target.value)}
+                    className="pl-4 py-3 text-lg border-2 border-purple-200 focus:border-purple-500 rounded-xl transition-all duration-300 shadow-lg"
+                  />
+                  <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 opacity-0 hover:opacity-10 transition-opacity duration-300 pointer-events-none"></div>
+                </div>
+                
+                <div className="relative">
+                  <Input
+                    placeholder={`📱 ${t.order.phone}`}
+                    value={orderForm.customerPhone}
+                    onChange={(e) => handleOrderFormChange('customerPhone', e.target.value)}
+                    className="pl-4 py-3 text-lg border-2 border-purple-200 focus:border-purple-500 rounded-xl transition-all duration-300 shadow-lg"
+                  />
+                  <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 opacity-0 hover:opacity-10 transition-opacity duration-300 pointer-events-none"></div>
+                </div>
+                
+                <div className="relative">
+                  <textarea
+                    placeholder={`🏠 ${t.order.address}`}
+                    value={orderForm.deliveryAddress}
+                    onChange={(e) => handleOrderFormChange('deliveryAddress', e.target.value)}
+                    rows={3}
+                    className="w-full pl-4 py-3 text-lg border-2 border-purple-200 focus:border-purple-500 rounded-xl transition-all duration-300 shadow-lg resize-none"
+                  />
+                  <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 opacity-0 hover:opacity-10 transition-opacity duration-300 pointer-events-none"></div>
+                </div>
+                
+                {/* Résumé de commande avec animation LED */}
+                <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-4 rounded-xl border-2 border-dashed border-gray-300">
+                  <div className="flex justify-between items-center">
+                    <span className="text-lg font-semibold text-gray-700">💰 Total:</span>
+                    <span className="text-2xl font-bold text-green-600 animate-pulse">
+                      {(discountedPrice ? discountedPrice * quantity : originalPrice * quantity).toFixed(2)} DH
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center mt-2">
+                    <span className="text-sm text-gray-600">📦 Quantité:</span>
+                    <span className="text-lg font-semibold text-gray-700">{quantity}</span>
+                  </div>
+                </div>
+                
+                <Button 
+                  onClick={handleSubmitOrder}
+                  disabled={createOrder.isPending}
+                  className="w-full py-4 text-lg font-bold bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-xl shadow-xl transform hover:scale-105 transition-all duration-300 relative overflow-hidden"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="relative flex items-center justify-center gap-2">
+                    {createOrder.isPending ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        Commande en cours...
+                      </>
+                    ) : (
+                      <>
+                        🚀 {t.order.submit}
+                        <div className="w-2 h-2 bg-white rounded-full animate-ping ml-2"></div>
+                      </>
+                    )}
+                  </div>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
         {/* Product Details Tabs */}
         <Card className="backdrop-blur-sm bg-white/80 border-0 shadow-xl">
           <CardContent className="p-6">
             <Tabs defaultValue="description" className="w-full">
               <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="description">Description</TabsTrigger>
-                <TabsTrigger value="specifications">Specifications</TabsTrigger>
-                <TabsTrigger value="reviews">Reviews</TabsTrigger>
+                <TabsTrigger value="description">{t.admin.description || 'Description'}</TabsTrigger>
+                <TabsTrigger value="specifications">{t.admin.specifications || 'Specifications'}</TabsTrigger>
+                <TabsTrigger value="reviews">{t.admin.reviews || 'Reviews'}</TabsTrigger>
               </TabsList>
               
               <TabsContent value="description" className="mt-6">
