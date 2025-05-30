@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { 
   ArrowLeft, 
@@ -98,7 +99,14 @@ export default function ProductDetails() {
   };
 
   const handleBuyNow = () => {
-    setIsOrderFormOpen(true);
+    // Si le formulaire n'est pas complet, diriger vers le formulaire
+    if (!isFormComplete()) {
+      navigateToForm();
+      return;
+    }
+    
+    // Si le formulaire est complet, procéder à la commande
+    handleSubmitOrder();
   };
 
   const handleOrderFormChange = (field: string, value: string) => {
@@ -111,20 +119,39 @@ export default function ProductDetails() {
            orderForm.deliveryAddress.trim();
   };
 
-  const handleSubmitOrder = async () => {
-    // Si le formulaire n'est pas complet, afficher un message et faire défiler vers le formulaire
-    if (!isFormComplete()) {
-      toast({
-        title: t.order.ready,
-        description: t.order.fillForm,
-        className: "bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0",
-      });
-      
-      // Faire défiler vers le formulaire sur desktop ou afficher sur mobile
+  const navigateToForm = () => {
+    toast({
+      title: t.order.ready,
+      description: t.order.fillForm,
+      className: "bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0",
+    });
+    
+    // Sur mobile, créer un formulaire de commande modal ou faire défiler vers la section
+    const isMobile = window.innerWidth < 768;
+    
+    if (isMobile) {
+      // Pour mobile, on peut faire défiler vers le haut pour révéler plus d'infos
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Ou afficher un modal de formulaire de commande mobile
+      setIsOrderFormOpen(true);
+    } else {
+      // Sur desktop, faire défiler vers le formulaire
       const formElement = document.querySelector('.order-form');
       if (formElement) {
-        formElement.scrollIntoView({ behavior: 'smooth' });
+        formElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Highlight le formulaire temporairement
+        formElement.classList.add('ring-4', 'ring-purple-300', 'ring-opacity-75');
+        setTimeout(() => {
+          formElement.classList.remove('ring-4', 'ring-purple-300', 'ring-opacity-75');
+        }, 2000);
       }
+    }
+  };
+
+  const handleSubmitOrder = async () => {
+    // Si le formulaire n'est pas complet, diriger vers le formulaire
+    if (!isFormComplete()) {
+      navigateToForm();
       return;
     }
 
@@ -652,6 +679,81 @@ export default function ProductDetails() {
           </Button>
         </div>
       </div>
+
+      {/* Modal de formulaire de commande pour mobile */}
+      <Dialog open={isOrderFormOpen} onOpenChange={setIsOrderFormOpen}>
+        <DialogContent className="sm:max-w-[425px] mx-4">
+          <DialogHeader>
+            <DialogTitle className="text-center text-xl font-bold">{t.order.title}</DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4 mt-4">
+            <div>
+              <Label htmlFor="modal-customerName" className="flex items-center gap-2">
+                <User className="h-4 w-4" />
+                {t.order.name} *
+              </Label>
+              <Input
+                id="modal-customerName"
+                value={orderForm.customerName}
+                onChange={(e) => handleOrderFormChange('customerName', e.target.value)}
+                placeholder={t.order.name}
+                className="mt-1"
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="modal-customerPhone" className="flex items-center gap-2">
+                <Phone className="h-4 w-4" />
+                {t.order.phone} *
+              </Label>
+              <Input
+                id="modal-customerPhone"
+                value={orderForm.customerPhone}
+                onChange={(e) => handleOrderFormChange('customerPhone', e.target.value)}
+                placeholder={t.order.phone}
+                className="mt-1"
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="modal-deliveryAddress" className="flex items-center gap-2">
+                <MapPin className="h-4 w-4" />
+                {t.order.address} *
+              </Label>
+              <Textarea
+                id="modal-deliveryAddress"
+                value={orderForm.deliveryAddress}
+                onChange={(e) => handleOrderFormChange('deliveryAddress', e.target.value)}
+                placeholder={t.order.address}
+                className="mt-1"
+                rows={3}
+              />
+            </div>
+
+            <Separator />
+            
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span>{getLocalizedText('name')}</span>
+                <span>x{quantity}</span>
+              </div>
+              <div className="flex justify-between text-lg font-bold">
+                <span>Total:</span>
+                <span>{(discountedPrice ? discountedPrice * quantity : originalPrice * quantity).toFixed(2)}€</span>
+              </div>
+            </div>
+            
+            <Button 
+              onClick={handleSubmitOrder}
+              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-3"
+              disabled={createOrder.isPending}
+            >
+              {createOrder.isPending ? t.order.processing : t.order.submit}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
