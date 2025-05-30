@@ -546,7 +546,7 @@ export default function ProductDetails() {
                 <div>
                   <Label htmlFor="customerPhone" className="flex items-center gap-2">
                     <Phone className="h-4 w-4" />
-                    Téléphone *
+                    {t.order.phone} *
                   </Label>
                   <Input
                     id="customerPhone"
@@ -560,7 +560,7 @@ export default function ProductDetails() {
                 <div>
                   <Label htmlFor="deliveryAddress" className="flex items-center gap-2">
                     <MapPin className="h-4 w-4" />
-                    Adresse de livraison *
+                    {t.order.address} *
                   </Label>
                   <Textarea
                     id="deliveryAddress"
