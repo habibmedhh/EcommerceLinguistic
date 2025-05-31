@@ -448,33 +448,81 @@ export default function Dashboard() {
             {/* Recent Orders */}
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle>Recent Orders</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <ShoppingCart className="h-5 w-5 text-blue-600" />
+                  Commandes Récentes
+                </CardTitle>
                 <Link href="/admin/orders">
-                  <Button variant="outline" size="sm">View All</Button>
+                  <Button variant="outline" size="sm">Voir Tout</Button>
                 </Link>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {orders.length > 0 ? orders.slice(0, 4).map((order) => (
-                    <div key={order.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-xl">
-                      <div className="flex items-center gap-4">
-                        <div>
-                          <div className="font-semibold">#{order.id}</div>
-                          <div className="text-sm text-gray-600">{order.customerName}</div>
+                  {orders.length > 0 ? orders.slice(0, 5).map((order) => (
+                    <div key={order.id} className="p-4 bg-gradient-to-r from-slate-50 to-gray-50 rounded-xl border border-gray-200 hover:border-blue-300 transition-all">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <ShoppingCart className="h-5 w-5 text-blue-600" />
+                          </div>
+                          <div>
+                            <div className="font-semibold text-gray-900">Commande #{order.id}</div>
+                            <div className="text-sm text-gray-500">{order.customerName}</div>
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex items-center gap-4">
-                        <div className="font-bold">{order.totalAmount}€</div>
                         <Badge 
                           variant={
                             order.status === 'delivered' ? 'default' :
                             order.status === 'confirmed' || order.status === 'shipped' ? 'secondary' :
                             'destructive'
                           }
+                          className="capitalize"
                         >
-                          {order.status}
+                          {order.status === 'pending' ? 'En attente' :
+                           order.status === 'confirmed' ? 'Confirmée' :
+                           order.status === 'shipped' ? 'Expédiée' :
+                           order.status === 'delivered' ? 'Livrée' :
+                           order.status === 'cancelled' ? 'Annulée' : order.status}
                         </Badge>
                       </div>
+                      
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <div className="text-gray-500">Montant</div>
+                          <div className="font-bold text-blue-600">{settings?.currencySymbol || 'DH'} {order.totalAmount}</div>
+                        </div>
+                        <div>
+                          <div className="text-gray-500">Date</div>
+                          <div className="font-medium">
+                            {order.createdAt ? new Date(order.createdAt).toLocaleDateString('fr-FR', { 
+                              day: '2-digit', 
+                              month: '2-digit',
+                              year: '2-digit'
+                            }) : 'N/A'}
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-gray-500">Téléphone</div>
+                          <div className="font-medium">{order.customerPhone}</div>
+                        </div>
+                        <div>
+                          <div className="text-gray-500">Adresse</div>
+                          <div className="font-medium text-xs truncate" title={order.deliveryAddress}>
+                            {order.deliveryAddress}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {order.status === 'delivered' && (
+                        <div className="mt-3 p-2 bg-green-50 rounded-lg">
+                          <div className="flex items-center gap-2 text-green-700">
+                            <TrendingUp className="h-4 w-4" />
+                            <span className="text-sm font-medium">
+                              Bénéfice estimé: {settings?.currencySymbol || 'DH'} {(parseFloat(order.totalAmount) * 0.3).toFixed(2)}
+                            </span>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )) : (
                     <div className="text-center py-8 text-gray-500">
