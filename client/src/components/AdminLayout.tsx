@@ -159,14 +159,21 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             <h1 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               Admin Panel
             </h1>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={() => setSidebarOpen(false)}
-              className="lg:hidden"
-            >
-              <X className="h-4 w-4" />
-            </Button>
+            <div className="flex items-center gap-2">
+              <NotificationIcon 
+                notifications={mockNotifications}
+                onMarkAsRead={handleMarkAsRead}
+                onMarkAllAsRead={handleMarkAllAsRead}
+              />
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => setSidebarOpen(false)}
+                className="lg:hidden"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
 
           <nav className="p-4 space-y-2">
@@ -212,6 +219,37 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             ))}
           </nav>
 
+          <Separator className="mx-4" />
+
+          {/* Actions rapides */}
+          <div className="p-4 space-y-2">
+            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
+              Actions rapides
+            </p>
+            <Link href="/">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="w-full justify-start gap-3"
+                onClick={() => setSidebarOpen(false)}
+              >
+                <Store className="h-4 w-4" />
+                Voir le site
+              </Button>
+            </Link>
+            <Link href="/admin/products/new">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="w-full justify-start gap-3"
+                onClick={() => setSidebarOpen(false)}
+              >
+                <PlusCircle className="h-4 w-4" />
+                Nouveau produit
+              </Button>
+            </Link>
+          </div>
+
           <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-700">
             <Button 
               variant="ghost" 
@@ -225,42 +263,22 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         </div>
 
         {/* Contenu principal */}
-        <div className="flex-1 flex flex-col overflow-hidden">
-          {/* Barre supérieure */}
-          <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
-            <div className="flex items-center justify-between px-6 py-4">
-              <div className="flex items-center gap-4">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={() => setSidebarOpen(true)}
-                  className="lg:hidden"
-                >
-                  <Menu className="h-4 w-4" />
-                </Button>
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                  {navigationItems.find(item => item.active)?.title || 'Administration'}
-                </h2>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <NotificationIcon 
-                  notifications={mockNotifications}
-                  onMarkAsRead={handleMarkAsRead}
-                  onMarkAllAsRead={handleMarkAllAsRead}
-                />
-                <Link href="/">
-                  <Button variant="outline" size="sm" className="gap-2">
-                    <Store className="h-4 w-4" />
-                    Voir le site
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </header>
+        <div className="flex-1 overflow-hidden">
+          {/* Bouton menu mobile seulement */}
+          <div className="lg:hidden p-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => setSidebarOpen(true)}
+              className="flex items-center gap-2"
+            >
+              <Menu className="h-4 w-4" />
+              Menu
+            </Button>
+          </div>
 
           {/* Zone de contenu */}
-          <main className="flex-1 overflow-y-auto p-6">
+          <main className="h-full overflow-y-auto p-6">
             {children}
           </main>
         </div>
