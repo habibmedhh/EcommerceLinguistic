@@ -42,8 +42,10 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <I18nProvider>
         <TooltipProvider>
-          <Toaster />
-          <Router />
+          <NotificationManager>
+            <Toaster />
+            <Router />
+          </NotificationManager>
         </TooltipProvider>
       </I18nProvider>
     </QueryClientProvider>

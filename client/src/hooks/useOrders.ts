@@ -58,9 +58,21 @@ export const useCreateOrder = () => {
       const response = await apiRequest("POST", "/api/orders", orderData);
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (newOrder) => {
       queryClient.invalidateQueries({ queryKey: ["/api/orders"] });
       queryClient.invalidateQueries({ queryKey: ["/api/orders/stats"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/analytics/orders"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/analytics/daily"] });
+      
+      // Send notification to admin
+      if ((window as any).addAdminNotification) {
+        (window as any).addAdminNotification({
+          type: 'new_order',
+          orderId: newOrder.id,
+          customerName: newOrder.customerName,
+          amount: newOrder.totalAmount
+        });
+      }
     },
   });
 };
