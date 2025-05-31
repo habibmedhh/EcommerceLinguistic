@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   BarChart3, 
   DollarSign, 
@@ -18,17 +19,20 @@ import {
   TrendingUp,
   ArrowLeft,
   Download,
-  Plus
+  Plus,
+  Calendar,
+  PieChart
 } from "lucide-react";
 
 export default function Dashboard() {
   const { t } = useI18n();
+  const [timePeriod, setTimePeriod] = useState("7"); // 7 days, 30 days, 90 days
   const { data: stats, isLoading: statsLoading } = useOrderStats();
   const { data: productsData, isLoading: productsLoading } = useProducts();
   const { data: ordersData, isLoading: ordersLoading } = useOrders();
   const { data: orderAnalytics } = useOrderAnalytics();
   const { data: productAnalytics } = useProductAnalytics();
-  const { data: dailyStats } = useDailyStats(30);
+  const { data: dailyStats } = useDailyStats(parseInt(timePeriod));
   const { data: settings } = useSettings();
 
   const products = productsData?.products || [];
@@ -110,7 +114,7 @@ export default function Dashboard() {
 
           <TabsContent value="overview" className="space-y-8">
             {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">{t.admin.totalRevenue}</CardTitle>
@@ -167,101 +171,267 @@ export default function Dashboard() {
               </Card>
             </div>
 
-            {/* Charts and Analytics */}
-            <div className="grid lg:grid-cols-2 gap-8">
-              {/* Revenue by Product Chart */}
+            {/* Performance Chart with Time Filter */}
+            <Card className="col-span-full">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+                <CardTitle className="flex items-center gap-2">
+                  <BarChart3 className="h-5 w-5" />
+                  Performance Analytics
+                </CardTitle>
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-gray-500" />
+                  <Select value={timePeriod} onValueChange={setTimePeriod}>
+                    <SelectTrigger className="w-32">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="7">7 Days</SelectItem>
+                      <SelectItem value="30">30 Days</SelectItem>
+                      <SelectItem value="90">90 Days</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="h-80 relative">
+                  {dailyStats && dailyStats.length > 0 ? (
+                    <div className="w-full h-full">
+                      {/* Line Chart Area */}
+                      <div className="relative w-full h-64 bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-4 overflow-hidden">
+                        <div className="absolute inset-0 bg-grid opacity-5"></div>
+                        
+                        {/* Revenue Line */}
+                        <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none">
+                          <defs>
+                            <linearGradient id="revenueGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                              <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.3" />
+                              <stop offset="100%" stopColor="#3B82F6" stopOpacity="0" />
+                            </linearGradient>
+                            <linearGradient id="profitGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                              <stop offset="0%" stopColor="#10B981" stopOpacity="0.3" />
+                              <stop offset="100%" stopColor="#10B981" stopOpacity="0" />
+                            </linearGradient>
+                          </defs>
+                          
+                          {/* Revenue Area */}
+                          <path
+                            d={`M 0,${240 - (dailyStats[0]?.revenue || 0) / Math.max(...dailyStats.map(d => d.revenue)) * 200} ${dailyStats.map((day, i) => 
+                              `L ${(i / (dailyStats.length - 1)) * 100}%,${240 - (day.revenue / Math.max(...dailyStats.map(d => d.revenue))) * 200}`
+                            ).join(' ')} L 100%,240 L 0,240 Z`}
+                            fill="url(#revenueGradient)"
+                          />
+                          
+                          {/* Profit Area */}
+                          <path
+                            d={`M 0,${240 - (dailyStats[0]?.profit || 0) / Math.max(...dailyStats.map(d => d.profit)) * 180} ${dailyStats.map((day, i) => 
+                              `L ${(i / (dailyStats.length - 1)) * 100}%,${240 - (day.profit / Math.max(...dailyStats.map(d => d.profit))) * 180}`
+                            ).join(' ')} L 100%,240 L 0,240 Z`}
+                            fill="url(#profitGradient)"
+                          />
+                          
+                          {/* Revenue Line */}
+                          <path
+                            d={`M 0,${240 - (dailyStats[0]?.revenue || 0) / Math.max(...dailyStats.map(d => d.revenue)) * 200} ${dailyStats.map((day, i) => 
+                              `L ${(i / (dailyStats.length - 1)) * 100}%,${240 - (day.revenue / Math.max(...dailyStats.map(d => d.revenue))) * 200}`
+                            ).join(' ')}`}
+                            stroke="#3B82F6"
+                            strokeWidth="3"
+                            fill="none"
+                            className="drop-shadow-sm"
+                          />
+                          
+                          {/* Profit Line */}
+                          <path
+                            d={`M 0,${240 - (dailyStats[0]?.profit || 0) / Math.max(...dailyStats.map(d => d.profit)) * 180} ${dailyStats.map((day, i) => 
+                              `L ${(i / (dailyStats.length - 1)) * 100}%,${240 - (day.profit / Math.max(...dailyStats.map(d => d.profit))) * 180}`
+                            ).join(' ')}`}
+                            stroke="#10B981"
+                            strokeWidth="3"
+                            fill="none"
+                            className="drop-shadow-sm"
+                          />
+                          
+                          {/* Data Points */}
+                          {dailyStats.map((day, i) => (
+                            <g key={day.date}>
+                              <circle
+                                cx={`${(i / (dailyStats.length - 1)) * 100}%`}
+                                cy={240 - (day.revenue / Math.max(...dailyStats.map(d => d.revenue))) * 200}
+                                r="4"
+                                fill="#3B82F6"
+                                className="drop-shadow-sm hover:r-6 transition-all"
+                              />
+                              <circle
+                                cx={`${(i / (dailyStats.length - 1)) * 100}%`}
+                                cy={240 - (day.profit / Math.max(...dailyStats.map(d => d.profit))) * 180}
+                                r="4"
+                                fill="#10B981"
+                                className="drop-shadow-sm hover:r-6 transition-all"
+                              />
+                            </g>
+                          ))}
+                        </svg>
+                        
+                        {/* Legend */}
+                        <div className="absolute bottom-4 right-4 flex items-center gap-4 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2">
+                          <div className="flex items-center gap-2">
+                            <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                            <span className="text-sm font-medium">Revenue</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                            <span className="text-sm font-medium">Profit</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="h-64 flex items-center justify-center text-gray-500">
+                      No performance data available
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Product Analytics */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8">
+              {/* Revenue Distribution Pie Chart */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Top Products by Revenue</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <PieChart className="h-5 w-5" />
+                    Revenue by Product
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-64 bg-gray-50 rounded-xl flex items-center justify-center">
-                    <div className="w-full h-full flex items-end justify-between px-8 py-4">
-                      {topProductsByRevenue.length > 0 ? topProductsByRevenue.map((product, index) => (
-                        <div key={product.name} className="flex flex-col items-center">
-                          <div 
-                            className="bg-gradient-to-t from-blue-600 to-blue-400 w-8 rounded-t"
-                            style={{ height: `${Math.max((product.totalRevenue / Math.max(...topProductsByRevenue.map(p => p.totalRevenue))) * 100, 10)}%`, minHeight: '20px' }}
-                          />
-                          <span className="text-xs text-gray-600 mt-2">{product.name.slice(0, 8)}...</span>
-                          <span className="text-xs text-blue-600 font-semibold">{settings?.currencySymbol || '$'}{product.totalRevenue}</span>
+                  <div className="h-64 flex items-center justify-center">
+                    {topProductsByRevenue.length > 0 ? (
+                      <div className="relative w-48 h-48">
+                        <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                          {topProductsByRevenue.slice(0, 5).map((product, index) => {
+                            const total = topProductsByRevenue.reduce((sum, p) => sum + p.totalRevenue, 0);
+                            const percentage = (product.totalRevenue / total) * 100;
+                            const strokeDasharray = `${percentage * 2.51} 251`;
+                            const strokeDashoffset = -index * 2.51 * topProductsByRevenue.slice(0, index).reduce((sum, p) => sum + (p.totalRevenue / total) * 100, 0);
+                            const colors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
+                            
+                            return (
+                              <circle
+                                key={product.id}
+                                cx="50"
+                                cy="50"
+                                r="40"
+                                fill="none"
+                                stroke={colors[index]}
+                                strokeWidth="8"
+                                strokeDasharray={strokeDasharray}
+                                strokeDashoffset={strokeDashoffset}
+                                className="transition-all duration-300 hover:stroke-width-10"
+                              />
+                            );
+                          })}
+                        </svg>
+                        
+                        {/* Center Text */}
+                        <div className="absolute inset-0 flex flex-col items-center justify-center">
+                          <div className="text-2xl font-bold text-gray-900">
+                            {settings?.currencySymbol || '$'}{topProductsByRevenue.reduce((sum, p) => sum + p.totalRevenue, 0).toLocaleString()}
+                          </div>
+                          <div className="text-sm text-gray-500">Total Revenue</div>
                         </div>
-                      )) : (
-                        <div className="text-gray-500 text-center">No sales data available</div>
-                      )}
-                    </div>
+                      </div>
+                    ) : (
+                      <div className="text-gray-500">No revenue data</div>
+                    )}
+                  </div>
+                  
+                  {/* Legend */}
+                  <div className="space-y-2 mt-4">
+                    {topProductsByRevenue.slice(0, 5).map((product, index) => {
+                      const colors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
+                      return (
+                        <div key={product.id} className="flex items-center justify-between text-sm">
+                          <div className="flex items-center gap-2">
+                            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: colors[index] }}></div>
+                            <span className="truncate max-w-32">{product.name}</span>
+                          </div>
+                          <span className="font-medium">{settings?.currencySymbol || '$'}{product.totalRevenue}</span>
+                        </div>
+                      );
+                    })}
                   </div>
                 </CardContent>
               </Card>
 
-              {/* Profit by Product Chart */}
+              {/* Profit Distribution Pie Chart */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Top Products by Profit</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5" />
+                    Profit by Product
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-64 bg-gray-50 rounded-xl flex items-center justify-center">
-                    <div className="w-full h-full flex items-end justify-between px-8 py-4">
-                      {topProductsByProfit.length > 0 ? topProductsByProfit.map((product, index) => (
-                        <div key={product.name} className="flex flex-col items-center">
-                          <div 
-                            className="bg-gradient-to-t from-green-600 to-green-400 w-8 rounded-t"
-                            style={{ height: `${Math.max((product.totalProfit / Math.max(...topProductsByProfit.map(p => p.totalProfit))) * 100, 10)}%`, minHeight: '20px' }}
-                          />
-                          <span className="text-xs text-gray-600 mt-2">{product.name.slice(0, 8)}...</span>
-                          <span className="text-xs text-green-600 font-semibold">{settings?.currencySymbol || '$'}{product.totalProfit.toFixed(2)}</span>
+                  <div className="h-64 flex items-center justify-center">
+                    {topProductsByProfit.length > 0 ? (
+                      <div className="relative w-48 h-48">
+                        <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                          {topProductsByProfit.slice(0, 5).map((product, index) => {
+                            const total = topProductsByProfit.reduce((sum, p) => sum + p.totalProfit, 0);
+                            const percentage = (product.totalProfit / total) * 100;
+                            const strokeDasharray = `${percentage * 2.51} 251`;
+                            const strokeDashoffset = -index * 2.51 * topProductsByProfit.slice(0, index).reduce((sum, p) => sum + (p.totalProfit / total) * 100, 0);
+                            const colors = ['#10B981', '#3B82F6', '#F59E0B', '#EF4444', '#8B5CF6'];
+                            
+                            return (
+                              <circle
+                                key={product.id}
+                                cx="50"
+                                cy="50"
+                                r="40"
+                                fill="none"
+                                stroke={colors[index]}
+                                strokeWidth="8"
+                                strokeDasharray={strokeDasharray}
+                                strokeDashoffset={strokeDashoffset}
+                                className="transition-all duration-300 hover:stroke-width-10"
+                              />
+                            );
+                          })}
+                        </svg>
+                        
+                        {/* Center Text */}
+                        <div className="absolute inset-0 flex flex-col items-center justify-center">
+                          <div className="text-2xl font-bold text-gray-900">
+                            {settings?.currencySymbol || '$'}{topProductsByProfit.reduce((sum, p) => sum + p.totalProfit, 0).toFixed(0)}
+                          </div>
+                          <div className="text-sm text-gray-500">Total Profit</div>
                         </div>
-                      )) : (
-                        <div className="text-gray-500 text-center">No profit data available</div>
-                      )}
-                    </div>
+                      </div>
+                    ) : (
+                      <div className="text-gray-500">No profit data</div>
+                    )}
+                  </div>
+                  
+                  {/* Legend */}
+                  <div className="space-y-2 mt-4">
+                    {topProductsByProfit.slice(0, 5).map((product, index) => {
+                      const colors = ['#10B981', '#3B82F6', '#F59E0B', '#EF4444', '#8B5CF6'];
+                      return (
+                        <div key={product.id} className="flex items-center justify-between text-sm">
+                          <div className="flex items-center gap-2">
+                            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: colors[index] }}></div>
+                            <span className="truncate max-w-32">{product.name}</span>
+                          </div>
+                          <span className="font-medium">{settings?.currencySymbol || '$'}{product.totalProfit.toFixed(2)}</span>
+                        </div>
+                      );
+                    })}
                   </div>
                 </CardContent>
               </Card>
             </div>
-
-            {/* Daily Performance Chart */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Daily Performance (Last 30 Days)</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="h-64 bg-gray-50 rounded-xl flex items-center justify-center">
-                  <div className="w-full h-full flex items-end justify-between px-4 py-4">
-                    {dailyStats && dailyStats.length > 0 ? dailyStats.slice(-10).map((day, index) => (
-                      <div key={day.date} className="flex flex-col items-center">
-                        <div className="flex flex-col items-center gap-1">
-                          <div 
-                            className="bg-gradient-to-t from-purple-600 to-purple-400 w-4 rounded-t"
-                            style={{ height: `${Math.max((day.revenue / Math.max(...dailyStats.map(d => d.revenue))) * 100, 5)}%`, minHeight: '10px' }}
-                          />
-                          <div 
-                            className="bg-gradient-to-t from-green-600 to-green-400 w-4 rounded-t"
-                            style={{ height: `${Math.max((day.profit / Math.max(...dailyStats.map(d => d.profit))) * 80, 5)}%`, minHeight: '8px' }}
-                          />
-                        </div>
-                        <span className="text-xs text-gray-600 mt-2">{new Date(day.date).getDate()}</span>
-                        <span className="text-xs text-purple-600 font-semibold">{settings?.currencySymbol || '$'}{day.revenue}</span>
-                      </div>
-                    )) : (
-                      <div className="text-gray-500 text-center">No daily data available</div>
-                    )}
-                  </div>
-                  <div className="absolute bottom-2 right-2 text-xs text-gray-500">
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-1">
-                        <div className="w-3 h-3 bg-purple-500 rounded"></div>
-                        <span>Revenue</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <div className="w-3 h-3 bg-green-500 rounded"></div>
-                        <span>Profit</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
 
             {/* Best Selling Products */}
             <Card>
