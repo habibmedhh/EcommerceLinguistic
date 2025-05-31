@@ -171,263 +171,245 @@ export default function Dashboard() {
               </Card>
             </div>
 
-            {/* Performance Chart with Time Filter */}
-            <Card className="col-span-full">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-                <CardTitle className="flex items-center gap-2">
-                  <BarChart3 className="h-5 w-5" />
-                  Performance Analytics
-                </CardTitle>
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-gray-500" />
+            {/* Sales Analysis */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Total Sales by Amount and Quantity by Date */}
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+                  <CardTitle className="flex items-center gap-2">
+                    <BarChart3 className="h-5 w-5 text-blue-600" />
+                    Ventes par Date
+                  </CardTitle>
                   <Select value={timePeriod} onValueChange={setTimePeriod}>
-                    <SelectTrigger className="w-32">
+                    <SelectTrigger className="w-28">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="7">7 Days</SelectItem>
-                      <SelectItem value="30">30 Days</SelectItem>
-                      <SelectItem value="90">90 Days</SelectItem>
+                      <SelectItem value="7">7j</SelectItem>
+                      <SelectItem value="30">30j</SelectItem>
+                      <SelectItem value="90">90j</SelectItem>
                     </SelectContent>
                   </Select>
-                </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-6">
+                    {/* Sales Amount Chart */}
+                    <div>
+                      <h4 className="text-sm font-medium text-gray-700 mb-3">Montant des Ventes</h4>
+                      <div className="space-y-3">
+                        {dailyStats && dailyStats.length > 0 ? dailyStats.filter(day => day.revenue > 0).slice(-7).map((day, index) => (
+                          <div key={day.date} className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <div className="w-20 text-sm text-gray-600">
+                                {new Date(day.date).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })}
+                              </div>
+                              <div className="flex-1 bg-gray-200 rounded-full h-2">
+                                <div 
+                                  className="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full transition-all duration-500"
+                                  style={{ 
+                                    width: `${Math.max((day.revenue / Math.max(...dailyStats.map(d => d.revenue))) * 100, 2)}%` 
+                                  }}
+                                />
+                              </div>
+                            </div>
+                            <div className="text-sm font-semibold text-blue-600 min-w-20 text-right">
+                              {settings?.currencySymbol || 'DH'} {day.revenue.toFixed(2)}
+                            </div>
+                          </div>
+                        )) : (
+                          <div className="text-center text-gray-500 py-4">Aucune vente</div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Sales Quantity Chart */}
+                    <div>
+                      <h4 className="text-sm font-medium text-gray-700 mb-3">Nombre de Commandes</h4>
+                      <div className="space-y-3">
+                        {dailyStats && dailyStats.length > 0 ? dailyStats.filter(day => day.orders > 0).slice(-7).map((day, index) => (
+                          <div key={day.date} className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <div className="w-20 text-sm text-gray-600">
+                                {new Date(day.date).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })}
+                              </div>
+                              <div className="flex-1 bg-gray-200 rounded-full h-2">
+                                <div 
+                                  className="bg-gradient-to-r from-indigo-500 to-indigo-600 h-2 rounded-full transition-all duration-500"
+                                  style={{ 
+                                    width: `${Math.max((day.orders / Math.max(...dailyStats.map(d => d.orders))) * 100, 5)}%` 
+                                  }}
+                                />
+                              </div>
+                            </div>
+                            <div className="text-sm font-semibold text-indigo-600 min-w-16 text-right">
+                              {day.orders} cmd
+                            </div>
+                          </div>
+                        )) : (
+                          <div className="text-center text-gray-500 py-4">Aucune commande</div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Total Profit by Date */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5 text-green-600" />
+                    Bénéfices par Date
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {dailyStats && dailyStats.length > 0 ? dailyStats.filter(day => day.profit > 0).slice(-7).map((day, index) => (
+                      <div key={day.date} className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-100">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                            <Calendar className="h-5 w-5 text-green-600" />
+                          </div>
+                          <div>
+                            <div className="font-medium text-gray-900">
+                              {new Date(day.date).toLocaleDateString('fr-FR', { 
+                                weekday: 'short', 
+                                day: '2-digit', 
+                                month: '2-digit' 
+                              })}
+                            </div>
+                            <div className="text-sm text-gray-500">{day.orders} commandes</div>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-lg font-bold text-green-600">
+                            {settings?.currencySymbol || 'DH'} {day.profit.toFixed(2)}
+                          </div>
+                          <div className="text-xs text-gray-500">bénéfice</div>
+                        </div>
+                      </div>
+                    )) : (
+                      <div className="text-center text-gray-500 py-8">Aucun bénéfice enregistré</div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Profit by Product */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Package className="h-5 w-5 text-purple-600" />
+                  Bénéfices par Produit
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="h-80 relative">
-                  {dailyStats && dailyStats.length > 0 ? (
-                    <div className="w-full h-full">
-                      {/* Line Chart Area */}
-                      <div className="relative w-full h-64 bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-4 overflow-hidden">
-                        <div className="absolute inset-0 bg-grid opacity-5"></div>
-                        
-                        {/* Revenue Line */}
-                        <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none">
-                          <defs>
-                            <linearGradient id="revenueGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                              <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.3" />
-                              <stop offset="100%" stopColor="#3B82F6" stopOpacity="0" />
-                            </linearGradient>
-                            <linearGradient id="profitGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                              <stop offset="0%" stopColor="#10B981" stopOpacity="0.3" />
-                              <stop offset="100%" stopColor="#10B981" stopOpacity="0" />
-                            </linearGradient>
-                          </defs>
-                          
-                          {/* Revenue Area */}
-                          <path
-                            d={`M 0,${240 - (dailyStats[0]?.revenue || 0) / Math.max(...dailyStats.map(d => d.revenue)) * 200} ${dailyStats.map((day, i) => 
-                              `L ${(i / (dailyStats.length - 1)) * 100}%,${240 - (day.revenue / Math.max(...dailyStats.map(d => d.revenue))) * 200}`
-                            ).join(' ')} L 100%,240 L 0,240 Z`}
-                            fill="url(#revenueGradient)"
-                          />
-                          
-                          {/* Profit Area */}
-                          <path
-                            d={`M 0,${240 - (dailyStats[0]?.profit || 0) / Math.max(...dailyStats.map(d => d.profit)) * 180} ${dailyStats.map((day, i) => 
-                              `L ${(i / (dailyStats.length - 1)) * 100}%,${240 - (day.profit / Math.max(...dailyStats.map(d => d.profit))) * 180}`
-                            ).join(' ')} L 100%,240 L 0,240 Z`}
-                            fill="url(#profitGradient)"
-                          />
-                          
-                          {/* Revenue Line */}
-                          <path
-                            d={`M 0,${240 - (dailyStats[0]?.revenue || 0) / Math.max(...dailyStats.map(d => d.revenue)) * 200} ${dailyStats.map((day, i) => 
-                              `L ${(i / (dailyStats.length - 1)) * 100}%,${240 - (day.revenue / Math.max(...dailyStats.map(d => d.revenue))) * 200}`
-                            ).join(' ')}`}
-                            stroke="#3B82F6"
-                            strokeWidth="3"
-                            fill="none"
-                            className="drop-shadow-sm"
-                          />
-                          
-                          {/* Profit Line */}
-                          <path
-                            d={`M 0,${240 - (dailyStats[0]?.profit || 0) / Math.max(...dailyStats.map(d => d.profit)) * 180} ${dailyStats.map((day, i) => 
-                              `L ${(i / (dailyStats.length - 1)) * 100}%,${240 - (day.profit / Math.max(...dailyStats.map(d => d.profit))) * 180}`
-                            ).join(' ')}`}
-                            stroke="#10B981"
-                            strokeWidth="3"
-                            fill="none"
-                            className="drop-shadow-sm"
-                          />
-                          
-                          {/* Data Points */}
-                          {dailyStats.map((day, i) => (
-                            <g key={day.date}>
-                              <circle
-                                cx={`${(i / (dailyStats.length - 1)) * 100}%`}
-                                cy={240 - (day.revenue / Math.max(...dailyStats.map(d => d.revenue))) * 200}
-                                r="4"
-                                fill="#3B82F6"
-                                className="drop-shadow-sm hover:r-6 transition-all"
-                              />
-                              <circle
-                                cx={`${(i / (dailyStats.length - 1)) * 100}%`}
-                                cy={240 - (day.profit / Math.max(...dailyStats.map(d => d.profit))) * 180}
-                                r="4"
-                                fill="#10B981"
-                                className="drop-shadow-sm hover:r-6 transition-all"
-                              />
-                            </g>
-                          ))}
-                        </svg>
-                        
-                        {/* Legend */}
-                        <div className="absolute bottom-4 right-4 flex items-center gap-4 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-2">
-                          <div className="flex items-center gap-2">
-                            <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                            <span className="text-sm font-medium">Revenue</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                            <span className="text-sm font-medium">Profit</span>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {topProductsByProfit.length > 0 ? topProductsByProfit.slice(0, 6).map((product, index) => (
+                    <div key={product.id} className="p-4 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border border-purple-100">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                          <Package className="h-5 w-5 text-purple-600" />
+                        </div>
+                        <div className="text-right">
+                          <div className="text-lg font-bold text-purple-600">
+                            {settings?.currencySymbol || 'DH'} {product.totalProfit.toFixed(2)}
                           </div>
                         </div>
                       </div>
+                      <div>
+                        <div className="font-medium text-gray-900 mb-1 line-clamp-1">{product.name}</div>
+                        <div className="text-sm text-gray-500">{product.totalSales} unités vendues</div>
+                        <div className="text-sm text-gray-500">
+                          {settings?.currencySymbol || 'DH'} {product.totalRevenue.toFixed(2)} revenus
+                        </div>
+                      </div>
                     </div>
-                  ) : (
-                    <div className="h-64 flex items-center justify-center text-gray-500">
-                      No performance data available
-                    </div>
+                  )) : (
+                    <div className="col-span-full text-center text-gray-500 py-8">Aucun produit vendu</div>
                   )}
                 </div>
               </CardContent>
             </Card>
 
-            {/* Product Analytics */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8">
-              {/* Revenue Distribution Pie Chart */}
+            {/* Delivered Orders Analysis */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Delivered Orders Revenue */}
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <PieChart className="h-5 w-5" />
-                    Revenue by Product
+                    <ShoppingCart className="h-5 w-5 text-emerald-600" />
+                    Colis Livrés - Revenus
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-64 flex items-center justify-center">
-                    {topProductsByRevenue.length > 0 ? (
-                      <div className="relative w-48 h-48">
-                        <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                          {topProductsByRevenue.slice(0, 5).map((product, index) => {
-                            const total = topProductsByRevenue.reduce((sum, p) => sum + p.totalRevenue, 0);
-                            const percentage = (product.totalRevenue / total) * 100;
-                            const strokeDasharray = `${percentage * 2.51} 251`;
-                            const strokeDashoffset = -index * 2.51 * topProductsByRevenue.slice(0, index).reduce((sum, p) => sum + (p.totalRevenue / total) * 100, 0);
-                            const colors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
-                            
-                            return (
-                              <circle
-                                key={product.id}
-                                cx="50"
-                                cy="50"
-                                r="40"
-                                fill="none"
-                                stroke={colors[index]}
-                                strokeWidth="8"
-                                strokeDasharray={strokeDasharray}
-                                strokeDashoffset={strokeDashoffset}
-                                className="transition-all duration-300 hover:stroke-width-10"
-                              />
-                            );
-                          })}
-                        </svg>
-                        
-                        {/* Center Text */}
-                        <div className="absolute inset-0 flex flex-col items-center justify-center">
-                          <div className="text-2xl font-bold text-gray-900">
-                            {settings?.currencySymbol || '$'}{topProductsByRevenue.reduce((sum, p) => sum + p.totalRevenue, 0).toLocaleString()}
+                  <div className="space-y-4">
+                    {orders.filter(order => order.status === 'delivered').length > 0 ? (
+                      orders.filter(order => order.status === 'delivered').slice(0, 5).map((order) => (
+                        <div key={order.id} className="flex items-center justify-between p-3 bg-emerald-50 rounded-lg">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
+                              <ShoppingCart className="h-4 w-4 text-emerald-600" />
+                            </div>
+                            <div>
+                              <div className="font-medium">Commande #{order.id}</div>
+                              <div className="text-sm text-gray-500">{order.customerName}</div>
+                            </div>
                           </div>
-                          <div className="text-sm text-gray-500">Total Revenue</div>
+                          <div className="text-right">
+                            <div className="font-bold text-emerald-600">
+                              {settings?.currencySymbol || 'DH'} {order.totalAmount}
+                            </div>
+                            <div className="text-xs text-gray-500">livré</div>
+                          </div>
                         </div>
-                      </div>
+                      ))
                     ) : (
-                      <div className="text-gray-500">No revenue data</div>
+                      <div className="text-center text-gray-500 py-8">Aucun colis livré</div>
                     )}
-                  </div>
-                  
-                  {/* Legend */}
-                  <div className="space-y-2 mt-4">
-                    {topProductsByRevenue.slice(0, 5).map((product, index) => {
-                      const colors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
-                      return (
-                        <div key={product.id} className="flex items-center justify-between text-sm">
-                          <div className="flex items-center gap-2">
-                            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: colors[index] }}></div>
-                            <span className="truncate max-w-32">{product.name}</span>
-                          </div>
-                          <span className="font-medium">{settings?.currencySymbol || '$'}{product.totalRevenue}</span>
-                        </div>
-                      );
-                    })}
                   </div>
                 </CardContent>
               </Card>
 
-              {/* Profit Distribution Pie Chart */}
+              {/* Delivered Orders Profit */}
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <TrendingUp className="h-5 w-5" />
-                    Profit by Product
+                    <DollarSign className="h-5 w-5 text-orange-600" />
+                    Colis Livrés - Bénéfices
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-64 flex items-center justify-center">
-                    {topProductsByProfit.length > 0 ? (
-                      <div className="relative w-48 h-48">
-                        <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                          {topProductsByProfit.slice(0, 5).map((product, index) => {
-                            const total = topProductsByProfit.reduce((sum, p) => sum + p.totalProfit, 0);
-                            const percentage = (product.totalProfit / total) * 100;
-                            const strokeDasharray = `${percentage * 2.51} 251`;
-                            const strokeDashoffset = -index * 2.51 * topProductsByProfit.slice(0, index).reduce((sum, p) => sum + (p.totalProfit / total) * 100, 0);
-                            const colors = ['#10B981', '#3B82F6', '#F59E0B', '#EF4444', '#8B5CF6'];
-                            
-                            return (
-                              <circle
-                                key={product.id}
-                                cx="50"
-                                cy="50"
-                                r="40"
-                                fill="none"
-                                stroke={colors[index]}
-                                strokeWidth="8"
-                                strokeDasharray={strokeDasharray}
-                                strokeDashoffset={strokeDashoffset}
-                                className="transition-all duration-300 hover:stroke-width-10"
-                              />
-                            );
-                          })}
-                        </svg>
-                        
-                        {/* Center Text */}
-                        <div className="absolute inset-0 flex flex-col items-center justify-center">
-                          <div className="text-2xl font-bold text-gray-900">
-                            {settings?.currencySymbol || '$'}{topProductsByProfit.reduce((sum, p) => sum + p.totalProfit, 0).toFixed(0)}
+                  <div className="space-y-4">
+                    {orders.filter(order => order.status === 'delivered').length > 0 ? (
+                      orders.filter(order => order.status === 'delivered').slice(0, 5).map((order) => {
+                        const orderProfit = parseFloat(order.totalAmount) * 0.3; // 30% profit margin
+                        return (
+                          <div key={order.id} className="flex items-center justify-between p-3 bg-orange-50 rounded-lg">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                                <DollarSign className="h-4 w-4 text-orange-600" />
+                              </div>
+                              <div>
+                                <div className="font-medium">Commande #{order.id}</div>
+                                <div className="text-sm text-gray-500">
+                                  {new Date(order.createdAt!).toLocaleDateString('fr-FR')}
+                                </div>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="font-bold text-orange-600">
+                                {settings?.currencySymbol || 'DH'} {orderProfit.toFixed(2)}
+                              </div>
+                              <div className="text-xs text-gray-500">bénéfice estimé</div>
+                            </div>
                           </div>
-                          <div className="text-sm text-gray-500">Total Profit</div>
-                        </div>
-                      </div>
+                        );
+                      })
                     ) : (
-                      <div className="text-gray-500">No profit data</div>
+                      <div className="text-center text-gray-500 py-8">Aucun bénéfice de livraison</div>
                     )}
-                  </div>
-                  
-                  {/* Legend */}
-                  <div className="space-y-2 mt-4">
-                    {topProductsByProfit.slice(0, 5).map((product, index) => {
-                      const colors = ['#10B981', '#3B82F6', '#F59E0B', '#EF4444', '#8B5CF6'];
-                      return (
-                        <div key={product.id} className="flex items-center justify-between text-sm">
-                          <div className="flex items-center gap-2">
-                            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: colors[index] }}></div>
-                            <span className="truncate max-w-32">{product.name}</span>
-                          </div>
-                          <span className="font-medium">{settings?.currencySymbol || '$'}{product.totalProfit.toFixed(2)}</span>
-                        </div>
-                      );
-                    })}
                   </div>
                 </CardContent>
               </Card>
