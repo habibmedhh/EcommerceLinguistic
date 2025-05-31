@@ -687,7 +687,9 @@ export default function ProductDetails() {
             <DialogHeader>
               <DialogTitle className="text-center text-2xl font-bold text-white flex items-center justify-center gap-2">
                 <span className="text-2xl">🛒</span>
-                {t.order.title}
+                {language === 'ar' ? 'اطلب الآن' : 
+                 language === 'fr' ? 'Commander maintenant' : 
+                 'Order Now'}
               </DialogTitle>
             </DialogHeader>
           </div>
@@ -711,11 +713,17 @@ export default function ProductDetails() {
                 </div>
                 <div className={`${direction === 'rtl' ? 'text-left' : 'text-right'}`}>
                   <div className="text-xl sm:text-2xl font-bold text-purple-600">
-                    {(discountedPrice ? discountedPrice * quantity : originalPrice * quantity).toFixed(2)}€
+                    {language === 'ar' ? 
+                      `${(discountedPrice ? discountedPrice * quantity : originalPrice * quantity).toFixed(2)} د.ج` :
+                      `${(discountedPrice ? discountedPrice * quantity : originalPrice * quantity).toFixed(2)}€`
+                    }
                   </div>
                   {discountedPrice && (
                     <div className="text-xs sm:text-sm text-gray-500 line-through">
-                      {(originalPrice * quantity).toFixed(2)}€
+                      {language === 'ar' ? 
+                        `${(originalPrice * quantity).toFixed(2)} د.ج` :
+                        `${(originalPrice * quantity).toFixed(2)}€`
+                      }
                     </div>
                   )}
                 </div>
@@ -729,7 +737,9 @@ export default function ProductDetails() {
                   <div className="w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-r from-blue-400 to-purple-500 rounded-lg flex items-center justify-center">
                     <User className="h-3 w-3 text-white" />
                   </div>
-                  {t.order.name} *
+                  {language === 'ar' ? 'الاسم الكامل *' : 
+                   language === 'fr' ? 'Nom complet *' : 
+                   'Full Name *'}
                 </Label>
                 <Input
                   id="modal-customerName"
@@ -746,7 +756,9 @@ export default function ProductDetails() {
                   <div className="w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-r from-green-400 to-blue-500 rounded-lg flex items-center justify-center">
                     <Phone className="h-3 w-3 text-white" />
                   </div>
-                  {t.order.phone} *
+                  {language === 'ar' ? 'رقم الهاتف *' : 
+                   language === 'fr' ? 'Numéro de téléphone *' : 
+                   'Phone Number *'}
                 </Label>
                 <Input
                   id="modal-customerPhone"
@@ -763,7 +775,9 @@ export default function ProductDetails() {
                   <div className="w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-r from-orange-400 to-red-500 rounded-lg flex items-center justify-center">
                     <MapPin className="h-3 w-3 text-white" />
                   </div>
-                  {t.order.address} *
+                  {language === 'ar' ? 'العنوان *' : 
+                   language === 'fr' ? 'Adresse *' : 
+                   'Address *'}
                 </Label>
                 <Textarea
                   id="modal-deliveryAddress"
