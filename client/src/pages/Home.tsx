@@ -34,7 +34,7 @@ import {
 import type { Product } from "@/types";
 
 export default function Home() {
-  const { t, direction } = useI18n();
+  const { t, direction, language } = useI18n();
   const { data: categories = [] } = useCategories();
   const { data: featuredProducts = [] } = useFeaturedProducts(8);
   const { data: saleProducts = [] } = useSaleProducts(6);
@@ -198,23 +198,39 @@ export default function Home() {
           <div className="text-center text-white mb-12">
             <h2 className="text-4xl lg:text-5xl font-bold mb-4 flex items-center justify-center gap-3">
               <Zap className="h-12 w-12" />
-              Flash Sale
+              {t.hero.flashSale}
             </h2>
-            <p className="text-xl mb-8">Limited time offers - Don't miss out!</p>
+            <p className="text-xl mb-8">
+              {language === 'ar' ? 'عروض محدودة الوقت - لا تفوتوا الفرصة!' : 
+               language === 'fr' ? 'Offres à durée limitée - Ne ratez pas ça !' : 
+               'Limited time offers - Don\'t miss out!'}
+            </p>
             
             {/* Countdown Timer */}
             <div className="flex justify-center gap-4 mb-8">
               <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4 text-center min-w-[80px]">
                 <div className="text-3xl font-bold">{timeLeft.hours.toString().padStart(2, '0')}</div>
-                <div className="text-sm opacity-75">Hours</div>
+                <div className="text-sm opacity-75">
+                  {language === 'ar' ? 'ساعات' : 
+                   language === 'fr' ? 'Heures' : 
+                   'Hours'}
+                </div>
               </div>
               <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4 text-center min-w-[80px]">
                 <div className="text-3xl font-bold">{timeLeft.minutes.toString().padStart(2, '0')}</div>
-                <div className="text-sm opacity-75">Minutes</div>
+                <div className="text-sm opacity-75">
+                  {language === 'ar' ? 'دقائق' : 
+                   language === 'fr' ? 'Minutes' : 
+                   'Minutes'}
+                </div>
               </div>
               <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4 text-center min-w-[80px]">
                 <div className="text-3xl font-bold">{timeLeft.seconds.toString().padStart(2, '0')}</div>
-                <div className="text-sm opacity-75">Seconds</div>
+                <div className="text-sm opacity-75">
+                  {language === 'ar' ? 'ثوان' : 
+                   language === 'fr' ? 'Secondes' : 
+                   'Seconds'}
+                </div>
               </div>
             </div>
           </div>
