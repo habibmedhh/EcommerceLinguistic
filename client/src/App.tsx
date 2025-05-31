@@ -16,6 +16,7 @@ import ProductsManagement from "@/pages/admin/ProductsManagement";
 import OrdersManagement from "@/pages/admin/OrdersManagement";
 import CategoriesManagement from "@/pages/admin/CategoriesManagement";
 import StoreSettings from "@/pages/admin/StoreSettings";
+import AdminManagement from "@/pages/admin/AdminManagement";
 import ProductEditorSimple from "@/pages/admin/ProductEditorSimple";
 import NotFound from "@/pages/not-found";
 
@@ -34,6 +35,7 @@ function Router() {
       <Route path="/admin/products/edit/:id" component={() => <AdminLayout><ProductEditorSimple /></AdminLayout>} />
       <Route path="/admin/orders" component={() => <AdminLayout><OrdersManagement /></AdminLayout>} />
       <Route path="/admin/categories" component={() => <AdminLayout><CategoriesManagement /></AdminLayout>} />
+      <Route path="/admin/admins" component={() => <AdminLayout><AdminManagement /></AdminLayout>} />
       <Route path="/admin/settings" component={() => <AdminLayout><StoreSettings /></AdminLayout>} />
       <Route component={NotFound} />
     </Switch>

@@ -81,6 +81,7 @@ export interface IStorage {
   getAdmin(id: number): Promise<Admin | undefined>;
   getAdminByUsername(username: string): Promise<Admin | undefined>;
   getAdminByEmail(email: string): Promise<Admin | undefined>;
+  getAllAdmins(): Promise<Admin[]>;
   createAdmin(admin: InsertAdmin): Promise<Admin>;
   updateAdmin(id: number, admin: Partial<InsertAdmin>): Promise<Admin | undefined>;
   deleteAdmin(id: number): Promise<boolean>;
