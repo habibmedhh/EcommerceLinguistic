@@ -18,7 +18,6 @@ interface LoginCredentials {
 
 interface LoginResponse {
   admin: AdminUser;
-  token: string;
 }
 
 export const useAdminAuth = () => {
@@ -26,53 +25,15 @@ export const useAdminAuth = () => {
 
   const { data: admin, isLoading } = useQuery({
     queryKey: ['/api/admin/me'],
-    queryFn: async () => {
-      const token = localStorage.getItem('adminToken');
-      if (!token) return null;
-      
-      try {
-        const response = await fetch('/api/admin/me', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        
-        if (!response.ok) {
-          if (response.status === 401) {
-            localStorage.removeItem('adminToken');
-            return null;
-          }
-          throw new Error('Erreur de vérification');
-        }
-        
-        return await response.json();
-      } catch (error) {
-        localStorage.removeItem('adminToken');
-        return null;
-      }
-    },
     retry: false,
   });
 
   const loginMutation = useMutation({
     mutationFn: async (credentials: LoginCredentials): Promise<LoginResponse> => {
-      const response = await fetch('/api/admin/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(credentials),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Erreur de connexion');
-      }
-
+      const response = await apiRequest('POST', '/api/admin/login', credentials);
       return await response.json();
     },
     onSuccess: (data) => {
-      localStorage.setItem('adminToken', data.token);
       queryClient.setQueryData(['/api/admin/me'], data.admin);
       queryClient.invalidateQueries({ queryKey: ['/api/admin/me'] });
     },
@@ -80,18 +41,9 @@ export const useAdminAuth = () => {
 
   const logoutMutation = useMutation({
     mutationFn: async () => {
-      const token = localStorage.getItem('adminToken');
-      if (token) {
-        await fetch('/api/admin/logout', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-      }
+      await apiRequest('POST', '/api/admin/logout');
     },
     onSuccess: () => {
-      localStorage.removeItem('adminToken');
       queryClient.setQueryData(['/api/admin/me'], null);
       queryClient.clear();
     },
@@ -99,19 +51,7 @@ export const useAdminAuth = () => {
 
   const createAdminMutation = useMutation({
     mutationFn: async (adminData: any) => {
-      const response = await fetch('/api/admin/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(adminData),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Erreur lors de la création du compte');
-      }
-
+      const response = await apiRequest('POST', '/api/admin/create', adminData);
       return await response.json();
     },
   });
