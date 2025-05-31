@@ -333,7 +333,7 @@ export default function ProductDetails() {
                     <Star
                       key={i}
                       className={`h-4 w-4 ${
-                        i < Math.floor(parseFloat(product.rating || "0"))
+                        i < Math.floor(parseFloat(product.averageRating || "0"))
                           ? "text-yellow-400 fill-current"
                           : "text-gray-300"
                       }`}

@@ -54,6 +54,7 @@ export const products = pgTable("products", {
   brandFr: text("brand_fr"),
   averageRating: decimal("average_rating", { precision: 3, scale: 2 }).default("0"),
   reviewCount: integer("review_count").default(0),
+  displayReviewCount: integer("display_review_count").default(0),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

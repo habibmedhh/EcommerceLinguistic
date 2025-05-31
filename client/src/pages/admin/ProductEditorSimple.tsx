@@ -71,6 +71,7 @@ export default function ProductEditorSimple() {
     }>,
     averageRating: 0,
     reviewCount: 0,
+    displayReviewCount: 0,
   });
 
   const [newTag, setNewTag] = useState("");
@@ -108,7 +109,7 @@ export default function ProductEditorSimple() {
         brandFr: product.brandFr || "",
         tags: Array.isArray(product.tags) ? product.tags : [],
         reviews: Array.isArray(product.reviews) ? product.reviews : [],
-        averageRating: product.averageRating || 0,
+        averageRating: parseFloat(product.averageRating || "0"),
         reviewCount: product.reviewCount || 0,
       });
       
@@ -753,7 +754,7 @@ export default function ProductEditorSimple() {
                   <div>
                     <Label>Note moyenne</Label>
                     <div className="text-2xl font-bold text-yellow-600">
-                      {productData.averageRating.toFixed(1)} ⭐
+                      {(typeof productData.averageRating === 'number' ? productData.averageRating : parseFloat(productData.averageRating || "0")).toFixed(1)} ⭐
                     </div>
                   </div>
                   <div>
