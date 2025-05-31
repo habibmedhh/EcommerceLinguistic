@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useLocation } from 'wouter';
 import { NotificationManager } from './AdminNotification';
 import { NotificationIcon } from './NotificationIcon';
 import { useI18n } from '@/providers/I18nProvider';
+import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Settings, LogOut } from 'lucide-react';
@@ -12,6 +14,34 @@ interface AdminLayoutProps {
 
 export function AdminLayout({ children }: AdminLayoutProps) {
   const { t } = useI18n();
+  const [, setLocation] = useLocation();
+  const { isAuthenticated, isLoading, logout } = useAdminAuth();
+
+  // Rediriger vers la page de connexion si pas authentifié
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      setLocation('/admin/login');
+    }
+  }, [isAuthenticated, isLoading, setLocation]);
+
+  // Afficher un loader pendant la vérification
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+      </div>
+    );
+  }
+
+  // Si pas authentifié, ne rien afficher (redirection en cours)
+  if (!isAuthenticated) {
+    return null;
+  }
+
+  const handleLogout = () => {
+    logout();
+    setLocation('/admin/login');
+  };
   
   // Simulation temporaire des notifications pour tester l'interface
   const mockNotifications = [
@@ -73,7 +103,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-900">
                   <Settings className="h-4 w-4" />
                 </Button>
-                <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-900">
+                <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-900" onClick={handleLogout}>
                   <LogOut className="h-4 w-4" />
                 </Button>
               </div>
