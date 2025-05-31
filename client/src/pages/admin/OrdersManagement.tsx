@@ -42,8 +42,10 @@ export default function OrdersManagement() {
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [selectedOrderIds, setSelectedOrderIds] = useState<number[]>([]);
   const [isOrderDialogOpen, setIsOrderDialogOpen] = useState(false);
-  const [isLabelDialogOpen, setIsLabelDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editingOrder, setEditingOrder] = useState<any>(null);
 
   const statusOptions = [
     { value: "all", label: "All Status" },
@@ -133,12 +135,57 @@ export default function OrdersManagement() {
           <head>
             <title>Étiquette Commande #${order.id}</title>
             <style>
-              body { font-family: Arial, sans-serif; padding: 20px; }
-              .label { border: 2px solid #000; padding: 20px; max-width: 400px; }
-              .header { text-align: center; border-bottom: 1px solid #000; margin-bottom: 15px; padding-bottom: 10px; }
-              .section { margin: 10px 0; }
-              .bold { font-weight: bold; }
-              .barcode { text-align: center; font-family: monospace; font-size: 18px; margin: 15px 0; }
+              @page {
+                size: 100mm 150mm;
+                margin: 0;
+              }
+              body { 
+                font-family: Arial, sans-serif; 
+                margin: 0; 
+                padding: 8mm;
+                width: 84mm;
+                height: 134mm;
+                box-sizing: border-box;
+              }
+              .label { 
+                border: 2px solid #000; 
+                padding: 8mm;
+                height: 100%;
+                box-sizing: border-box;
+                display: flex;
+                flex-direction: column;
+              }
+              .header { 
+                text-align: center; 
+                border-bottom: 1px solid #000; 
+                margin-bottom: 6mm; 
+                padding-bottom: 4mm; 
+              }
+              .header h2 { 
+                margin: 0; 
+                font-size: 18px; 
+                font-weight: bold; 
+              }
+              .section { 
+                margin: 3mm 0; 
+                font-size: 12px;
+              }
+              .bold { 
+                font-weight: bold; 
+                margin-bottom: 2mm;
+              }
+              .barcode { 
+                text-align: center; 
+                font-family: monospace; 
+                font-size: 14px; 
+                margin-top: auto;
+                padding-top: 4mm;
+                border-top: 1px solid #000;
+              }
+              .amount {
+                font-size: 16px;
+                font-weight: bold;
+              }
             </style>
           </head>
           <body>
@@ -152,12 +199,12 @@ export default function OrdersManagement() {
                 <div>${order.customerPhone}</div>
               </div>
               <div class="section">
-                <div class="bold">Adresse de livraison:</div>
+                <div class="bold">Adresse:</div>
                 <div>${order.deliveryAddress}</div>
               </div>
               <div class="section">
                 <div class="bold">Montant:</div>
-                <div style="font-size: 20px;">${settings?.currencySymbol || 'DH'} ${order.totalAmount}</div>
+                <div class="amount">${settings?.currencySymbol || 'DH'} ${order.totalAmount}</div>
               </div>
               <div class="section">
                 <div class="bold">Statut:</div>
@@ -180,6 +227,192 @@ export default function OrdersManagement() {
       `);
       printWindow.document.close();
       printWindow.print();
+    }
+  };
+
+  const printMultipleLabels = () => {
+    if (selectedOrderIds.length === 0) {
+      toast({
+        title: "Erreur",
+        description: "Veuillez sélectionner au moins une commande",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const selectedOrders = filteredOrders.filter(order => selectedOrderIds.includes(order.id));
+    const printWindow = window.open('', '_blank');
+    
+    if (printWindow) {
+      let labelsHtml = '';
+      selectedOrders.forEach((order, index) => {
+        labelsHtml += `
+          <div class="label" ${index > 0 ? 'style="page-break-before: always;"' : ''}>
+            <div class="header">
+              <h2>COMMANDE #${order.id}</h2>
+            </div>
+            <div class="section">
+              <div class="bold">Client:</div>
+              <div>${order.customerName}</div>
+              <div>${order.customerPhone}</div>
+            </div>
+            <div class="section">
+              <div class="bold">Adresse:</div>
+              <div>${order.deliveryAddress}</div>
+            </div>
+            <div class="section">
+              <div class="bold">Montant:</div>
+              <div class="amount">${settings?.currencySymbol || 'DH'} ${order.totalAmount}</div>
+            </div>
+            <div class="section">
+              <div class="bold">Statut:</div>
+              <div>${order.status === 'pending' ? 'En attente' :
+                     order.status === 'confirmed' ? 'Confirmée' :
+                     order.status === 'shipped' ? 'Expédiée' :
+                     order.status === 'delivered' ? 'Livrée' :
+                     order.status === 'cancelled' ? 'Annulée' : order.status}</div>
+            </div>
+            <div class="section">
+              <div class="bold">Date:</div>
+              <div>${new Date(order.createdAt!).toLocaleDateString('fr-FR')}</div>
+            </div>
+            <div class="barcode">
+              ||||| ${order.id.toString().padStart(8, '0')} |||||
+            </div>
+          </div>
+        `;
+      });
+
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>Étiquettes Multiples</title>
+            <style>
+              @page {
+                size: 100mm 150mm;
+                margin: 0;
+              }
+              body { 
+                font-family: Arial, sans-serif; 
+                margin: 0; 
+                padding: 8mm;
+                width: 84mm;
+                box-sizing: border-box;
+              }
+              .label { 
+                border: 2px solid #000; 
+                padding: 8mm;
+                height: 134mm;
+                box-sizing: border-box;
+                display: flex;
+                flex-direction: column;
+              }
+              .header { 
+                text-align: center; 
+                border-bottom: 1px solid #000; 
+                margin-bottom: 6mm; 
+                padding-bottom: 4mm; 
+              }
+              .header h2 { 
+                margin: 0; 
+                font-size: 18px; 
+                font-weight: bold; 
+              }
+              .section { 
+                margin: 3mm 0; 
+                font-size: 12px;
+              }
+              .bold { 
+                font-weight: bold; 
+                margin-bottom: 2mm;
+              }
+              .barcode { 
+                text-align: center; 
+                font-family: monospace; 
+                font-size: 14px; 
+                margin-top: auto;
+                padding-top: 4mm;
+                border-top: 1px solid #000;
+              }
+              .amount {
+                font-size: 16px;
+                font-weight: bold;
+              }
+            </style>
+          </head>
+          <body>
+            ${labelsHtml}
+          </body>
+        </html>
+      `);
+      printWindow.document.close();
+      printWindow.print();
+    }
+  };
+
+  const toggleOrderSelection = (orderId: number) => {
+    setSelectedOrderIds(prev => 
+      prev.includes(orderId) 
+        ? prev.filter(id => id !== orderId)
+        : [...prev, orderId]
+    );
+  };
+
+  const selectAllOrders = () => {
+    if (selectedOrderIds.length === filteredOrders.length) {
+      setSelectedOrderIds([]);
+    } else {
+      setSelectedOrderIds(filteredOrders.map(order => order.id));
+    }
+  };
+
+  const handleEditOrder = (order: any) => {
+    setEditingOrder({
+      id: order.id,
+      customerName: order.customerName,
+      customerPhone: order.customerPhone,
+      customerEmail: order.customerEmail || '',
+      deliveryAddress: order.deliveryAddress
+    });
+    setIsEditDialogOpen(true);
+  };
+
+  const saveOrderChanges = async () => {
+    if (!editingOrder) return;
+    
+    try {
+      // API call to update order customer info
+      const response = await fetch(`/api/orders/${editingOrder.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          customerName: editingOrder.customerName,
+          customerPhone: editingOrder.customerPhone,
+          customerEmail: editingOrder.customerEmail,
+          deliveryAddress: editingOrder.deliveryAddress
+        }),
+      });
+
+      if (response.ok) {
+        toast({
+          title: "Succès",
+          description: "Informations client mises à jour",
+        });
+        setIsEditDialogOpen(false);
+        setEditingOrder(null);
+        // Refresh orders data
+        window.location.reload();
+      } else {
+        throw new Error('Failed to update order');
+      }
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Impossible de mettre à jour les informations",
+        variant: "destructive",
+      });
     }
   };
 
@@ -236,10 +469,18 @@ export default function OrdersManagement() {
               <h1 className="text-2xl font-bold">Orders Management</h1>
             </div>
             
-            <Button onClick={exportOrders} variant="outline">
-              <Download className="h-4 w-4 mr-2" />
-              Export CSV
-            </Button>
+            <div className="flex gap-2">
+              {selectedOrderIds.length > 0 && (
+                <Button onClick={printMultipleLabels} variant="outline" className="bg-blue-50">
+                  <Printer className="h-4 w-4 mr-2" />
+                  Imprimer {selectedOrderIds.length} étiquette{selectedOrderIds.length > 1 ? 's' : ''}
+                </Button>
+              )}
+              <Button onClick={exportOrders} variant="outline">
+                <Download className="h-4 w-4 mr-2" />
+                Export CSV
+              </Button>
+            </div>
           </div>
         </div>
       </header>
@@ -373,6 +614,14 @@ export default function OrdersManagement() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b">
+                    <th className="text-left py-3 px-4 font-semibold">
+                      <input
+                        type="checkbox"
+                        checked={selectedOrderIds.length === filteredOrders.length && filteredOrders.length > 0}
+                        onChange={selectAllOrders}
+                        className="rounded"
+                      />
+                    </th>
                     <th className="text-left py-3 px-4 font-semibold">ID Commande</th>
                     <th className="text-left py-3 px-4 font-semibold">Client</th>
                     <th className="text-left py-3 px-4 font-semibold">Contact</th>
@@ -386,6 +635,14 @@ export default function OrdersManagement() {
                 <tbody>
                   {filteredOrders.map((order) => (
                     <tr key={order.id} className="border-b hover:bg-gray-50">
+                      <td className="py-3 px-4">
+                        <input
+                          type="checkbox"
+                          checked={selectedOrderIds.includes(order.id)}
+                          onChange={() => toggleOrderSelection(order.id)}
+                          className="rounded"
+                        />
+                      </td>
                       <td className="py-3 px-4 font-mono text-sm">
                         #{order.id.toString().padStart(4, '0')}
                       </td>
@@ -463,6 +720,15 @@ export default function OrdersManagement() {
                             title="Imprimer l'étiquette"
                           >
                             <Printer className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleEditOrder(order)}
+                            className="text-green-600 hover:text-green-700"
+                            title="Modifier les informations"
+                          >
+                            <Edit className="h-4 w-4" />
                           </Button>
                           <Button
                             size="sm"
@@ -558,6 +824,64 @@ export default function OrdersManagement() {
                   </div>
                 </div>
               )}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Order Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Modifier les informations client</DialogTitle>
+          </DialogHeader>
+          {editingOrder && (
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-medium">Nom du client</label>
+                <Input
+                  value={editingOrder.customerName}
+                  onChange={(e) => setEditingOrder({...editingOrder, customerName: e.target.value})}
+                  placeholder="Nom complet"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium">Téléphone</label>
+                <Input
+                  value={editingOrder.customerPhone}
+                  onChange={(e) => setEditingOrder({...editingOrder, customerPhone: e.target.value})}
+                  placeholder="Numéro de téléphone"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium">Email (optionnel)</label>
+                <Input
+                  value={editingOrder.customerEmail}
+                  onChange={(e) => setEditingOrder({...editingOrder, customerEmail: e.target.value})}
+                  placeholder="Adresse email"
+                  type="email"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium">Adresse de livraison</label>
+                <Input
+                  value={editingOrder.deliveryAddress}
+                  onChange={(e) => setEditingOrder({...editingOrder, deliveryAddress: e.target.value})}
+                  placeholder="Adresse complète"
+                />
+              </div>
+              <div className="flex gap-2 pt-4">
+                <Button onClick={saveOrderChanges} className="flex-1">
+                  Sauvegarder
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setIsEditDialogOpen(false)}
+                  className="flex-1"
+                >
+                  Annuler
+                </Button>
+              </div>
             </div>
           )}
         </DialogContent>
