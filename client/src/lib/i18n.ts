@@ -100,9 +100,16 @@ export interface Translation {
   };
   // Notifications
   notifications: {
+    title: string;
     newOrder: string;
     newOrderMessage: string;
     confirmOrderStatus: string;
+    orderFrom: string;
+    markAllRead: string;
+    noNotifications: string;
+    justNow: string;
+    minutesAgo: string;
+    hoursAgo: string;
   };
   // Common
   common: {
@@ -218,9 +225,16 @@ export const translations: Record<string, Translation> = {
       support: "24/7 Support"
     },
     notifications: {
+      title: "Notifications",
       newOrder: "New Order Created",
       newOrderMessage: "A new order has been created with amount",
-      confirmOrderStatus: "Please confirm the order status"
+      confirmOrderStatus: "Please confirm the order status",
+      orderFrom: "Order from",
+      markAllRead: "Mark all as read",
+      noNotifications: "No notifications",
+      justNow: "Just now",
+      minutesAgo: "min ago",
+      hoursAgo: "h ago"
     },
     common: {
       loading: "Loading...",
@@ -333,9 +347,16 @@ export const translations: Record<string, Translation> = {
       support: "Support 24/7"
     },
     notifications: {
+      title: "Notifications",
       newOrder: "Nouvelle commande créée",
       newOrderMessage: "Une nouvelle commande a été créée d'un montant de",
-      confirmOrderStatus: "Merci de confirmer le statut de la commande"
+      confirmOrderStatus: "Merci de confirmer le statut de la commande",
+      orderFrom: "Commande de",
+      markAllRead: "Tout marquer comme lu",
+      noNotifications: "Aucune notification",
+      justNow: "À l'instant",
+      minutesAgo: "min",
+      hoursAgo: "h"
     },
     common: {
       loading: "Chargement...",

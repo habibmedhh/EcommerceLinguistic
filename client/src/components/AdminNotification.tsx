@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Bell, X, ShoppingCart, Eye } from "lucide-react";
 import { Link } from "wouter";
+import { NotificationIcon } from './NotificationIcon';
 
 interface AdminNotificationProps {
   notification: {
@@ -146,10 +147,10 @@ export function NotificationManager({ children }: NotificationManagerProps) {
   useEffect(() => {
     (window as any).addAdminNotification = addNotification;
     console.log("Admin notification system initialized");
-    return () => {
-      delete (window as any).addAdminNotification;
-    };
-  }, []);
+    
+    // Don't remove the function when component unmounts
+    // This ensures it's always available globally
+  }, [addNotification]);
 
   return (
     <>
