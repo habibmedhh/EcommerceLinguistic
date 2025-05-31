@@ -77,6 +77,12 @@ export default function Dashboard() {
             </div>
             
             <div className="flex items-center gap-4">
+              <Link href="/admin/settings">
+                <Button variant="outline" size="sm">
+                  <Package className="h-4 w-4 mr-2" />
+                  Store Settings
+                </Button>
+              </Link>
               <Button variant="outline" size="sm">
                 <Download className="h-4 w-4 mr-2" />
                 Export Data
@@ -134,8 +140,8 @@ export default function Dashboard() {
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">{t.admin.avgOrder}</CardTitle>
-                  <BarChart3 className="h-4 w-4 text-purple-600" />
+                  <CardTitle className="text-sm font-medium">Total Profit</CardTitle>
+                  <DollarSign className="h-4 w-4 text-green-600" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{(orderAnalytics?.totalProfit || 0).toFixed(2)}{settings?.currencySymbol || '€'}</div>
