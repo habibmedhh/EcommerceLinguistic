@@ -149,10 +149,10 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
   return (
     <NotificationManager>
-      <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="flex h-screen bg-gray-50 dark:bg-gray-900 w-full">
         {/* Sidebar */}
         <div className={cn(
-          "fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 shadow-lg transform transition-transform duration-200 ease-in-out lg:translate-x-0 lg:static lg:inset-0",
+          "fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 shadow-lg transform transition-transform duration-200 ease-in-out lg:translate-x-0 lg:static lg:inset-0 lg:flex-shrink-0",
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}>
           <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
@@ -225,10 +225,10 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         </div>
 
         {/* Contenu principal */}
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 flex flex-col min-w-0 w-full">
           {/* Barre supérieure */}
-          <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
-            <div className="flex items-center justify-between px-6 py-4">
+          <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 w-full">
+            <div className="flex items-center justify-between px-4 py-4 lg:px-6">
               <div className="flex items-center gap-4">
                 <Button 
                   variant="ghost" 
@@ -260,8 +260,8 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           </header>
 
           {/* Zone de contenu */}
-          <main className="flex-1 overflow-y-auto">
-            <div className="p-6 max-w-full">
+          <main className="flex-1 w-full overflow-y-auto bg-gray-50 dark:bg-gray-900">
+            <div className="w-full p-4 lg:p-6">
               {children}
             </div>
           </main>
