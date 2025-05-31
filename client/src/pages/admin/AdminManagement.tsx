@@ -48,7 +48,7 @@ export default function AdminManagement() {
   // Mutation pour créer un administrateur
   const createAdminMutation = useMutation({
     mutationFn: async (data: typeof createData) => {
-      return await apiRequest('/api/admin/create', 'POST', data);
+      return await apiRequest('POST', '/api/admin/create', data);
     },
     onSuccess: () => {
       toast({
@@ -78,7 +78,7 @@ export default function AdminManagement() {
   // Mutation pour activer/désactiver un administrateur
   const toggleAdminMutation = useMutation({
     mutationFn: async ({ id, isActive }: { id: number; isActive: boolean }) => {
-      return await apiRequest(`/api/admin/${id}/toggle`, 'PATCH', { isActive });
+      return await apiRequest('PATCH', `/api/admin/${id}/toggle`, { isActive });
     },
     onSuccess: () => {
       toast({

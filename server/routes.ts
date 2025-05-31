@@ -4,7 +4,26 @@ import { storage } from "./storage";
 import { insertProductSchema, insertCategorySchema, insertOrderSchema, insertPromotionSchema, insertAdminSchema } from "@shared/schema";
 import { z } from "zod";
 
-// Middleware d'authentification admin
+// Middleware d'authentification admin basé sur les sessions
+const authenticateAdminSession = async (req: any, res: any, next: any) => {
+  try {
+    if (!req.session || !req.session.adminId) {
+      return res.status(401).json({ error: 'Non authentifié' });
+    }
+
+    const admin = await storage.getAdmin(req.session.adminId);
+    if (!admin || !admin.isActive) {
+      return res.status(401).json({ error: 'Session invalide ou compte désactivé' });
+    }
+    
+    req.admin = admin;
+    next();
+  } catch (error) {
+    return res.status(401).json({ error: 'Erreur d\'authentification' });
+  }
+};
+
+// Middleware d'authentification admin (legacy - avec token)
 const authenticateAdmin = async (req: any, res: any, next: any) => {
   const token = req.headers.authorization?.replace('Bearer ', '');
   
@@ -573,7 +592,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ error: "Identifiants invalides" });
       }
 
-      const session = await storage.createAdminSession(admin.id);
+      // Store admin ID in session instead of creating a separate token
+      req.session.adminId = admin.id;
       
       res.json({
         admin: {
@@ -583,8 +603,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           role: admin.role,
           firstName: admin.firstName,
           lastName: admin.lastName
-        },
-        token: session.token
+        }
       });
     } catch (error) {
       console.error('Erreur de connexion admin:', error);
@@ -592,12 +611,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/admin/logout", authenticateAdmin, async (req: any, res) => {
+  app.post("/api/admin/logout", authenticateAdminSession, async (req: any, res) => {
     try {
-      const token = req.headers.authorization?.replace('Bearer ', '');
-      if (token) {
-        await storage.deleteAdminSession(token);
-      }
+      // Clear admin session
+      req.session.adminId = null;
       res.json({ message: "Déconnexion réussie" });
     } catch (error) {
       res.status(500).json({ error: "Erreur lors de la déconnexion" });
@@ -622,7 +639,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Admin management routes
-  app.get('/api/admin/list', authenticateAdmin, async (req, res) => {
+  app.get('/api/admin/list', authenticateAdminSession, async (req, res) => {
     try {
       const adminList = await storage.getAllAdmins();
       // Remove passwords from response
@@ -634,7 +651,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/admin/create', authenticateAdmin, async (req, res) => {
+  app.post('/api/admin/create', authenticateAdminSession, async (req, res) => {
     try {
       const adminData = insertAdminSchema.parse(req.body);
       
@@ -664,7 +681,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch('/api/admin/:id/toggle', authenticateAdmin, async (req, res) => {
+  app.patch('/api/admin/:id/toggle', authenticateAdminSession, async (req, res) => {
     try {
       const adminId = parseInt(req.params.id);
       const { isActive } = req.body;
