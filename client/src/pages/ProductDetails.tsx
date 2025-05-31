@@ -148,26 +148,8 @@ export default function ProductDetails() {
       className: "bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0",
     });
     
-    // Sur mobile, créer un formulaire de commande modal ou faire défiler vers la section
-    const isMobile = window.innerWidth < 768;
-    
-    if (isMobile) {
-      // Pour mobile, on peut faire défiler vers le haut pour révéler plus d'infos
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      // Ou afficher un modal de formulaire de commande mobile
-      setIsOrderFormOpen(true);
-    } else {
-      // Sur desktop, faire défiler vers le formulaire
-      const formElement = document.querySelector('.order-form');
-      if (formElement) {
-        formElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        // Highlight le formulaire temporairement
-        formElement.classList.add('ring-4', 'ring-purple-300', 'ring-opacity-75');
-        setTimeout(() => {
-          formElement.classList.remove('ring-4', 'ring-purple-300', 'ring-opacity-75');
-        }, 2000);
-      }
-    }
+    // Toujours ouvrir le modal de formulaire pour une expérience cohérente
+    setIsOrderFormOpen(true);
   };
 
   // Animation de confettis
