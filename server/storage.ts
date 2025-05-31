@@ -51,6 +51,7 @@ export interface IStorage {
   getOrder(id: number): Promise<(Order & { items: (OrderItem & { product: Product })[] }) | undefined>;
   createOrder(order: InsertOrder, items: InsertOrderItem[]): Promise<Order>;
   updateOrderStatus(id: number, status: string): Promise<Order | undefined>;
+  updateOrderCustomerInfo(id: number, customerInfo: any): Promise<Order | undefined>;
   deleteOrder(id: number): Promise<boolean>;
   getOrderStats(): Promise<{
     totalOrders: number;
@@ -321,6 +322,26 @@ export class DatabaseStorage implements IStorage {
       .where(eq(orders.id, id))
       .returning();
     return updated || undefined;
+  }
+
+  async updateOrderCustomerInfo(id: number, customerInfo: any): Promise<Order | undefined> {
+    try {
+      const updateData: any = {};
+      if (customerInfo.customerName) updateData.customerName = customerInfo.customerName;
+      if (customerInfo.customerPhone) updateData.customerPhone = customerInfo.customerPhone;
+      if (customerInfo.customerEmail !== undefined) updateData.customerEmail = customerInfo.customerEmail || null;
+      if (customerInfo.deliveryAddress) updateData.deliveryAddress = customerInfo.deliveryAddress;
+
+      const [order] = await db
+        .update(orders)
+        .set(updateData)
+        .where(eq(orders.id, id))
+        .returning();
+      return order || undefined;
+    } catch (error) {
+      console.error('Error updating order customer info:', error);
+      return undefined;
+    }
   }
 
   async deleteOrder(id: number): Promise<boolean> {
