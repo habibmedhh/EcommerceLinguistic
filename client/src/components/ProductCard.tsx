@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "wouter";
 import { useI18n } from "@/providers/I18nProvider";
+import { useSettings } from "@/hooks/useSettings";
 import { useCart } from "@/hooks/useCart";
 import { useScrollAnimation } from "@/hooks/useAnimations";
 import { Card } from "@/components/ui/card";
@@ -18,6 +19,7 @@ interface ProductCardProps {
 export function ProductCard({ product, onQuickView }: ProductCardProps) {
   const { t, language } = useI18n();
   const { addToCart } = useCart();
+  const { data: settings } = useSettings();
   const { toast } = useToast();
   const [isLiked, setIsLiked] = useState(false);
   const animationRef = useScrollAnimation();
@@ -147,15 +149,15 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
           {salePrice ? (
             <>
               <span className="text-2xl font-bold text-purple-600">
-                ${salePrice.toFixed(2)}
+                {salePrice.toFixed(2)}{settings?.currencySymbol || (language === 'ar' ? ' د.ج' : '€')}
               </span>
               <span className="text-lg text-gray-500 line-through">
-                ${price.toFixed(2)}
+                {price.toFixed(2)}{settings?.currencySymbol || (language === 'ar' ? ' د.ج' : '€')}
               </span>
             </>
           ) : (
             <span className="text-2xl font-bold text-purple-600">
-              ${price.toFixed(2)}
+              {price.toFixed(2)}{settings?.currencySymbol || (language === 'ar' ? ' د.ج' : '€')}
             </span>
           )}
         </div>

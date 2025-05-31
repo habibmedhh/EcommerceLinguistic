@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import { useI18n } from "@/providers/I18nProvider";
 import { useCategories } from "@/hooks/useCategories";
 import { useFeaturedProducts, useSaleProducts } from "@/hooks/useProducts";
+import { useSettings } from "@/hooks/useSettings";
 import { useScrollAnimation, useParallax } from "@/hooks/useAnimations";
 import { Header } from "@/components/Header";
 import { CategoryCard } from "@/components/CategoryCard";
@@ -38,6 +39,7 @@ export default function Home() {
   const { data: categories = [] } = useCategories();
   const { data: featuredProducts = [] } = useFeaturedProducts(8);
   const { data: saleProducts = [] } = useSaleProducts(6);
+  const { data: settings } = useSettings();
   
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [email, setEmail] = useState("");
@@ -260,11 +262,11 @@ export default function Home() {
                 <h3 className="text-xl font-bold mb-2">{product.name}</h3>
                 <div className="flex items-center justify-center gap-3 mb-4">
                   <span className="text-2xl font-bold">
-                    ${parseFloat(product.salePrice || product.price).toFixed(2)}
+                    {parseFloat(product.salePrice || product.price).toFixed(2)}{settings?.currencySymbol || '€'}
                   </span>
                   {product.salePrice && (
                     <span className="text-lg line-through opacity-75">
-                      ${parseFloat(product.price).toFixed(2)}
+                      {parseFloat(product.price).toFixed(2)}{settings?.currencySymbol || '€'}
                     </span>
                   )}
                 </div>
