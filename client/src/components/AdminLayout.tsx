@@ -149,10 +149,10 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
   return (
     <NotificationManager>
-      <div className="flex h-screen bg-gray-50 dark:bg-gray-900 w-full">
+      <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
         {/* Sidebar */}
         <div className={cn(
-          "fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 shadow-lg transform transition-transform duration-200 ease-in-out lg:translate-x-0 lg:static lg:inset-0 lg:flex-shrink-0",
+          "fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 shadow-lg transform transition-transform duration-200 ease-in-out lg:translate-x-0 lg:static lg:inset-0",
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}>
           <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
@@ -260,7 +260,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           </header>
 
           {/* Zone de contenu */}
-          <main className="flex-1 overflow-auto p-2 bg-gray-50 dark:bg-gray-900">
+          <main className="flex-1 overflow-y-auto p-6">
             {children}
           </main>
         </div>
