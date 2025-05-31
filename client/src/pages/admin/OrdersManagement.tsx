@@ -22,7 +22,10 @@ import {
   Phone,
   MapPin,
   User,
-  Package
+  Package,
+  Printer,
+  TrendingUp,
+  CalendarDays
 } from "lucide-react";
 import type { Order } from "@/types";
 
@@ -36,8 +39,11 @@ export default function OrdersManagement() {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isOrderDialogOpen, setIsOrderDialogOpen] = useState(false);
+  const [isLabelDialogOpen, setIsLabelDialogOpen] = useState(false);
 
   const statusOptions = [
     { value: "all", label: "All Status" },
@@ -62,7 +68,23 @@ export default function OrdersManagement() {
       order.customerPhone.includes(searchTerm) ||
       order.id.toString().includes(searchTerm);
     const matchesStatus = statusFilter === "all" || order.status === statusFilter;
-    return matchesSearch && matchesStatus;
+    
+    // Date filtering
+    let matchesDate = true;
+    if (dateFrom || dateTo) {
+      const orderDate = new Date(order.createdAt!);
+      if (dateFrom) {
+        const fromDate = new Date(dateFrom);
+        matchesDate = matchesDate && orderDate >= fromDate;
+      }
+      if (dateTo) {
+        const toDate = new Date(dateTo);
+        toDate.setHours(23, 59, 59); // End of day
+        matchesDate = matchesDate && orderDate <= toDate;
+      }
+    }
+    
+    return matchesSearch && matchesStatus && matchesDate;
   }) || [];
 
   const handleStatusUpdate = async (orderId: number, newStatus: string) => {
@@ -99,16 +121,85 @@ export default function OrdersManagement() {
     }
   };
 
+  const calculateOrderProfit = (order: any) => {
+    return (parseFloat(order.totalAmount) * 0.3).toFixed(2); // 30% profit margin
+  };
+
+  const printOrderLabel = (order: any) => {
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>Étiquette Commande #${order.id}</title>
+            <style>
+              body { font-family: Arial, sans-serif; padding: 20px; }
+              .label { border: 2px solid #000; padding: 20px; max-width: 400px; }
+              .header { text-align: center; border-bottom: 1px solid #000; margin-bottom: 15px; padding-bottom: 10px; }
+              .section { margin: 10px 0; }
+              .bold { font-weight: bold; }
+              .barcode { text-align: center; font-family: monospace; font-size: 18px; margin: 15px 0; }
+            </style>
+          </head>
+          <body>
+            <div class="label">
+              <div class="header">
+                <h2>COMMANDE #${order.id}</h2>
+              </div>
+              <div class="section">
+                <div class="bold">Client:</div>
+                <div>${order.customerName}</div>
+                <div>${order.customerPhone}</div>
+              </div>
+              <div class="section">
+                <div class="bold">Adresse de livraison:</div>
+                <div>${order.deliveryAddress}</div>
+              </div>
+              <div class="section">
+                <div class="bold">Montant:</div>
+                <div style="font-size: 20px;">${settings?.currencySymbol || 'DH'} ${order.totalAmount}</div>
+              </div>
+              <div class="section">
+                <div class="bold">Statut:</div>
+                <div>${order.status === 'pending' ? 'En attente' :
+                       order.status === 'confirmed' ? 'Confirmée' :
+                       order.status === 'shipped' ? 'Expédiée' :
+                       order.status === 'delivered' ? 'Livrée' :
+                       order.status === 'cancelled' ? 'Annulée' : order.status}</div>
+              </div>
+              <div class="section">
+                <div class="bold">Date:</div>
+                <div>${new Date(order.createdAt!).toLocaleDateString('fr-FR')}</div>
+              </div>
+              <div class="barcode">
+                ||||| ${order.id.toString().padStart(8, '0')} |||||
+              </div>
+            </div>
+          </body>
+        </html>
+      `);
+      printWindow.document.close();
+      printWindow.print();
+    }
+  };
+
   const exportOrders = () => {
     const csvContent = [
-      ["Order ID", "Customer", "Phone", "Amount", "Status", "Date"].join(","),
+      ["ID Commande", "Client", "Téléphone", "Email", "Adresse", "Montant", "Bénéfice", "Statut", "Date"].join(","),
       ...filteredOrders.map(order => [
         order.id,
-        order.customerName,
+        `"${order.customerName}"`,
         order.customerPhone,
-        order.totalAmount,
-        order.status,
-        new Date(order.createdAt!).toLocaleDateString()
+        `"${order.customerEmail || 'N/A'}"`,
+        `"${order.deliveryAddress}"`,
+        `${settings?.currencySymbol || 'DH'} ${order.totalAmount}`,
+        `${settings?.currencySymbol || 'DH'} ${calculateOrderProfit(order)}`,
+        order.status === 'pending' ? 'En attente' :
+        order.status === 'confirmed' ? 'Confirmée' :
+        order.status === 'shipped' ? 'Expédiée' :
+        order.status === 'delivered' ? 'Livrée' :
+        order.status === 'cancelled' ? 'Annulée' : order.status,
+        new Date(order.createdAt!).toLocaleDateString('fr-FR')
       ].join(","))
     ].join("\n");
 
@@ -157,12 +248,12 @@ export default function OrdersManagement() {
         {/* Filters */}
         <Card className="mb-8">
           <CardContent className="p-6">
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="flex-1">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+              <div className="lg:col-span-2">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <Input
-                    placeholder="Search by customer name, phone, or order ID..."
+                    placeholder="Rechercher par nom, téléphone, ou ID..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
@@ -171,17 +262,40 @@ export default function OrdersManagement() {
               </div>
               
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-full md:w-48">
-                  <SelectValue placeholder="Filter by status" />
+                <SelectTrigger>
+                  <SelectValue placeholder="Statut" />
                 </SelectTrigger>
                 <SelectContent>
-                  {statusOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
+                  <SelectItem value="all">Tous les statuts</SelectItem>
+                  <SelectItem value="pending">En attente</SelectItem>
+                  <SelectItem value="confirmed">Confirmée</SelectItem>
+                  <SelectItem value="shipped">Expédiée</SelectItem>
+                  <SelectItem value="delivered">Livrée</SelectItem>
+                  <SelectItem value="cancelled">Annulée</SelectItem>
                 </SelectContent>
               </Select>
+
+              <div className="relative">
+                <CalendarDays className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Input
+                  type="date"
+                  placeholder="Date de début"
+                  value={dateFrom}
+                  onChange={(e) => setDateFrom(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+
+              <div className="relative">
+                <CalendarDays className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Input
+                  type="date"
+                  placeholder="Date de fin"
+                  value={dateTo}
+                  onChange={(e) => setDateTo(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -259,11 +373,12 @@ export default function OrdersManagement() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b">
-                    <th className="text-left py-3 px-4 font-semibold">Order ID</th>
-                    <th className="text-left py-3 px-4 font-semibold">Customer</th>
+                    <th className="text-left py-3 px-4 font-semibold">ID Commande</th>
+                    <th className="text-left py-3 px-4 font-semibold">Client</th>
                     <th className="text-left py-3 px-4 font-semibold">Contact</th>
-                    <th className="text-left py-3 px-4 font-semibold">Amount</th>
-                    <th className="text-left py-3 px-4 font-semibold">Status</th>
+                    <th className="text-left py-3 px-4 font-semibold">Montant</th>
+                    <th className="text-left py-3 px-4 font-semibold">Bénéfice</th>
+                    <th className="text-left py-3 px-4 font-semibold">Statut</th>
                     <th className="text-left py-3 px-4 font-semibold">Date</th>
                     <th className="text-left py-3 px-4 font-semibold">Actions</th>
                   </tr>
@@ -288,8 +403,16 @@ export default function OrdersManagement() {
                       </td>
                       <td className="py-3 px-4">
                         <span className="font-bold text-purple-600">
-                          {parseFloat(order.totalAmount).toFixed(2)}{settings?.currencySymbol || '€'}
+                          {settings?.currencySymbol || 'DH'} {parseFloat(order.totalAmount).toFixed(2)}
                         </span>
+                      </td>
+                      <td className="py-3 px-4">
+                        <div className="flex items-center gap-1">
+                          <TrendingUp className="h-4 w-4 text-green-600" />
+                          <span className="font-semibold text-green-600">
+                            {settings?.currencySymbol || 'DH'} {calculateOrderProfit(order)}
+                          </span>
+                        </div>
                       </td>
                       <td className="py-3 px-4">
                         <Select
@@ -299,16 +422,20 @@ export default function OrdersManagement() {
                           <SelectTrigger className="w-32">
                             <SelectValue>
                               <Badge className={statusColors[order.status as keyof typeof statusColors] || "bg-gray-100 text-gray-800"}>
-                                {order.status}
+                                {order.status === 'pending' ? 'En attente' :
+                                 order.status === 'confirmed' ? 'Confirmée' :
+                                 order.status === 'shipped' ? 'Expédiée' :
+                                 order.status === 'delivered' ? 'Livrée' :
+                                 order.status === 'cancelled' ? 'Annulée' : order.status}
                               </Badge>
                             </SelectValue>
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="pending">Pending</SelectItem>
-                            <SelectItem value="confirmed">Confirmed</SelectItem>
-                            <SelectItem value="shipped">Shipped</SelectItem>
-                            <SelectItem value="delivered">Delivered</SelectItem>
-                            <SelectItem value="cancelled">Cancelled</SelectItem>
+                            <SelectItem value="pending">En attente</SelectItem>
+                            <SelectItem value="confirmed">Confirmée</SelectItem>
+                            <SelectItem value="shipped">Expédiée</SelectItem>
+                            <SelectItem value="delivered">Livrée</SelectItem>
+                            <SelectItem value="cancelled">Annulée</SelectItem>
                           </SelectContent>
                         </Select>
                       </td>
@@ -324,14 +451,25 @@ export default function OrdersManagement() {
                               setSelectedOrder(order);
                               setIsOrderDialogOpen(true);
                             }}
+                            title="Voir les détails"
                           >
                             <Eye className="h-4 w-4" />
                           </Button>
                           <Button
                             size="sm"
                             variant="outline"
+                            onClick={() => printOrderLabel(order)}
+                            className="text-blue-600 hover:text-blue-700"
+                            title="Imprimer l'étiquette"
+                          >
+                            <Printer className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
                             onClick={() => handleDeleteOrder(order.id)}
                             className="text-red-600 hover:text-red-700"
+                            title="Supprimer"
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
