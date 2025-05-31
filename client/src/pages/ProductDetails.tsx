@@ -103,14 +103,8 @@ export default function ProductDetails() {
   };
 
   const handleBuyNow = () => {
-    // Si le formulaire n'est pas complet, diriger vers le formulaire
-    if (!isFormComplete()) {
-      navigateToForm();
-      return;
-    }
-    
-    // Si le formulaire est complet, procéder à la commande
-    handleSubmitOrder();
+    // Toujours ouvrir le formulaire pour que l'utilisateur puisse saisir ses informations
+    setIsOrderFormOpen(true);
   };
 
   const validatePhoneNumber = (phone: string) => {
