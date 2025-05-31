@@ -685,7 +685,7 @@ export default function ProductDetails() {
         <DialogContent className="sm:max-w-[480px] mx-2 my-4 p-0 gap-0 bg-gradient-to-br from-purple-50 via-white to-blue-50 max-h-[90vh] overflow-y-auto" dir={direction}>
           <div className="bg-gradient-to-r from-purple-600 to-pink-600 p-6 rounded-t-lg">
             <DialogHeader>
-              <DialogTitle className="text-center text-2xl font-bold text-white flex items-center justify-center gap-2">
+              <DialogTitle className="tracking-tight text-center text-2xl font-bold text-white flex items-center justify-center gap-2 pl-[88px] pr-[88px]">
                 <span className="text-2xl">🛒</span>
                 {language === 'ar' ? 'اطلب الآن' : 
                  language === 'fr' ? 'Commander maintenant' : 
