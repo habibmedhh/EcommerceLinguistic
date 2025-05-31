@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useParams } from "wouter";
 import { useI18n } from "@/providers/I18nProvider";
 import { useProduct } from "@/hooks/useProducts";
+import { useSettings } from "@/hooks/useSettings";
 import { useCart } from "@/hooks/useCart";
 import { useCreateOrder } from "@/hooks/useOrders";
 import { Header } from "@/components/Header";
@@ -37,6 +38,7 @@ export default function ProductDetails() {
   const productId = parseInt(id || "0");
   const { t, language, direction } = useI18n();
   const { data: product, isLoading } = useProduct(productId);
+  const { data: settings } = useSettings();
   const { addToCart } = useCart();
   const createOrder = useCreateOrder();
   const { toast } = useToast();
@@ -348,15 +350,15 @@ export default function ProductDetails() {
                 {discountedPrice ? (
                   <>
                     <span className="text-3xl font-bold text-purple-600">
-                      ${discountedPrice.toFixed(2)}
+                      {discountedPrice.toFixed(2)}{settings?.currencySymbol || (language === 'ar' ? ' د.ج' : '€')}
                     </span>
                     <span className="text-xl text-gray-500 line-through">
-                      ${originalPrice.toFixed(2)}
+                      {originalPrice.toFixed(2)}{settings?.currencySymbol || (language === 'ar' ? ' د.ج' : '€')}
                     </span>
                   </>
                 ) : (
                   <span className="text-3xl font-bold text-purple-600">
-                    ${originalPrice.toFixed(2)}
+                    {originalPrice.toFixed(2)}{settings?.currencySymbol || (language === 'ar' ? ' د.ج' : '€')}
                   </span>
                 )}
               </div>
@@ -679,10 +681,7 @@ export default function ProductDetails() {
                          'Unit Price:'}
                       </span>
                       <span className="font-medium">
-                        {language === 'ar' ? 
-                          `${discountedPrice ? discountedPrice : originalPrice} د.ج` :
-                          `${discountedPrice ? discountedPrice : originalPrice}€`
-                        }
+                        {(discountedPrice ? discountedPrice : originalPrice).toFixed(2)}{settings?.currencySymbol || (language === 'ar' ? ' د.ج' : '€')}
                       </span>
                     </div>
                     <Separator />
@@ -693,10 +692,7 @@ export default function ProductDetails() {
                          'Total:'}
                       </span>
                       <span>
-                        {language === 'ar' ? 
-                          `${(discountedPrice ? discountedPrice * quantity : originalPrice * quantity).toFixed(2)} د.ج` :
-                          `${(discountedPrice ? discountedPrice * quantity : originalPrice * quantity).toFixed(2)}€`
-                        }
+                        {(discountedPrice ? discountedPrice * quantity : originalPrice * quantity).toFixed(2)}{settings?.currencySymbol || (language === 'ar' ? ' د.ج' : '€')}
                       </span>
                     </div>
                   </div>

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useI18n } from "@/providers/I18nProvider";
+import { useSettings } from "@/hooks/useSettings";
 import { useCart } from "@/hooks/useCart";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,7 @@ interface ProductModalProps {
 export function ProductModal({ product, open, onClose }: ProductModalProps) {
   const { t, language } = useI18n();
   const { addToCart } = useCart();
+  const { data: settings } = useSettings();
   const { toast } = useToast();
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
