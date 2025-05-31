@@ -7,11 +7,12 @@ import { z } from "zod";
 // Middleware d'authentification admin basé sur les sessions
 const authenticateAdminSession = async (req: any, res: any, next: any) => {
   try {
-    if (!req.session || !req.session.adminId) {
+    const session = req.session as any;
+    if (!session || !session.adminId) {
       return res.status(401).json({ error: 'Non authentifié' });
     }
 
-    const admin = await storage.getAdmin(req.session.adminId);
+    const admin = await storage.getAdmin(session.adminId);
     if (!admin || !admin.isActive) {
       return res.status(401).json({ error: 'Session invalide ou compte désactivé' });
     }
@@ -593,7 +594,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Store admin ID in session instead of creating a separate token
-      req.session.adminId = admin.id;
+      (req.session as any).adminId = admin.id;
       
       res.json({
         admin: {
@@ -614,7 +615,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/admin/logout", authenticateAdminSession, async (req: any, res) => {
     try {
       // Clear admin session
-      req.session.adminId = null;
+      (req.session as any).adminId = null;
       res.json({ message: "Déconnexion réussie" });
     } catch (error) {
       res.status(500).json({ error: "Erreur lors de la déconnexion" });
