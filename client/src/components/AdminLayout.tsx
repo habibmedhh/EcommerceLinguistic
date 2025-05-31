@@ -260,8 +260,8 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           </header>
 
           {/* Zone de contenu */}
-          <main className="flex-1 w-full overflow-y-auto bg-gray-50 dark:bg-gray-900">
-            <div className="w-full p-4 lg:p-6">
+          <main className="flex-1 overflow-y-auto">
+            <div className="p-6">
               {children}
             </div>
           </main>
