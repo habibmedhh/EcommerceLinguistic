@@ -52,6 +52,10 @@ export default function ProductDetails() {
     customerPhone: '',
     deliveryAddress: ''
   });
+  
+  const [formErrors, setFormErrors] = useState({
+    customerPhone: ''
+  });
 
   if (isLoading) {
     return (
@@ -109,14 +113,32 @@ export default function ProductDetails() {
     handleSubmitOrder();
   };
 
+  const validatePhoneNumber = (phone: string) => {
+    const cleanPhone = phone.replace(/\s+/g, '').replace(/[^\d]/g, '');
+    if (cleanPhone.length < 10) {
+      return language === 'ar' ? 'يجب أن يحتوي رقم الهاتف على 10 أرقام على الأقل' : 
+             language === 'fr' ? 'Le numéro de téléphone doit contenir au moins 10 chiffres' : 
+             'Phone number must contain at least 10 digits';
+    }
+    return '';
+  };
+
   const handleOrderFormChange = (field: string, value: string) => {
     setOrderForm(prev => ({ ...prev, [field]: value }));
+    
+    // Validation en temps réel pour le téléphone
+    if (field === 'customerPhone') {
+      const error = validatePhoneNumber(value);
+      setFormErrors(prev => ({ ...prev, customerPhone: error }));
+    }
   };
 
   const isFormComplete = () => {
+    const phoneError = validatePhoneNumber(orderForm.customerPhone);
     return orderForm.customerName.trim() && 
            orderForm.customerPhone.trim() && 
-           orderForm.deliveryAddress.trim();
+           orderForm.deliveryAddress.trim() &&
+           !phoneError;
   };
 
   const navigateToForm = () => {
@@ -148,7 +170,44 @@ export default function ProductDetails() {
     }
   };
 
+  // Animation de confettis
+  const createConfetti = () => {
+    const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#98D8C8'];
+    const confettiCount = 50;
+    
+    for (let i = 0; i < confettiCount; i++) {
+      setTimeout(() => {
+        const confetti = document.createElement('div');
+        confetti.style.position = 'fixed';
+        confetti.style.left = Math.random() * window.innerWidth + 'px';
+        confetti.style.top = '-10px';
+        confetti.style.width = '10px';
+        confetti.style.height = '10px';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0%';
+        confetti.style.zIndex = '9999';
+        confetti.style.pointerEvents = 'none';
+        confetti.style.animation = `confetti-fall ${2 + Math.random() * 3}s linear forwards`;
+        
+        document.body.appendChild(confetti);
+        
+        setTimeout(() => {
+          if (confetti.parentNode) {
+            confetti.parentNode.removeChild(confetti);
+          }
+        }, 5000);
+      }, i * 100);
+    }
+  };
+
   const handleSubmitOrder = async () => {
+    // Validation du téléphone avant soumission
+    const phoneError = validatePhoneNumber(orderForm.customerPhone);
+    if (phoneError) {
+      setFormErrors(prev => ({ ...prev, customerPhone: phoneError }));
+      return;
+    }
+
     // Si le formulaire n'est pas complet, diriger vers le formulaire
     if (!isFormComplete()) {
       navigateToForm();
@@ -179,6 +238,9 @@ export default function ProductDetails() {
 
       await createOrder.mutateAsync(orderData);
       
+      // Déclencher l'animation de confettis
+      createConfetti();
+      
       // Afficher le message de confirmation avec couleurs sympas
       toast({
         title: t.order.confirmed,
@@ -188,6 +250,7 @@ export default function ProductDetails() {
       
       // Réinitialiser le formulaire
       setOrderForm({ customerName: '', customerPhone: '', deliveryAddress: '' });
+      setFormErrors({ customerPhone: '' });
       setIsOrderFormOpen(false);
     } catch (error) {
       toast({
@@ -765,9 +828,14 @@ export default function ProductDetails() {
                   value={orderForm.customerPhone}
                   onChange={(e) => handleOrderFormChange('customerPhone', e.target.value)}
                   placeholder={t.order.phone}
-                  className={`h-10 sm:h-12 border-2 border-purple-200 rounded-xl focus:border-purple-500 transition-colors ${direction === 'rtl' ? 'text-right' : 'text-left'}`}
+                  className={`h-10 sm:h-12 border-2 border-purple-200 rounded-xl focus:border-purple-500 transition-colors ${direction === 'rtl' ? 'text-right' : 'text-left'} ${formErrors.customerPhone ? 'border-red-500' : ''}`}
                   dir={direction}
                 />
+                {formErrors.customerPhone && (
+                  <p className={`text-red-500 text-sm mt-1 ${direction === 'rtl' ? 'text-right' : 'text-left'}`}>
+                    {formErrors.customerPhone}
+                  </p>
+                )}
               </div>
               
               <div>
