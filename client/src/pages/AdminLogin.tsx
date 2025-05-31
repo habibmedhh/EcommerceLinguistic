@@ -99,12 +99,6 @@ export default function AdminLogin() {
                 Se connecter
               </Button>
             </form>
-
-            <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-              <p className="text-sm text-blue-800 font-medium">Compte de test :</p>
-              <p className="text-xs text-blue-600">Utilisateur: admin</p>
-              <p className="text-xs text-blue-600">Mot de passe: admin123</p>
-            </div>
           </CardContent>
         </Card>
       </div>
