@@ -1,12 +1,29 @@
-import React, { useEffect } from 'react';
-import { useLocation } from 'wouter';
+import React, { useEffect, useState } from 'react';
+import { useLocation, Link } from 'wouter';
 import { NotificationManager } from './AdminNotification';
 import { NotificationIcon } from './NotificationIcon';
 import { useI18n } from '@/providers/I18nProvider';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Settings, LogOut } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { 
+  Settings, 
+  LogOut, 
+  LayoutDashboard, 
+  Package, 
+  ShoppingCart, 
+  FolderTree, 
+  Users, 
+  Store,
+  Menu,
+  X,
+  PlusCircle,
+  BarChart3,
+  Bell
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -14,8 +31,9 @@ interface AdminLayoutProps {
 
 export function AdminLayout({ children }: AdminLayoutProps) {
   const { t } = useI18n();
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
   const { isAuthenticated, isLoading, logout } = useAdminAuth();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Rediriger vers la page de connexion si pas authentifié
   useEffect(() => {
@@ -84,37 +102,176 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     // Ici on ajoutera la logique pour tout marquer comme lu
   };
 
+  // Menu de navigation
+  const navigationItems = [
+    {
+      title: 'Tableau de bord',
+      href: '/admin/dashboard',
+      icon: LayoutDashboard,
+      active: location === '/admin/dashboard' || location === '/admin'
+    },
+    {
+      title: 'Commandes',
+      href: '/admin/orders',
+      icon: ShoppingCart,
+      active: location === '/admin/orders',
+      badge: mockNotifications.filter(n => !n.read).length
+    },
+    {
+      title: 'Produits',
+      href: '/admin/products',
+      icon: Package,
+      active: location?.startsWith('/admin/products'),
+      submenu: [
+        { title: 'Liste des produits', href: '/admin/products' },
+        { title: 'Ajouter un produit', href: '/admin/products/new' }
+      ]
+    },
+    {
+      title: 'Catégories',
+      href: '/admin/categories',
+      icon: FolderTree,
+      active: location === '/admin/categories'
+    },
+    {
+      title: 'Administrateurs',
+      href: '/admin/admins',
+      icon: Users,
+      active: location === '/admin/admins'
+    },
+    {
+      title: 'Paramètres',
+      href: '/admin/settings',
+      icon: Settings,
+      active: location === '/admin/settings'
+    }
+  ];
+
   return (
     <NotificationManager>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-        {/* Barre de navigation admin */}
-        <Card className="rounded-none border-b shadow-sm">
-          <CardHeader className="py-4">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                🛡️ Admin Dashboard
-              </CardTitle>
+      <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
+        {/* Sidebar */}
+        <div className={cn(
+          "fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 shadow-lg transform transition-transform duration-200 ease-in-out lg:translate-x-0 lg:static lg:inset-0",
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        )}>
+          <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+            <h1 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Admin Panel
+            </h1>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => setSidebarOpen(false)}
+              className="lg:hidden"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+
+          <nav className="p-4 space-y-2">
+            {navigationItems.map((item) => (
+              <div key={item.href}>
+                <Link href={item.href}>
+                  <Button 
+                    variant={item.active ? "default" : "ghost"}
+                    className={cn(
+                      "w-full justify-start gap-3",
+                      item.active && "bg-blue-600 text-white hover:bg-blue-700"
+                    )}
+                    onClick={() => setSidebarOpen(false)}
+                  >
+                    <item.icon className="h-4 w-4" />
+                    <span className="flex-1 text-left">{item.title}</span>
+                    {item.badge && item.badge > 0 && (
+                      <Badge variant="destructive" className="text-xs">
+                        {item.badge}
+                      </Badge>
+                    )}
+                  </Button>
+                </Link>
+
+                {/* Sous-menu pour les produits */}
+                {item.submenu && item.active && (
+                  <div className="ml-6 mt-2 space-y-1">
+                    {item.submenu.map((subItem) => (
+                      <Link key={subItem.href} href={subItem.href}>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="w-full justify-start text-sm text-gray-600 hover:text-gray-900"
+                          onClick={() => setSidebarOpen(false)}
+                        >
+                          {subItem.title}
+                        </Button>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </nav>
+
+          <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-700">
+            <Button 
+              variant="ghost" 
+              className="w-full justify-start gap-3 text-red-600 hover:text-red-700 hover:bg-red-50"
+              onClick={handleLogout}
+            >
+              <LogOut className="h-4 w-4" />
+              Déconnexion
+            </Button>
+          </div>
+        </div>
+
+        {/* Contenu principal */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {/* Barre supérieure */}
+          <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between px-6 py-4">
+              <div className="flex items-center gap-4">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => setSidebarOpen(true)}
+                  className="lg:hidden"
+                >
+                  <Menu className="h-4 w-4" />
+                </Button>
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                  {navigationItems.find(item => item.active)?.title || 'Administration'}
+                </h2>
+              </div>
+
               <div className="flex items-center gap-3">
                 <NotificationIcon 
                   notifications={mockNotifications}
                   onMarkAsRead={handleMarkAsRead}
                   onMarkAllAsRead={handleMarkAllAsRead}
                 />
-                <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-900">
-                  <Settings className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-900" onClick={handleLogout}>
-                  <LogOut className="h-4 w-4" />
-                </Button>
+                <Link href="/">
+                  <Button variant="outline" size="sm" className="gap-2">
+                    <Store className="h-4 w-4" />
+                    Voir le site
+                  </Button>
+                </Link>
               </div>
             </div>
-          </CardHeader>
-        </Card>
-        
-        {/* Contenu principal */}
-        <div className="p-6">
-          {children}
+          </header>
+
+          {/* Zone de contenu */}
+          <main className="flex-1 overflow-y-auto p-6">
+            {children}
+          </main>
         </div>
+
+        {/* Overlay pour mobile */}
+        {sidebarOpen && (
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
       </div>
     </NotificationManager>
   );
