@@ -152,6 +152,22 @@ export interface Translation {
     minutesAgo: string;
     hoursAgo: string;
   };
+  // Cart
+  cart: {
+    title: string;
+    empty: string;
+    emptyMessage: string;
+    continueShopping: string;
+    orderSummary: string;
+    checkout: string;
+    clearCart: string;
+    quantity: string;
+    remove: string;
+    subtotal: string;
+    shipping: string;
+    tax: string;
+    total: string;
+  };
   // Common
   common: {
     loading: string;
@@ -171,6 +187,7 @@ export interface Translation {
     status: string;
     date: string;
     actions: string;
+    back: string;
   };
 }
 
@@ -318,6 +335,21 @@ export const translations: Record<string, Translation> = {
       minutesAgo: "min ago",
       hoursAgo: "h ago"
     },
+    cart: {
+      title: "Shopping Cart",
+      empty: "Empty Cart",
+      emptyMessage: "Your cart is empty",
+      continueShopping: "Continue Shopping",
+      orderSummary: "Order Summary",
+      checkout: "Checkout",
+      clearCart: "Clear Cart",
+      quantity: "Quantity",
+      remove: "Remove",
+      subtotal: "Subtotal",
+      shipping: "Shipping",
+      tax: "Tax",
+      total: "Total"
+    },
     common: {
       loading: "Loading...",
       error: "An error occurred",
@@ -335,7 +367,8 @@ export const translations: Record<string, Translation> = {
       total: "Total",
       status: "Status",
       date: "Date",
-      actions: "Actions"
+      actions: "Actions",
+      back: "Back"
     }
   },
   fr: {

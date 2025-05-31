@@ -56,17 +56,19 @@ export function Header() {
               <Search className="h-5 w-5" />
             </Button>
 
-            <Button variant="ghost" size="sm" className="relative p-2">
-              <ShoppingCart className="h-5 w-5" />
-              {cart.count > 0 && (
-                <Badge 
-                  variant="destructive" 
-                  className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 text-xs flex items-center justify-center"
-                >
-                  {cart.count}
-                </Badge>
-              )}
-            </Button>
+            <Link href="/cart">
+              <Button variant="ghost" size="sm" className="relative p-2">
+                <ShoppingCart className="h-5 w-5" />
+                {cart.count > 0 && (
+                  <Badge 
+                    variant="destructive" 
+                    className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 text-xs flex items-center justify-center"
+                  >
+                    {cart.count}
+                  </Badge>
+                )}
+              </Button>
+            </Link>
 
             <Link href="/admin">
               <Button variant="ghost" size="sm" className="p-2" title="Administration">
