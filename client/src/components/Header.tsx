@@ -41,9 +41,6 @@ export function Header() {
             <Link href="#contact" className="text-gray-700 hover:text-purple-600 transition-colors font-medium">
               {t.nav.contact}
             </Link>
-            <Link href="/admin" className="text-gray-700 hover:text-purple-600 transition-colors font-medium">
-              {t.nav.admin}
-            </Link>
           </nav>
 
           {/* Actions */}

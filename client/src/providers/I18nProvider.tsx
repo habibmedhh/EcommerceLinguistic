@@ -6,7 +6,7 @@ const I18nContext = createContext<I18nContextType | undefined>(undefined);
 export function I18nProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguage] = useState<Language>(() => {
     const stored = localStorage.getItem("preferred-language");
-    return (stored as Language) || "en";
+    return (stored as Language) || "ar";
   });
 
   useEffect(() => {
