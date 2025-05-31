@@ -476,7 +476,7 @@ export default function OrdersManagement() {
                   Back to Dashboard
                 </Button>
               </Link>
-              <h1 className="text-2xl font-bold">Orders Management</h1>
+              <h1 className="text-2xl font-bold">{t.admin.ordersManagement}</h1>
             </div>
             
             <div className="flex gap-2">

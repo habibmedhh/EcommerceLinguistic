@@ -105,6 +105,39 @@ export interface Translation {
     stockLevel: string;
     inventory: string;
     categories: string;
+    ordersManagement: string;
+    productsManagement: string;
+    categoriesManagement: string;
+    storeSettings: string;
+    search: string;
+    filter: string;
+    all: string;
+    pending: string;
+    confirmed: string;
+    shipped: string;
+    delivered: string;
+    cancelled: string;
+    customerName: string;
+    phone: string;
+    address: string;
+    orderDate: string;
+    status: string;
+    amount: string;
+    actions: string;
+    viewDetails: string;
+    updateStatus: string;
+    deleteOrder: string;
+    printLabel: string;
+    exportSelected: string;
+    name: string;
+    price: string;
+    category: string;
+    stock: string;
+    active: string;
+    inactive: string;
+    addProduct: string;
+    editProduct: string;
+    deleteProduct: string;
   };
   // Notifications
   notifications: {
@@ -238,7 +271,40 @@ export const translations: Record<string, Translation> = {
       noSales: "No sales",
       stockLevel: "Stock Level",
       inventory: "Inventory",
-      categories: "Categories"
+      categories: "Categories",
+      ordersManagement: "Orders Management",
+      productsManagement: "Products Management",
+      categoriesManagement: "Categories Management",
+      storeSettings: "Store Settings",
+      search: "Search",
+      filter: "Filter",
+      all: "All",
+      pending: "Pending",
+      confirmed: "Confirmed",
+      shipped: "Shipped",
+      delivered: "Delivered",
+      cancelled: "Cancelled",
+      customerName: "Customer Name",
+      phone: "Phone",
+      address: "Address",
+      orderDate: "Order Date",
+      status: "Status",
+      amount: "Amount",
+      actions: "Actions",
+      viewDetails: "View Details",
+      updateStatus: "Update Status",
+      deleteOrder: "Delete Order",
+      printLabel: "Print Label",
+      exportSelected: "Export Selected",
+      name: "Name",
+      price: "Price",
+      category: "Category",
+      stock: "Stock",
+      active: "Active",
+      inactive: "Inactive",
+      addProduct: "Add Product",
+      editProduct: "Edit Product",
+      deleteProduct: "Delete Product"
     },
     notifications: {
       title: "Notifications",
@@ -368,7 +434,40 @@ export const translations: Record<string, Translation> = {
       noSales: "Aucune vente",
       stockLevel: "Niveau de Stock",
       inventory: "Inventaire",
-      categories: "Catégories"
+      categories: "Catégories",
+      ordersManagement: "Gestion des Commandes",
+      productsManagement: "Gestion des Produits",
+      categoriesManagement: "Gestion des Catégories",
+      storeSettings: "Paramètres du Magasin",
+      search: "Rechercher",
+      filter: "Filtrer",
+      all: "Tous",
+      pending: "En attente",
+      confirmed: "Confirmé",
+      shipped: "Expédié",
+      delivered: "Livré",
+      cancelled: "Annulé",
+      customerName: "Nom du Client",
+      phone: "Téléphone",
+      address: "Adresse",
+      orderDate: "Date de Commande",
+      status: "Statut",
+      amount: "Montant",
+      actions: "Actions",
+      viewDetails: "Voir Détails",
+      updateStatus: "Mettre à jour le Statut",
+      deleteOrder: "Supprimer Commande",
+      printLabel: "Imprimer Étiquette",
+      exportSelected: "Exporter Sélection",
+      name: "Nom",
+      price: "Prix",
+      category: "Catégorie",
+      stock: "Stock",
+      active: "Actif",
+      inactive: "Inactif",
+      addProduct: "Ajouter Produit",
+      editProduct: "Modifier Produit",
+      deleteProduct: "Supprimer Produit"
     },
     notifications: {
       title: "Notifications",
@@ -498,7 +597,40 @@ export const translations: Record<string, Translation> = {
       noSales: "لا توجد مبيعات",
       stockLevel: "مستوى المخزون",
       inventory: "المخزون",
-      categories: "التصنيفات"
+      categories: "التصنيفات",
+      ordersManagement: "إدارة الطلبات",
+      productsManagement: "إدارة المنتجات",
+      categoriesManagement: "إدارة التصنيفات",
+      storeSettings: "إعدادات المتجر",
+      search: "البحث",
+      filter: "تصفية",
+      all: "الكل",
+      pending: "قيد الانتظار",
+      confirmed: "مؤكد",
+      shipped: "تم الشحن",
+      delivered: "تم التسليم",
+      cancelled: "ملغي",
+      customerName: "اسم العميل",
+      phone: "الهاتف",
+      address: "العنوان",
+      orderDate: "تاريخ الطلب",
+      status: "الحالة",
+      amount: "المبلغ",
+      actions: "الإجراءات",
+      viewDetails: "عرض التفاصيل",
+      updateStatus: "تحديث الحالة",
+      deleteOrder: "حذف الطلب",
+      printLabel: "طباعة الملصق",
+      exportSelected: "تصدير المحدد",
+      name: "الاسم",
+      price: "السعر",
+      category: "التصنيف",
+      stock: "المخزون",
+      active: "نشط",
+      inactive: "غير نشط",
+      addProduct: "إضافة منتج",
+      editProduct: "تعديل المنتج",
+      deleteProduct: "حذف المنتج"
     },
     notifications: {
       title: "الإشعارات",
