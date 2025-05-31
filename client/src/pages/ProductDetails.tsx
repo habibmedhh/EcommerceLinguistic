@@ -52,10 +52,6 @@ export default function ProductDetails() {
     customerPhone: '',
     deliveryAddress: ''
   });
-  
-  const [formErrors, setFormErrors] = useState({
-    customerPhone: ''
-  });
 
   if (isLoading) {
     return (
@@ -103,36 +99,24 @@ export default function ProductDetails() {
   };
 
   const handleBuyNow = () => {
-    // Toujours ouvrir le formulaire pour que l'utilisateur puisse saisir ses informations
-    setIsOrderFormOpen(true);
-  };
-
-  const validatePhoneNumber = (phone: string) => {
-    const cleanPhone = phone.replace(/\s+/g, '').replace(/[^\d]/g, '');
-    if (cleanPhone.length < 10) {
-      return language === 'ar' ? 'يجب أن يحتوي رقم الهاتف على 10 أرقام على الأقل' : 
-             language === 'fr' ? 'Le numéro de téléphone doit contenir au moins 10 chiffres' : 
-             'Phone number must contain at least 10 digits';
+    // Si le formulaire n'est pas complet, diriger vers le formulaire
+    if (!isFormComplete()) {
+      navigateToForm();
+      return;
     }
-    return '';
+    
+    // Si le formulaire est complet, procéder à la commande
+    handleSubmitOrder();
   };
 
   const handleOrderFormChange = (field: string, value: string) => {
     setOrderForm(prev => ({ ...prev, [field]: value }));
-    
-    // Validation en temps réel pour le téléphone
-    if (field === 'customerPhone') {
-      const error = validatePhoneNumber(value);
-      setFormErrors(prev => ({ ...prev, customerPhone: error }));
-    }
   };
 
   const isFormComplete = () => {
-    const phoneError = validatePhoneNumber(orderForm.customerPhone);
     return orderForm.customerName.trim() && 
            orderForm.customerPhone.trim() && 
-           orderForm.deliveryAddress.trim() &&
-           !phoneError;
+           orderForm.deliveryAddress.trim();
   };
 
   const navigateToForm = () => {
@@ -142,48 +126,29 @@ export default function ProductDetails() {
       className: "bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0",
     });
     
-    // Toujours ouvrir le modal de formulaire pour une expérience cohérente
-    setIsOrderFormOpen(true);
-  };
-
-  // Animation de confettis
-  const createConfetti = () => {
-    const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#98D8C8'];
-    const confettiCount = 50;
+    // Sur mobile, créer un formulaire de commande modal ou faire défiler vers la section
+    const isMobile = window.innerWidth < 768;
     
-    for (let i = 0; i < confettiCount; i++) {
-      setTimeout(() => {
-        const confetti = document.createElement('div');
-        confetti.style.position = 'fixed';
-        confetti.style.left = Math.random() * window.innerWidth + 'px';
-        confetti.style.top = '-10px';
-        confetti.style.width = '10px';
-        confetti.style.height = '10px';
-        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-        confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0%';
-        confetti.style.zIndex = '9999';
-        confetti.style.pointerEvents = 'none';
-        confetti.style.animation = `confetti-fall ${2 + Math.random() * 3}s linear forwards`;
-        
-        document.body.appendChild(confetti);
-        
+    if (isMobile) {
+      // Pour mobile, on peut faire défiler vers le haut pour révéler plus d'infos
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Ou afficher un modal de formulaire de commande mobile
+      setIsOrderFormOpen(true);
+    } else {
+      // Sur desktop, faire défiler vers le formulaire
+      const formElement = document.querySelector('.order-form');
+      if (formElement) {
+        formElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Highlight le formulaire temporairement
+        formElement.classList.add('ring-4', 'ring-purple-300', 'ring-opacity-75');
         setTimeout(() => {
-          if (confetti.parentNode) {
-            confetti.parentNode.removeChild(confetti);
-          }
-        }, 5000);
-      }, i * 100);
+          formElement.classList.remove('ring-4', 'ring-purple-300', 'ring-opacity-75');
+        }, 2000);
+      }
     }
   };
 
   const handleSubmitOrder = async () => {
-    // Validation du téléphone avant soumission
-    const phoneError = validatePhoneNumber(orderForm.customerPhone);
-    if (phoneError) {
-      setFormErrors(prev => ({ ...prev, customerPhone: phoneError }));
-      return;
-    }
-
     // Si le formulaire n'est pas complet, diriger vers le formulaire
     if (!isFormComplete()) {
       navigateToForm();
@@ -214,9 +179,6 @@ export default function ProductDetails() {
 
       await createOrder.mutateAsync(orderData);
       
-      // Déclencher l'animation de confettis
-      createConfetti();
-      
       // Afficher le message de confirmation avec couleurs sympas
       toast({
         title: t.order.confirmed,
@@ -226,7 +188,6 @@ export default function ProductDetails() {
       
       // Réinitialiser le formulaire
       setOrderForm({ customerName: '', customerPhone: '', deliveryAddress: '' });
-      setFormErrors({ customerPhone: '' });
       setIsOrderFormOpen(false);
     } catch (error) {
       toast({
@@ -693,7 +654,7 @@ export default function ProductDetails() {
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-white to-white/95 backdrop-blur-sm border-t shadow-2xl md:hidden z-50">
         <div className="flex gap-3">
           <Button 
-            onClick={handleBuyNow}
+            onClick={handleSubmitOrder}
             className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-4 rounded-2xl shadow-lg animate-pulse relative overflow-hidden"
             disabled={createOrder.isPending}
             style={{
@@ -804,14 +765,9 @@ export default function ProductDetails() {
                   value={orderForm.customerPhone}
                   onChange={(e) => handleOrderFormChange('customerPhone', e.target.value)}
                   placeholder={t.order.phone}
-                  className={`h-10 sm:h-12 border-2 border-purple-200 rounded-xl focus:border-purple-500 transition-colors ${direction === 'rtl' ? 'text-right' : 'text-left'} ${formErrors.customerPhone ? 'border-red-500' : ''}`}
+                  className={`h-10 sm:h-12 border-2 border-purple-200 rounded-xl focus:border-purple-500 transition-colors ${direction === 'rtl' ? 'text-right' : 'text-left'}`}
                   dir={direction}
                 />
-                {formErrors.customerPhone && (
-                  <p className={`text-red-500 text-sm mt-1 ${direction === 'rtl' ? 'text-right' : 'text-left'}`}>
-                    {formErrors.customerPhone}
-                  </p>
-                )}
               </div>
               
               <div>
