@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 
 export default function Dashboard() {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const [timePeriod, setTimePeriod] = useState("7"); // 7 days, 30 days, 90 days
   const { data: stats, isLoading: statsLoading } = useOrderStats();
   const { data: productsData, isLoading: productsLoading } = useProducts();
@@ -102,21 +102,21 @@ export default function Dashboard() {
                   <div className="text-2xl font-bold">{stats?.totalOrders || 0}</div>
                   <div className="text-xs text-green-600 flex items-center mt-1">
                     <TrendingUp className="h-3 w-3 mr-1" />
-                    +8.2% from last week
+                    +8.2%
                   </div>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Profit</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t.admin.totalRevenue}</CardTitle>
                   <DollarSign className="h-4 w-4 text-green-600" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{(orderAnalytics?.totalProfit || 0).toFixed(2)}{settings?.currencySymbol || '€'}</div>
                   <div className="text-xs text-green-600 flex items-center mt-1">
                     <TrendingUp className="h-3 w-3 mr-1" />
-                    Margin: {avgProfitMargin.toFixed(1)}%
+                    {avgProfitMargin.toFixed(1)}%
                   </div>
                 </CardContent>
               </Card>
@@ -129,7 +129,7 @@ export default function Dashboard() {
                 <CardContent>
                   <div className="text-2xl font-bold">{stats?.pendingOrders || 0}</div>
                   <div className="text-xs text-gray-600 mt-1">
-                    Requires attention
+                    {t.admin.pendingOrders}
                   </div>
                 </CardContent>
               </Card>
@@ -142,7 +142,7 @@ export default function Dashboard() {
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
                   <CardTitle className="flex items-center gap-2">
                     <BarChart3 className="h-5 w-5 text-blue-600" />
-                    Ventes par Date
+                    {language === 'ar' ? 'المبيعات حسب التاريخ' : language === 'fr' ? 'Ventes par Date' : 'Sales by Date'}
                   </CardTitle>
                   <Select value={timePeriod} onValueChange={setTimePeriod}>
                     <SelectTrigger className="w-28">
@@ -159,7 +159,7 @@ export default function Dashboard() {
                   <div className="space-y-6">
                     {/* Sales Amount Chart */}
                     <div>
-                      <h4 className="text-sm font-medium text-gray-700 mb-3">Montant des Ventes</h4>
+                      <h4 className="text-sm font-medium text-gray-700 mb-3">{language === 'ar' ? 'مبلغ المبيعات' : language === 'fr' ? 'Montant des Ventes' : 'Sales Amount'}</h4>
                       <div className="space-y-3">
                         {dailyStats && dailyStats.length > 0 ? dailyStats.filter(day => day.revenue > 0).slice(-7).map((day, index) => (
                           <div key={day.date} className="flex items-center justify-between">
