@@ -189,7 +189,7 @@ export default function ProductsManagement() {
                   Back to Dashboard
                 </Button>
               </Link>
-              <h1 className="text-2xl font-bold">Products Management</h1>
+              <h1 className="text-2xl font-bold">{t.admin.productsManagement}</h1>
             </div>
             
             <Link href="/admin/products/new">

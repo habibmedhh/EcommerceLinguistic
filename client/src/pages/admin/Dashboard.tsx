@@ -504,7 +504,7 @@ export default function Dashboard() {
             <div className="text-center py-8">
               <p className="text-gray-600 mb-4">Order management interface</p>
               <Link href="/admin/orders">
-                <Button>Go to Orders Management</Button>
+                <Button>{t.admin.ordersManagement}</Button>
               </Link>
             </div>
           </TabsContent>
@@ -513,7 +513,7 @@ export default function Dashboard() {
             <div className="text-center py-8">
               <p className="text-gray-600 mb-4">Product management interface</p>
               <Link href="/admin/products">
-                <Button>Go to Products Management</Button>
+                <Button>{t.admin.productsManagement}</Button>
               </Link>
             </div>
           </TabsContent>
@@ -521,7 +521,7 @@ export default function Dashboard() {
           <TabsContent value="settings">
             <Card>
               <CardHeader>
-                <CardTitle>Settings</CardTitle>
+                <CardTitle>{t.admin.settings}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
