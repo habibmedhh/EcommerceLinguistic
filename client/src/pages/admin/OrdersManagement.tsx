@@ -45,7 +45,13 @@ export default function OrdersManagement() {
   const [selectedOrderIds, setSelectedOrderIds] = useState<number[]>([]);
   const [isOrderDialogOpen, setIsOrderDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isBulkEditDialogOpen, setIsBulkEditDialogOpen] = useState(false);
   const [editingOrder, setEditingOrder] = useState<any>(null);
+  const [bulkEditData, setBulkEditData] = useState({
+    customerName: "",
+    customerPhone: "",
+    deliveryAddress: ""
+  });
 
   const statusOptions = [
     { value: "all", label: "All Status" },
