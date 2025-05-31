@@ -514,7 +514,7 @@ export default function ProductDetails() {
                 </div>
                 
                 <Button 
-                  onClick={handleSubmitOrder}
+                  onClick={handleBuyNow}
                   disabled={createOrder.isPending}
                   className="w-full py-4 text-lg font-bold bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-xl shadow-xl transform hover:scale-105 transition-all duration-300 relative overflow-hidden"
                 >
@@ -671,7 +671,7 @@ export default function ProductDetails() {
                 
                 <div className="space-y-3">
                   <Button 
-                    onClick={handleSubmitOrder}
+                    onClick={handleBuyNow}
                     className="w-full purple-gradient text-white hover:scale-105 transition-transform"
                     size="lg"
                     disabled={createOrder.isPending}
