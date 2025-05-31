@@ -31,7 +31,7 @@ export const useCart = () => {
 
   const calculateTotals = (items: CartItem[]) => {
     const total = items.reduce((sum, item) => {
-      const price = parseFloat(item.product.salePrice || item.product.price);
+      const price = parseFloat(item.product.price);
       return sum + (price * item.quantity);
     }, 0);
     const count = items.reduce((sum, item) => sum + item.quantity, 0);
@@ -91,12 +91,23 @@ export const useCart = () => {
     return cart.items.find(item => item.product.id === productId);
   };
 
+  const getTotalPrice = (): number => {
+    return cart.total;
+  };
+
+  const getTotalItems = (): number => {
+    return cart.count;
+  };
+
   return {
     cart,
+    items: cart.items,
     addToCart,
     removeFromCart,
     updateQuantity,
     clearCart,
     getCartItem,
+    getTotalPrice,
+    getTotalItems,
   };
 };

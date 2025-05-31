@@ -10,6 +10,7 @@ import Home from "@/pages/Home";
 import Categories from "@/pages/Categories";
 import Products from "@/pages/Products";
 import ProductDetails from "@/pages/ProductDetails";
+import Cart from "@/pages/Cart";
 import AdminLogin from "@/pages/AdminLogin";
 import Dashboard from "@/pages/admin/Dashboard";
 import ProductsManagement from "@/pages/admin/ProductsManagement";
