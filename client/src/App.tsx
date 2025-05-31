@@ -4,7 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { I18nProvider } from "@/providers/I18nProvider";
-import { NotificationManager } from "@/components/AdminNotification";
+import { AdminLayout } from "@/components/AdminLayout";
 import Home from "@/pages/Home";
 import Categories from "@/pages/Categories";
 import Products from "@/pages/Products";
@@ -24,14 +24,14 @@ function Router() {
       <Route path="/categories" component={Categories} />
       <Route path="/products" component={Products} />
       <Route path="/product/:id" component={ProductDetails} />
-      <Route path="/admin" component={Dashboard} />
-      <Route path="/admin/dashboard" component={Dashboard} />
-      <Route path="/admin/products" component={ProductsManagement} />
-      <Route path="/admin/products/new" component={ProductEditorSimple} />
-      <Route path="/admin/products/edit/:id" component={ProductEditorSimple} />
-      <Route path="/admin/orders" component={OrdersManagement} />
-      <Route path="/admin/categories" component={CategoriesManagement} />
-      <Route path="/admin/settings" component={StoreSettings} />
+      <Route path="/admin" component={() => <AdminLayout><Dashboard /></AdminLayout>} />
+      <Route path="/admin/dashboard" component={() => <AdminLayout><Dashboard /></AdminLayout>} />
+      <Route path="/admin/products" component={() => <AdminLayout><ProductsManagement /></AdminLayout>} />
+      <Route path="/admin/products/new" component={() => <AdminLayout><ProductEditorSimple /></AdminLayout>} />
+      <Route path="/admin/products/edit/:id" component={() => <AdminLayout><ProductEditorSimple /></AdminLayout>} />
+      <Route path="/admin/orders" component={() => <AdminLayout><OrdersManagement /></AdminLayout>} />
+      <Route path="/admin/categories" component={() => <AdminLayout><CategoriesManagement /></AdminLayout>} />
+      <Route path="/admin/settings" component={() => <AdminLayout><StoreSettings /></AdminLayout>} />
       <Route component={NotFound} />
     </Switch>
   );
@@ -42,10 +42,8 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <I18nProvider>
         <TooltipProvider>
-          <NotificationManager>
-            <Toaster />
-            <Router />
-          </NotificationManager>
+          <Toaster />
+          <Router />
         </TooltipProvider>
       </I18nProvider>
     </QueryClientProvider>
