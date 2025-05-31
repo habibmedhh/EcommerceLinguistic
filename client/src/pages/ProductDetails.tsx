@@ -261,7 +261,6 @@ export default function ProductDetails() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
       <Header />
-      
       <div className="container mx-auto px-4 pt-24 pb-16">
 
 
@@ -506,7 +505,7 @@ export default function ProductDetails() {
                 {/* Résumé de commande avec animation LED */}
                 <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-4 rounded-xl border-2 border-dashed border-gray-300">
                   <div className="flex justify-between items-center">
-                    <span className="text-lg font-semibold text-gray-700">💰 Total:</span>
+                    <span className="text-lg font-semibold text-gray-700">💰 Total</span>
                     <span className="text-2xl font-bold text-green-600 animate-pulse">
                       {(discountedPrice ? discountedPrice * quantity : originalPrice * quantity).toFixed(2)} DH
                     </span>
@@ -728,7 +727,6 @@ export default function ProductDetails() {
           </CardContent>
         </Card>
       </div>
-
       {/* Bouton de commande flottant animé pour mobile */}
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-white to-white/95 backdrop-blur-sm border-t shadow-2xl md:hidden z-50">
         <div className="flex gap-3">
@@ -758,7 +756,6 @@ export default function ProductDetails() {
           </Button>
         </div>
       </div>
-
       {/* Modal de formulaire de commande stylé pour mobile */}
       <Dialog open={isOrderFormOpen} onOpenChange={setIsOrderFormOpen}>
         <DialogContent className="sm:max-w-[480px] mx-2 my-4 p-0 gap-0 bg-gradient-to-br from-purple-50 via-white to-blue-50 max-h-[90vh] overflow-y-auto" dir={direction}>
@@ -889,7 +886,6 @@ export default function ProductDetails() {
           </div>
         </DialogContent>
       </Dialog>
-
       {/* Galerie d'images détaillées */}
       {productImages.length > 1 && (
         <Card className="mt-8">
