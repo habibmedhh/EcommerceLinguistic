@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useI18n } from "@/providers/I18nProvider";
 import { useProduct, useCreateProduct, useUpdateProduct } from "@/hooks/useProducts";
 import { useCategories } from "@/hooks/useCategories";
+import { useSettings } from "@/hooks/useSettings";
 import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -33,6 +34,7 @@ export default function ProductEditorSimple() {
   const isEdit = !!id;
   const { data: product } = useProduct(isEdit ? parseInt(id) : 0);
   const { data: categories = [] } = useCategories();
+  const { data: settings } = useSettings();
   const createProduct = useCreateProduct();
   const updateProduct = useUpdateProduct();
 
@@ -308,7 +310,7 @@ export default function ProductEditorSimple() {
               <CardContent className="space-y-4">
                 <div className="grid md:grid-cols-3 gap-4">
                   <div>
-                    <Label htmlFor="price">Prix de vente (€) *</Label>
+                    <Label htmlFor="price">Prix de vente ({settings?.currencySymbol || '€'}) *</Label>
                     <Input
                       id="price"
                       type="number"
@@ -319,7 +321,7 @@ export default function ProductEditorSimple() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="costPrice">Prix de revient (€)</Label>
+                    <Label htmlFor="costPrice">Prix de revient ({settings?.currencySymbol || '€'})</Label>
                     <Input
                       id="costPrice"
                       type="number"
@@ -385,7 +387,7 @@ export default function ProductEditorSimple() {
                       <div>
                         <span className="text-gray-600">Bénéfice unitaire:</span>
                         <div className="font-bold text-green-700">
-                          {(parseFloat(productData.price) - parseFloat(productData.costPrice || "0")).toFixed(2)} €
+                          {(parseFloat(productData.price) - parseFloat(productData.costPrice || "0")).toFixed(2)} {settings?.currencySymbol || '€'}
                         </div>
                       </div>
                       <div>
