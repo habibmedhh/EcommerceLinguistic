@@ -27,7 +27,6 @@ interface OrderFormProps {
 export function OrderForm({ open, onClose, initialItems = [], totalAmount = "0" }: OrderFormProps) {
   const { t } = useI18n();
   const { toast } = useToast();
-  const createOrder = useCreateOrder();
   
   const [formData, setFormData] = useState({
     customerName: "",
@@ -37,6 +36,8 @@ export function OrderForm({ open, onClose, initialItems = [], totalAmount = "0" 
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
+
+  const createOrder = useCreateOrder();
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -60,22 +61,25 @@ export function OrderForm({ open, onClose, initialItems = [], totalAmount = "0" 
       totalAmount,
     };
 
-    try {
-      await createOrder.mutateAsync(orderData);
-      console.log('Order success - setting states:', { isSubmitted: true, showConfetti: true });
-      setIsSubmitted(true);
-      setShowConfetti(true);
-      toast({
-        title: t.order.success,
-        description: "Your order has been placed successfully!",
-      });
-    } catch (error) {
-      toast({
-        title: t.common.error,
-        description: "Failed to place order. Please try again.",
-        variant: "destructive",
-      });
-    }
+    createOrder.mutate(orderData, {
+      onSuccess: () => {
+        console.log('Order success - setting states:', { isSubmitted: true, showConfetti: true });
+        setIsSubmitted(true);
+        setShowConfetti(true);
+        toast({
+          title: t.order.success,
+          description: "Your order has been placed successfully!",
+        });
+      },
+      onError: (error) => {
+        console.error('Order error:', error);
+        toast({
+          title: t.common.error,
+          description: "Failed to place order. Please try again.",
+          variant: "destructive",
+        });
+      }
+    });
   };
 
   const handleClose = () => {
