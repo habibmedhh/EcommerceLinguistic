@@ -111,6 +111,7 @@ export default function ProductEditorSimple() {
         reviews: Array.isArray(product.reviews) ? product.reviews : [],
         averageRating: parseFloat(product.averageRating || "0"),
         reviewCount: product.reviewCount || 0,
+        displayReviewCount: product.displayReviewCount || 0,
       });
       
       // Initialiser les URLs d'images
@@ -758,10 +759,37 @@ export default function ProductEditorSimple() {
                     </div>
                   </div>
                   <div>
-                    <Label>Nombre d'avis</Label>
+                    <Label>Nombre d'avis (réel)</Label>
                     <div className="text-2xl font-bold text-blue-600">
                       {productData.reviewCount}
                     </div>
+                  </div>
+                </div>
+
+                {/* Nombre d'avis à afficher pour le marketing */}
+                <div className="border rounded-lg p-4 space-y-4">
+                  <h4 className="font-semibold text-orange-600">Paramètres d'affichage Marketing</h4>
+                  <div className="space-y-2">
+                    <Label htmlFor="displayReviewCount">
+                      Nombre d'avis à afficher publiquement 
+                      <span className="text-sm text-gray-500 ml-2">(pour le marketing - peut être différent du nombre réel)</span>
+                    </Label>
+                    <Input
+                      id="displayReviewCount"
+                      type="number"
+                      min="0"
+                      value={productData.displayReviewCount}
+                      onChange={(e) => setProductData(prev => ({ 
+                        ...prev, 
+                        displayReviewCount: parseInt(e.target.value) || 0 
+                      }))}
+                      placeholder="Ex: 1500"
+                      className="w-full"
+                    />
+                    <p className="text-sm text-gray-600">
+                      Ce nombre sera affiché aux clients au lieu du nombre réel d'avis. 
+                      Utile pour améliorer la perception du produit.
+                    </p>
                   </div>
                 </div>
 

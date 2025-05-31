@@ -129,7 +129,7 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
               />
             ))}
           </div>
-          <span className="text-sm text-gray-500">({product.reviewCount || 0})</span>
+          <span className="text-sm text-gray-500">({product.displayReviewCount || product.reviewCount || 0})</span>
         </div>
 
         {/* Product Name */}

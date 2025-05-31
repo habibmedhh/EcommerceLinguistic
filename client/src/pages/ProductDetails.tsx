@@ -341,7 +341,7 @@ export default function ProductDetails() {
                   ))}
                 </div>
                 <span className="text-sm text-gray-600">
-                  ({product.reviewCount || 0} reviews)
+                  ({product.displayReviewCount || product.reviewCount || 0} reviews)
                 </span>
               </div>
 

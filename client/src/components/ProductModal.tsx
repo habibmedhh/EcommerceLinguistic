@@ -166,7 +166,7 @@ export function ProductModal({ product, open, onClose }: ProductModalProps) {
                   />
                 ))}
               </div>
-              <span className="text-gray-600">({product.reviewCount || 0} reviews)</span>
+              <span className="text-gray-600">({product.displayReviewCount || product.reviewCount || 0} reviews)</span>
             </div>
 
             {/* Price */}
