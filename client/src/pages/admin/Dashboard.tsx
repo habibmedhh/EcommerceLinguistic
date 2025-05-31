@@ -142,7 +142,7 @@ export default function Dashboard() {
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
                   <CardTitle className="flex items-center gap-2">
                     <BarChart3 className="h-5 w-5 text-blue-600" />
-                    {language === 'ar' ? 'المبيعات حسب التاريخ' : language === 'fr' ? 'Ventes par Date' : 'Sales by Date'}
+                    {t.admin.salesByDate}
                   </CardTitle>
                   <Select value={timePeriod} onValueChange={setTimePeriod}>
                     <SelectTrigger className="w-28">
@@ -159,7 +159,7 @@ export default function Dashboard() {
                   <div className="space-y-6">
                     {/* Sales Amount Chart */}
                     <div>
-                      <h4 className="text-sm font-medium text-gray-700 mb-3">{language === 'ar' ? 'مبلغ المبيعات' : language === 'fr' ? 'Montant des Ventes' : 'Sales Amount'}</h4>
+                      <h4 className="text-sm font-medium text-gray-700 mb-3">{t.admin.salesAmount}</h4>
                       <div className="space-y-3">
                         {dailyStats && dailyStats.length > 0 ? dailyStats.filter(day => day.revenue > 0).slice(-7).map((day, index) => (
                           <div key={day.date} className="flex items-center justify-between">

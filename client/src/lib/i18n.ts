@@ -97,6 +97,14 @@ export interface Translation {
     securePayment: string;
     returns: string;
     support: string;
+    totalProfit: string;
+    salesByDate: string;
+    salesAmount: string;
+    orderCount: string;
+    noSales: string;
+    stockLevel: string;
+    inventory: string;
+    categories: string;
   };
   // Notifications
   notifications: {
@@ -222,7 +230,15 @@ export const translations: Record<string, Translation> = {
       freeShipping: "Free Shipping",
       securePayment: "Secure Payment",
       returns: "30-Day Returns",
-      support: "24/7 Support"
+      support: "24/7 Support",
+      totalProfit: "Total Profit",
+      salesByDate: "Sales by Date",
+      salesAmount: "Sales Amount",
+      orderCount: "Order Count",
+      noSales: "No sales",
+      stockLevel: "Stock Level",
+      inventory: "Inventory",
+      categories: "Categories"
     },
     notifications: {
       title: "Notifications",
@@ -344,7 +360,15 @@ export const translations: Record<string, Translation> = {
       freeShipping: "Livraison gratuite",
       securePayment: "Paiement sécurisé",
       returns: "Retours 30 jours",
-      support: "Support 24/7"
+      support: "Support 24/7",
+      totalProfit: "Profit Total",
+      salesByDate: "Ventes par Date",
+      salesAmount: "Montant des Ventes",
+      orderCount: "Nombre de Commandes",
+      noSales: "Aucune vente",
+      stockLevel: "Niveau de Stock",
+      inventory: "Inventaire",
+      categories: "Catégories"
     },
     notifications: {
       title: "Notifications",
@@ -466,7 +490,15 @@ export const translations: Record<string, Translation> = {
       freeShipping: "شحن مجاني",
       securePayment: "دفع آمن",
       returns: "إرجاع 30 يوم",
-      support: "دعم 24/7"
+      support: "دعم 24/7",
+      totalProfit: "إجمالي الأرباح",
+      salesByDate: "المبيعات حسب التاريخ",
+      salesAmount: "مبلغ المبيعات",
+      orderCount: "عدد الطلبات",
+      noSales: "لا توجد مبيعات",
+      stockLevel: "مستوى المخزون",
+      inventory: "المخزون",
+      categories: "التصنيفات"
     },
     notifications: {
       title: "الإشعارات",
