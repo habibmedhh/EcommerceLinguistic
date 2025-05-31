@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "wouter";
 import { useI18n } from "@/providers/I18nProvider";
-import { useOrders, useUpdateOrderStatus, useDeleteOrder } from "@/hooks/useOrders";
+import { useOrders, useOrder, useUpdateOrderStatus, useDeleteOrder } from "@/hooks/useOrders";
 import { useSettings } from "@/hooks/useSettings";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -42,8 +42,12 @@ export default function OrdersManagement() {
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
   const [selectedOrderIds, setSelectedOrderIds] = useState<number[]>([]);
   const [isOrderDialogOpen, setIsOrderDialogOpen] = useState(false);
+  
+  // Get detailed order with items when viewing details
+  const { data: orderDetails } = useOrder(selectedOrderId || 0);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isBulkEditDialogOpen, setIsBulkEditDialogOpen] = useState(false);
   const [editingOrder, setEditingOrder] = useState<any>(null);
@@ -712,6 +716,7 @@ export default function OrdersManagement() {
                             variant="outline"
                             onClick={() => {
                               setSelectedOrder(order);
+                              setSelectedOrderId(order.id);
                               setIsOrderDialogOpen(true);
                             }}
                             title="Voir les détails"
@@ -818,6 +823,47 @@ export default function OrdersManagement() {
                     <MapPin className="h-4 w-4 text-gray-400 mt-0.5" />
                     <span>{selectedOrder.deliveryAddress}</span>
                   </p>
+                </div>
+              </div>
+              
+              {/* Ordered Products */}
+              <div>
+                <h3 className="font-semibold mb-2 flex items-center gap-2">
+                  <Package className="h-4 w-4" />
+                  Produits commandés
+                </h3>
+                <div className="border rounded-lg overflow-hidden">
+                  {orderDetails?.items && orderDetails.items.length > 0 ? (
+                    <div className="space-y-0">
+                      {orderDetails.items.map((item, index) => (
+                        <div key={index} className="p-3 border-b last:border-b-0 flex items-center justify-between bg-gray-50">
+                          <div className="flex-1">
+                            <p className="font-medium text-sm">{item.product.name}</p>
+                            <p className="text-xs text-gray-500">{item.product.nameAr}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-sm font-medium">Quantité: {item.quantity}</p>
+                            <p className="text-sm text-purple-600 font-bold">
+                              {parseFloat(item.price).toFixed(2)} {settings?.currencySymbol || 'DH'}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                      <div className="p-3 bg-blue-50 border-t">
+                        <div className="flex justify-between items-center">
+                          <span className="font-semibold">Total de la commande:</span>
+                          <span className="font-bold text-lg text-blue-600">
+                            {parseFloat(selectedOrder.totalAmount).toFixed(2)} {settings?.currencySymbol || 'DH'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="p-4 text-center text-gray-500">
+                      <Package className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                      <p>Aucun produit trouvé pour cette commande</p>
+                    </div>
+                  )}
                 </div>
               </div>
               
