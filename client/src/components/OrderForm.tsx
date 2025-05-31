@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { ShoppingCart, CheckCircle } from "lucide-react";
+import { Confetti } from "@/components/Confetti";
 import type { OrderRequest } from "@/types";
 
 interface OrderFormProps {
@@ -35,6 +36,7 @@ export function OrderForm({ open, onClose, initialItems = [], totalAmount = "0" 
     deliveryAddress: "",
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -61,6 +63,7 @@ export function OrderForm({ open, onClose, initialItems = [], totalAmount = "0" 
     try {
       await createOrder.mutateAsync(orderData);
       setIsSubmitted(true);
+      setShowConfetti(true);
       toast({
         title: t.order.success,
         description: "Your order has been placed successfully!",
@@ -76,6 +79,7 @@ export function OrderForm({ open, onClose, initialItems = [], totalAmount = "0" 
 
   const handleClose = () => {
     setIsSubmitted(false);
+    setShowConfetti(false);
     setFormData({
       customerName: "",
       customerPhone: "",
@@ -87,22 +91,25 @@ export function OrderForm({ open, onClose, initialItems = [], totalAmount = "0" 
 
   if (isSubmitted) {
     return (
-      <Dialog open={open} onOpenChange={handleClose}>
-        <DialogContent className="max-w-md">
-          <div className="text-center py-8">
-            <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">
-              {t.order.success}
-            </h3>
-            <p className="text-gray-600 mb-6">
-              Thank you for your order! We'll contact you soon to confirm the details.
-            </p>
-            <Button onClick={handleClose} className="w-full">
-              Close
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <>
+        <Confetti active={showConfetti} duration={4000} pieces={80} />
+        <Dialog open={open} onOpenChange={handleClose}>
+          <DialogContent className="max-w-md">
+            <div className="text-center py-8">
+              <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                {t.order.success}
+              </h3>
+              <p className="text-gray-600 mb-6">
+                Thank you for your order! We'll contact you soon to confirm the details.
+              </p>
+              <Button onClick={handleClose} className="w-full">
+                Close
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </>
     );
   }
 
