@@ -18,7 +18,8 @@ export const admins = pgTable("admins", {
   username: text("username").notNull().unique(),
   password: text("password").notNull(), // Hash bcrypt
   email: text("email").notNull().unique(),
-  fullName: text("full_name").notNull(),
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name").notNull(),
   role: text("role").notNull().default("admin"), // admin, super_admin
   isActive: boolean("is_active").default(true),
   lastLogin: timestamp("last_login"),

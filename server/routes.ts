@@ -1,8 +1,29 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertProductSchema, insertCategorySchema, insertOrderSchema, insertPromotionSchema } from "@shared/schema";
+import { insertProductSchema, insertCategorySchema, insertOrderSchema, insertPromotionSchema, insertAdminSchema } from "@shared/schema";
 import { z } from "zod";
+
+// Middleware d'authentification admin
+const authenticateAdmin = async (req: any, res: any, next: any) => {
+  const token = req.headers.authorization?.replace('Bearer ', '');
+  
+  if (!token) {
+    return res.status(401).json({ error: 'Token manquant' });
+  }
+
+  try {
+    const admin = await storage.getAdminBySession(token);
+    if (!admin) {
+      return res.status(401).json({ error: 'Session invalide' });
+    }
+    
+    req.admin = admin;
+    next();
+  } catch (error) {
+    return res.status(401).json({ error: 'Erreur d\'authentification' });
+  }
+};
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Categories
@@ -535,6 +556,91 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(setting);
     } catch (error) {
       res.status(500).json({ error: "Failed to update setting" });
+    }
+  });
+
+  // Routes d'authentification admin
+  app.post("/api/admin/login", async (req, res) => {
+    try {
+      const { username, password } = req.body;
+      
+      if (!username || !password) {
+        return res.status(400).json({ error: "Nom d'utilisateur et mot de passe requis" });
+      }
+
+      const admin = await storage.authenticateAdmin(username, password);
+      if (!admin) {
+        return res.status(401).json({ error: "Identifiants invalides" });
+      }
+
+      const session = await storage.createAdminSession(admin.id);
+      
+      res.json({
+        admin: {
+          id: admin.id,
+          username: admin.username,
+          email: admin.email,
+          role: admin.role,
+          firstName: admin.firstName,
+          lastName: admin.lastName
+        },
+        token: session.token
+      });
+    } catch (error) {
+      console.error('Erreur de connexion admin:', error);
+      res.status(500).json({ error: "Erreur interne du serveur" });
+    }
+  });
+
+  app.post("/api/admin/logout", authenticateAdmin, async (req: any, res) => {
+    try {
+      const token = req.headers.authorization?.replace('Bearer ', '');
+      if (token) {
+        await storage.deleteAdminSession(token);
+      }
+      res.json({ message: "Déconnexion réussie" });
+    } catch (error) {
+      res.status(500).json({ error: "Erreur lors de la déconnexion" });
+    }
+  });
+
+  app.get("/api/admin/me", authenticateAdmin, async (req: any, res) => {
+    try {
+      const admin = req.admin;
+      res.json({
+        id: admin.id,
+        username: admin.username,
+        email: admin.email,
+        role: admin.role,
+        firstName: admin.firstName,
+        lastName: admin.lastName,
+        lastLogin: admin.lastLogin
+      });
+    } catch (error) {
+      res.status(500).json({ error: "Erreur lors de la récupération du profil" });
+    }
+  });
+
+  app.post("/api/admin/create", async (req, res) => {
+    try {
+      const adminData = insertAdminSchema.parse(req.body);
+      const admin = await storage.createAdmin(adminData);
+      
+      res.status(201).json({
+        id: admin.id,
+        username: admin.username,
+        email: admin.email,
+        role: admin.role,
+        firstName: admin.firstName,
+        lastName: admin.lastName
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ error: "Données invalides", details: error.errors });
+      } else {
+        console.error('Erreur création admin:', error);
+        res.status(500).json({ error: "Erreur lors de la création du compte admin" });
+      }
     }
   });
 
