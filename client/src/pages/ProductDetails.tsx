@@ -693,7 +693,7 @@ export default function ProductDetails() {
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-white to-white/95 backdrop-blur-sm border-t shadow-2xl md:hidden z-50">
         <div className="flex gap-3">
           <Button 
-            onClick={handleSubmitOrder}
+            onClick={handleBuyNow}
             className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-4 rounded-2xl shadow-lg animate-pulse relative overflow-hidden"
             disabled={createOrder.isPending}
             style={{
