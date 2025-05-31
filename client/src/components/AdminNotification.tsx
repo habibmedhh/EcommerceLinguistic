@@ -145,6 +145,7 @@ export function NotificationManager({ children }: NotificationManagerProps) {
   // Expose the addNotification function globally
   useEffect(() => {
     (window as any).addAdminNotification = addNotification;
+    console.log("Admin notification system initialized");
     return () => {
       delete (window as any).addAdminNotification;
     };

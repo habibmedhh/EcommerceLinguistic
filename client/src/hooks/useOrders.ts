@@ -65,13 +65,17 @@ export const useCreateOrder = () => {
       queryClient.invalidateQueries({ queryKey: ["/api/analytics/daily"] });
       
       // Send notification to admin
+      console.log("Order created successfully:", newOrder);
       if ((window as any).addAdminNotification) {
+        console.log("Sending admin notification...");
         (window as any).addAdminNotification({
           type: 'new_order',
           orderId: newOrder.id,
           customerName: newOrder.customerName,
           amount: newOrder.totalAmount
         });
+      } else {
+        console.log("addAdminNotification function not available");
       }
     },
   });
