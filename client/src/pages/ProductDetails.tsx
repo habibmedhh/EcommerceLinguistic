@@ -103,7 +103,13 @@ export default function ProductDetails() {
   };
 
   const handleBuyNow = () => {
-    // Toujours ouvrir le formulaire pour que l'utilisateur puisse saisir ses informations
+    // Si le formulaire est complet, procéder directement à la commande
+    if (isFormComplete()) {
+      handleSubmitOrder();
+      return;
+    }
+    
+    // Sinon, ouvrir le formulaire pour que l'utilisateur puisse saisir ses informations
     setIsOrderFormOpen(true);
   };
 
