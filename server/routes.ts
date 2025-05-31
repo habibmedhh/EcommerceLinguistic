@@ -411,7 +411,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const dateStr = date.toISOString().split('T')[0];
         
         const dayOrders = orders.orders.filter(order => 
-          order.createdAt && order.createdAt.startsWith(dateStr)
+          order.createdAt && order.createdAt.toISOString().startsWith(dateStr)
         );
         
         const revenue = dayOrders.reduce((sum, order) => sum + parseFloat(order.totalAmount), 0);

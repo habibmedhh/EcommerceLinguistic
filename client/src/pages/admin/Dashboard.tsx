@@ -181,7 +181,7 @@ export default function Dashboard() {
                         <div key={product.name} className="flex flex-col items-center">
                           <div 
                             className="bg-gradient-to-t from-purple-600 to-purple-400 w-8 rounded-t"
-                            style={{ height: `${Math.max((product.revenue / Math.max(...topProducts.map(p => p.revenue))) * 100, 10)}%`, minHeight: '20px' }}
+                            style={{ height: `${Math.max((product.totalRevenue / Math.max(...topProducts.map(p => p.totalRevenue))) * 100, 10)}%`, minHeight: '20px' }}
                           />
                           <span className="text-xs text-gray-600 mt-2">{product.name.slice(0, 8)}...</span>
                         </div>
@@ -206,10 +206,10 @@ export default function Dashboard() {
                           </div>
                           <div>
                             <div className="font-semibold">{product.name}</div>
-                            <div className="text-sm text-gray-500">{product.sales} sold</div>
+                            <div className="text-sm text-gray-500">{product.totalSales} sold</div>
                           </div>
                         </div>
-                        <div className="font-bold text-purple-600">${product.revenue.toLocaleString()}</div>
+                        <div className="font-bold text-purple-600">{settings?.currencySymbol || '$'}{product.totalRevenue.toLocaleString()}</div>
                       </div>
                     ))}
                   </div>
