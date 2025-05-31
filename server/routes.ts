@@ -354,24 +354,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const orders = await storage.getOrders({ limit: 1000 });
       const products = await storage.getProducts({ limit: 100 });
       
+      // Get all order items from all orders
+      const allOrderItems = [];
+      for (const order of orders.orders) {
+        const fullOrder = await storage.getOrder(order.id);
+        if (fullOrder && fullOrder.items) {
+          fullOrder.items.forEach(item => {
+            allOrderItems.push({
+              ...item,
+              orderId: order.id,
+              orderStatus: order.status,
+              orderDate: order.createdAt
+            });
+          });
+        }
+      }
+      
       const productStats = products.products.map(product => {
-        const productOrders = orders.orders.filter(order => 
-          order.items?.some(item => item.productId === product.id)
-        );
+        const productItems = allOrderItems.filter(item => item.productId === product.id);
         
-        const totalSales = productOrders.reduce((sum, order) => {
-          const item = order.items?.find(item => item.productId === product.id);
-          return sum + (item?.quantity || 0);
+        // Calculate total sales (quantity)
+        const totalSales = productItems.reduce((sum, item) => sum + (item.quantity || 0), 0);
+        
+        // Calculate total revenue from actual order items
+        const totalRevenue = productItems.reduce((sum, item) => {
+          return sum + (parseFloat(item.price || '0') * (item.quantity || 0));
         }, 0);
         
-        const totalRevenue = productOrders.reduce((sum, order) => {
-          const item = order.items?.find(item => item.productId === product.id);
-          return sum + (parseFloat(item?.price || '0') * (item?.quantity || 0));
-        }, 0);
-        
+        // Calculate profit using cost price from product or estimate
+        const productPrice = parseFloat(product.price || '0');
         const costPrice = parseFloat(product.costPrice || '0');
-        const salePrice = parseFloat(product.salePrice || product.price);
-        const profitPerUnit = costPrice > 0 ? salePrice - costPrice : salePrice * 0.3;
+        const profitPerUnit = costPrice > 0 ? productPrice - costPrice : productPrice * 0.3; // 30% profit margin if no cost
         const totalProfit = totalSales * profitPerUnit;
         
         const averageOrderValue = totalSales > 0 ? totalRevenue / totalSales : 0;
@@ -387,10 +400,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         };
       });
       
-      // Sort by total revenue
-      productStats.sort((a, b) => b.totalRevenue - a.totalRevenue);
+      // Sort by total revenue and filter out products with no sales
+      const activeProducts = productStats.filter(p => p.totalSales > 0);
+      activeProducts.sort((a, b) => b.totalRevenue - a.totalRevenue);
       
-      res.json(productStats);
+      res.json(activeProducts);
     } catch (error) {
       console.error('Error fetching product analytics:', error);
       res.status(500).json({ error: "Failed to fetch product analytics" });
@@ -410,18 +424,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
         date.setDate(date.getDate() - i);
         const dateStr = date.toISOString().split('T')[0];
         
-        const dayOrders = orders.orders.filter(order => 
-          order.createdAt && order.createdAt.toISOString().startsWith(dateStr)
-        );
+        const dayOrders = orders.orders.filter(order => {
+          if (!order.createdAt) return false;
+          const orderDate = new Date(order.createdAt).toISOString().split('T')[0];
+          return orderDate === dateStr;
+        });
         
         const revenue = dayOrders.reduce((sum, order) => sum + parseFloat(order.totalAmount), 0);
-        const profit = revenue * 0.3; // Assuming 30% profit margin
+        
+        // Calculate real profit based on actual order items
+        let profit = 0;
+        for (const order of dayOrders) {
+          const fullOrder = await storage.getOrder(order.id);
+          if (fullOrder && fullOrder.items) {
+            for (const item of fullOrder.items) {
+              const itemPrice = parseFloat(item.price || '0');
+              const itemQuantity = item.quantity || 0;
+              // Use 30% profit margin on actual sale price
+              const itemProfit = itemPrice * itemQuantity * 0.3;
+              profit += itemProfit;
+            }
+          }
+        }
         
         dailyStats.push({
           date: dateStr,
           orders: dayOrders.length,
-          revenue,
-          profit
+          revenue: Math.round(revenue * 100) / 100,
+          profit: Math.round(profit * 100) / 100
         });
       }
       
