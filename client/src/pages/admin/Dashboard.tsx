@@ -3,6 +3,8 @@ import { Link } from "wouter";
 import { useI18n } from "@/providers/I18nProvider";
 import { useOrderStats, useOrders } from "@/hooks/useOrders";
 import { useProducts } from "@/hooks/useProducts";
+import { useOrderAnalytics, useProductAnalytics, useDailyStats } from "@/hooks/useAnalytics";
+import { useSettings } from "@/hooks/useSettings";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -24,42 +26,30 @@ export default function Dashboard() {
   const { data: stats, isLoading: statsLoading } = useOrderStats();
   const { data: productsData, isLoading: productsLoading } = useProducts();
   const { data: ordersData, isLoading: ordersLoading } = useOrders();
+  const { data: orderAnalytics } = useOrderAnalytics();
+  const { data: productAnalytics } = useProductAnalytics();
+  const { data: dailyStats } = useDailyStats(30);
+  const { data: settings } = useSettings();
 
   const products = productsData?.products || [];
   const orders = ordersData?.orders || [];
 
-  // Calculer les statistiques réelles des produits
-  const topProducts = products
-    .filter(product => product.stock !== undefined && product.price)
-    .map(product => {
-      const soldQuantity = Math.max(0, 100 - (product.stock || 0)); // Estimation basée sur le stock
-      const revenue = soldQuantity * parseFloat(product.price || "0");
-      return {
-        name: product.name,
-        sales: soldQuantity,
-        revenue: revenue,
-        profit: product.costPrice ? revenue - (soldQuantity * parseFloat(product.costPrice)) : 0,
-        margin: product.costPrice ? ((parseFloat(product.price || "0") - parseFloat(product.costPrice)) / parseFloat(product.price || "1")) * 100 : 0
-      };
-    })
-    .sort((a, b) => b.revenue - a.revenue)
-    .slice(0, 4);
-
-  // Statistiques des produits réels
+  // Use real analytics data
+  const topProducts = productAnalytics?.slice(0, 4) || [];
+  const bestSellers = productAnalytics?.sort((a, b) => b.totalSales - a.totalSales).slice(0, 5) || [];
+  
+  // Real product statistics
   const totalProducts = products.length;
   const lowStockProducts = products.filter(p => (p.stock || 0) < 10).length;
   const featuredProducts = products.filter(p => p.featured).length;
   const totalInventoryValue = products.reduce((sum, p) => sum + (parseFloat(p.price || "0") * (p.stock || 0)), 0);
 
-  // Calculer la marge bénéficiaire moyenne
-  const avgProfitMargin = products.length > 0 
-    ? products.reduce((sum, p) => {
-        if (p.costPrice && p.price) {
-          const margin = ((parseFloat(p.price) - parseFloat(p.costPrice)) / parseFloat(p.price)) * 100;
-          return sum + margin;
-        }
-        return sum;
-      }, 0) / products.filter(p => p.costPrice && p.price).length
+  // Real profit margin calculation
+  const avgProfitMargin = productAnalytics && productAnalytics.length > 0 
+    ? productAnalytics.reduce((sum, p) => {
+        const margin = p.totalRevenue > 0 ? (p.totalProfit / p.totalRevenue) * 100 : 0;
+        return sum + margin;
+      }, 0) / productAnalytics.length
     : 0;
 
   if (statsLoading || productsLoading || ordersLoading) {
@@ -120,10 +110,10 @@ export default function Dashboard() {
                   <DollarSign className="h-4 w-4 text-green-600" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">${stats?.totalRevenue?.toFixed(2) || '0.00'}</div>
+                  <div className="text-2xl font-bold">{(orderAnalytics?.totalRevenue || stats?.totalRevenue || 0).toFixed(2)}{settings?.currencySymbol || '€'}</div>
                   <div className="text-xs text-green-600 flex items-center mt-1">
                     <TrendingUp className="h-3 w-3 mr-1" />
-                    +12.5% from last month
+                    {orderAnalytics?.monthlyGrowth ? `${orderAnalytics.monthlyGrowth > 0 ? '+' : ''}${orderAnalytics.monthlyGrowth.toFixed(1)}%` : '+0%'} from last month
                   </div>
                 </CardContent>
               </Card>
@@ -148,10 +138,10 @@ export default function Dashboard() {
                   <BarChart3 className="h-4 w-4 text-purple-600" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">${stats?.avgOrderValue?.toFixed(2) || '0.00'}</div>
-                  <div className="text-xs text-red-600 flex items-center mt-1">
-                    <TrendingUp className="h-3 w-3 mr-1 rotate-180" />
-                    -2.1% from last month
+                  <div className="text-2xl font-bold">{(orderAnalytics?.totalProfit || 0).toFixed(2)}{settings?.currencySymbol || '€'}</div>
+                  <div className="text-xs text-green-600 flex items-center mt-1">
+                    <TrendingUp className="h-3 w-3 mr-1" />
+                    Margin: {avgProfitMargin.toFixed(1)}%
                   </div>
                 </CardContent>
               </Card>
