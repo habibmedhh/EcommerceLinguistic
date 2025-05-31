@@ -28,15 +28,18 @@ export function Confetti({ active, duration = 3000, pieces = 50 }: ConfettiProps
   const [confettiPieces, setConfettiPieces] = useState<ConfettiPiece[]>([]);
 
   useEffect(() => {
+    console.log('Confetti effect triggered:', { active, duration, pieces });
+    
     if (!active) {
       setConfettiPieces([]);
       return;
     }
 
     // Create initial confetti pieces
+    const windowWidth = typeof window !== 'undefined' ? window.innerWidth : 1200;
     const initialPieces: ConfettiPiece[] = Array.from({ length: pieces }, (_, i) => ({
       id: i,
-      x: Math.random() * window.innerWidth,
+      x: Math.random() * windowWidth,
       y: -20,
       rotation: Math.random() * 360,
       rotationSpeed: (Math.random() - 0.5) * 8,
@@ -76,7 +79,7 @@ export function Confetti({ active, duration = 3000, pieces = 50 }: ConfettiProps
   if (!active || confettiPieces.length === 0) return null;
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden">
+    <div className="fixed inset-0 pointer-events-none z-[9999] overflow-hidden">
       {confettiPieces.map(piece => (
         <div
           key={piece.id}

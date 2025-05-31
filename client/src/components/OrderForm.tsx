@@ -62,6 +62,7 @@ export function OrderForm({ open, onClose, initialItems = [], totalAmount = "0" 
 
     try {
       await createOrder.mutateAsync(orderData);
+      console.log('Order success - setting states:', { isSubmitted: true, showConfetti: true });
       setIsSubmitted(true);
       setShowConfetti(true);
       toast({
