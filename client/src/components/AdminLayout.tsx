@@ -225,10 +225,10 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         </div>
 
         {/* Contenu principal */}
-        <div className="flex-1 flex flex-col min-w-0 w-full">
+        <div className="flex-1 flex flex-col overflow-hidden">
           {/* Barre supérieure */}
-          <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 w-full">
-            <div className="flex items-center justify-between px-4 py-4 lg:px-6">
+          <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between px-6 py-4">
               <div className="flex items-center gap-4">
                 <Button 
                   variant="ghost" 
@@ -260,10 +260,8 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           </header>
 
           {/* Zone de contenu */}
-          <main className="flex-1 overflow-y-auto">
-            <div className="p-6">
-              {children}
-            </div>
+          <main className="flex-1 overflow-auto p-6 bg-gray-50 dark:bg-gray-900">
+            {children}
           </main>
         </div>
 
