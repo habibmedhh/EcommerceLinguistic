@@ -469,9 +469,16 @@ export const translations: Record<string, Translation> = {
       support: "دعم 24/7"
     },
     notifications: {
+      title: "الإشعارات",
       newOrder: "تم إنشاء طلب جديد",
       newOrderMessage: "تم إنشاء طلب جديد بمبلغ",
-      confirmOrderStatus: "يرجى تأكيد حالة الطلب"
+      confirmOrderStatus: "يرجى تأكيد حالة الطلب",
+      orderFrom: "طلب من",
+      markAllRead: "وضع علامة على الكل كمقروء",
+      noNotifications: "لا توجد إشعارات",
+      justNow: "الآن",
+      minutesAgo: "د",
+      hoursAgo: "س"
     },
     common: {
       loading: "جاري التحميل...",
