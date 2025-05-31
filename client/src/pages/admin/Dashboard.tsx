@@ -67,43 +67,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Link href="/">
-                <Button variant="ghost" size="sm">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to Store
-                </Button>
-              </Link>
-              <h1 className="text-2xl font-bold">{t.admin.dashboard}</h1>
-            </div>
-            
-            <div className="flex items-center gap-4">
-              <Link href="/admin/settings">
-                <Button variant="outline" size="sm">
-                  <Package className="h-4 w-4 mr-2" />
-                  Store Settings
-                </Button>
-              </Link>
-              <Button variant="outline" size="sm">
-                <Download className="h-4 w-4 mr-2" />
-                Export Data
-              </Button>
-              <Link href="/admin/products">
-                <Button size="sm">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Product
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <div className="container mx-auto px-4 py-8">
+      <div className="space-y-6">
         <Tabs defaultValue="overview" className="space-y-8">
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="overview">{t.admin.overview}</TabsTrigger>
