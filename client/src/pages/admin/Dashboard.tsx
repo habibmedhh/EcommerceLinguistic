@@ -34,9 +34,10 @@ export default function Dashboard() {
   const products = productsData?.products || [];
   const orders = ordersData?.orders || [];
 
-  // Use real analytics data
-  const topProducts = productAnalytics?.slice(0, 4) || [];
-  const bestSellers = productAnalytics?.sort((a, b) => b.totalSales - a.totalSales).slice(0, 5) || [];
+  // Use real analytics data - sort by revenue and sales
+  const topProductsByRevenue = productAnalytics?.sort((a, b) => b.totalRevenue - a.totalRevenue).slice(0, 4) || [];
+  const topProductsBySales = productAnalytics?.sort((a, b) => b.totalSales - a.totalSales).slice(0, 5) || [];
+  const topProductsByProfit = productAnalytics?.sort((a, b) => b.totalProfit - a.totalProfit).slice(0, 4) || [];
   
   // Real product statistics
   const totalProducts = products.length;
@@ -166,56 +167,131 @@ export default function Dashboard() {
               </Card>
             </div>
 
-            {/* Charts and Recent Activity */}
+            {/* Charts and Analytics */}
             <div className="grid lg:grid-cols-2 gap-8">
-              {/* Sales Chart */}
+              {/* Revenue by Product Chart */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Sales Overview</CardTitle>
+                  <CardTitle>Top Products by Revenue</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="h-64 bg-gray-50 rounded-xl flex items-center justify-center">
-                    {/* Products Revenue Chart */}
                     <div className="w-full h-full flex items-end justify-between px-8 py-4">
-                      {topProducts.map((product, index) => (
+                      {topProductsByRevenue.length > 0 ? topProductsByRevenue.map((product, index) => (
                         <div key={product.name} className="flex flex-col items-center">
                           <div 
-                            className="bg-gradient-to-t from-purple-600 to-purple-400 w-8 rounded-t"
-                            style={{ height: `${Math.max((product.totalRevenue / Math.max(...topProducts.map(p => p.totalRevenue))) * 100, 10)}%`, minHeight: '20px' }}
+                            className="bg-gradient-to-t from-blue-600 to-blue-400 w-8 rounded-t"
+                            style={{ height: `${Math.max((product.totalRevenue / Math.max(...topProductsByRevenue.map(p => p.totalRevenue))) * 100, 10)}%`, minHeight: '20px' }}
                           />
                           <span className="text-xs text-gray-600 mt-2">{product.name.slice(0, 8)}...</span>
+                          <span className="text-xs text-blue-600 font-semibold">{settings?.currencySymbol || '$'}{product.totalRevenue}</span>
                         </div>
-                      ))}
+                      )) : (
+                        <div className="text-gray-500 text-center">No sales data available</div>
+                      )}
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              {/* Top Products */}
+              {/* Profit by Product Chart */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Top Products</CardTitle>
+                  <CardTitle>Top Products by Profit</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    {topProducts.map((product, index) => (
-                      <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                        <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                            <Package className="h-6 w-6 text-purple-600" />
-                          </div>
-                          <div>
-                            <div className="font-semibold">{product.name}</div>
-                            <div className="text-sm text-gray-500">{product.totalSales} sold</div>
-                          </div>
+                  <div className="h-64 bg-gray-50 rounded-xl flex items-center justify-center">
+                    <div className="w-full h-full flex items-end justify-between px-8 py-4">
+                      {topProductsByProfit.length > 0 ? topProductsByProfit.map((product, index) => (
+                        <div key={product.name} className="flex flex-col items-center">
+                          <div 
+                            className="bg-gradient-to-t from-green-600 to-green-400 w-8 rounded-t"
+                            style={{ height: `${Math.max((product.totalProfit / Math.max(...topProductsByProfit.map(p => p.totalProfit))) * 100, 10)}%`, minHeight: '20px' }}
+                          />
+                          <span className="text-xs text-gray-600 mt-2">{product.name.slice(0, 8)}...</span>
+                          <span className="text-xs text-green-600 font-semibold">{settings?.currencySymbol || '$'}{product.totalProfit.toFixed(2)}</span>
                         </div>
-                        <div className="font-bold text-purple-600">{settings?.currencySymbol || '$'}{product.totalRevenue.toLocaleString()}</div>
-                      </div>
-                    ))}
+                      )) : (
+                        <div className="text-gray-500 text-center">No profit data available</div>
+                      )}
+                    </div>
                   </div>
                 </CardContent>
               </Card>
             </div>
+
+            {/* Daily Performance Chart */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Daily Performance (Last 30 Days)</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-64 bg-gray-50 rounded-xl flex items-center justify-center">
+                  <div className="w-full h-full flex items-end justify-between px-4 py-4">
+                    {dailyStats && dailyStats.length > 0 ? dailyStats.slice(-10).map((day, index) => (
+                      <div key={day.date} className="flex flex-col items-center">
+                        <div className="flex flex-col items-center gap-1">
+                          <div 
+                            className="bg-gradient-to-t from-purple-600 to-purple-400 w-4 rounded-t"
+                            style={{ height: `${Math.max((day.revenue / Math.max(...dailyStats.map(d => d.revenue))) * 100, 5)}%`, minHeight: '10px' }}
+                          />
+                          <div 
+                            className="bg-gradient-to-t from-green-600 to-green-400 w-4 rounded-t"
+                            style={{ height: `${Math.max((day.profit / Math.max(...dailyStats.map(d => d.profit))) * 80, 5)}%`, minHeight: '8px' }}
+                          />
+                        </div>
+                        <span className="text-xs text-gray-600 mt-2">{new Date(day.date).getDate()}</span>
+                        <span className="text-xs text-purple-600 font-semibold">{settings?.currencySymbol || '$'}{day.revenue}</span>
+                      </div>
+                    )) : (
+                      <div className="text-gray-500 text-center">No daily data available</div>
+                    )}
+                  </div>
+                  <div className="absolute bottom-2 right-2 text-xs text-gray-500">
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-1">
+                        <div className="w-3 h-3 bg-purple-500 rounded"></div>
+                        <span>Revenue</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <div className="w-3 h-3 bg-green-500 rounded"></div>
+                        <span>Profit</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Best Selling Products */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Best Selling Products (By Quantity)</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {topProductsBySales.length > 0 ? topProductsBySales.map((product, index) => (
+                    <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                          <Package className="h-6 w-6 text-purple-600" />
+                        </div>
+                        <div>
+                          <div className="font-semibold">{product.name}</div>
+                          <div className="text-sm text-gray-500">{product.totalSales} units sold</div>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="font-bold text-purple-600">{settings?.currencySymbol || '$'}{product.totalRevenue.toLocaleString()}</div>
+                        <div className="text-sm text-green-600">{settings?.currencySymbol || '$'}{product.totalProfit.toFixed(2)} profit</div>
+                      </div>
+                    </div>
+                  )) : (
+                    <div className="text-gray-500 text-center p-8">No sales data available yet</div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Recent Orders */}
             <Card>
