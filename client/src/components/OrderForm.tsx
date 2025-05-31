@@ -9,7 +9,6 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { ShoppingCart, CheckCircle } from "lucide-react";
-import { Confetti } from "@/components/Confetti";
 import type { OrderRequest } from "@/types";
 
 interface OrderFormProps {
@@ -27,6 +26,7 @@ interface OrderFormProps {
 export function OrderForm({ open, onClose, initialItems = [], totalAmount = "0" }: OrderFormProps) {
   const { t } = useI18n();
   const { toast } = useToast();
+  const createOrder = useCreateOrder();
   
   const [formData, setFormData] = useState({
     customerName: "",
@@ -35,9 +35,6 @@ export function OrderForm({ open, onClose, initialItems = [], totalAmount = "0" 
     deliveryAddress: "",
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [showConfetti, setShowConfetti] = useState(false);
-
-  const createOrder = useCreateOrder();
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -61,30 +58,24 @@ export function OrderForm({ open, onClose, initialItems = [], totalAmount = "0" 
       totalAmount,
     };
 
-    createOrder.mutate(orderData, {
-      onSuccess: () => {
-        console.log('Order success - setting states:', { isSubmitted: true, showConfetti: true });
-        setIsSubmitted(true);
-        setShowConfetti(true);
-        toast({
-          title: t.order.success,
-          description: "Your order has been placed successfully!",
-        });
-      },
-      onError: (error) => {
-        console.error('Order error:', error);
-        toast({
-          title: t.common.error,
-          description: "Failed to place order. Please try again.",
-          variant: "destructive",
-        });
-      }
-    });
+    try {
+      await createOrder.mutateAsync(orderData);
+      setIsSubmitted(true);
+      toast({
+        title: t.order.success,
+        description: "Your order has been placed successfully!",
+      });
+    } catch (error) {
+      toast({
+        title: t.common.error,
+        description: "Failed to place order. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleClose = () => {
     setIsSubmitted(false);
-    setShowConfetti(false);
     setFormData({
       customerName: "",
       customerPhone: "",
@@ -96,25 +87,22 @@ export function OrderForm({ open, onClose, initialItems = [], totalAmount = "0" 
 
   if (isSubmitted) {
     return (
-      <>
-        <Confetti active={showConfetti} duration={4000} pieces={80} />
-        <Dialog open={open} onOpenChange={handleClose}>
-          <DialogContent className="max-w-md">
-            <div className="text-center py-8">
-              <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                {t.order.success}
-              </h3>
-              <p className="text-gray-600 mb-6">
-                Thank you for your order! We'll contact you soon to confirm the details.
-              </p>
-              <Button onClick={handleClose} className="w-full">
-                Close
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
-      </>
+      <Dialog open={open} onOpenChange={handleClose}>
+        <DialogContent className="max-w-md">
+          <div className="text-center py-8">
+            <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
+            <h3 className="text-2xl font-bold text-gray-900 mb-2">
+              {t.order.success}
+            </h3>
+            <p className="text-gray-600 mb-6">
+              Thank you for your order! We'll contact you soon to confirm the details.
+            </p>
+            <Button onClick={handleClose} className="w-full">
+              Close
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     );
   }
 
