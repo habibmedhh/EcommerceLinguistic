@@ -511,7 +511,7 @@ export default function ProductDetails() {
                     </span>
                   </div>
                   <div className="flex justify-between items-center mt-2">
-                    <span className="text-sm text-gray-600">📦 Quantité:</span>
+                    <span className="text-sm text-gray-600">📦 Quantité</span>
                     <span className="text-lg font-semibold text-gray-700">{quantity}</span>
                   </div>
                 </div>
