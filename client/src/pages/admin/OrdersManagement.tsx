@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "wouter";
 import { useI18n } from "@/providers/I18nProvider";
 import { useOrders, useUpdateOrderStatus, useDeleteOrder } from "@/hooks/useOrders";
+import { useSettings } from "@/hooks/useSettings";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,6 +30,7 @@ export default function OrdersManagement() {
   const { t } = useI18n();
   const { toast } = useToast();
   const { data: orders, isLoading } = useOrders();
+  const { data: settings } = useSettings();
   const updateOrderStatus = useUpdateOrderStatus();
   const deleteOrder = useDeleteOrder();
 
@@ -286,7 +288,7 @@ export default function OrdersManagement() {
                       </td>
                       <td className="py-3 px-4">
                         <span className="font-bold text-purple-600">
-                          ${parseFloat(order.totalAmount).toFixed(2)}
+                          {parseFloat(order.totalAmount).toFixed(2)}{settings?.currencySymbol || '€'}
                         </span>
                       </td>
                       <td className="py-3 px-4">
@@ -373,7 +375,7 @@ export default function OrdersManagement() {
                         {selectedOrder.status}
                       </Badge>
                     </p>
-                    <p><span className="font-medium">Total:</span> <span className="text-purple-600 font-bold">${parseFloat(selectedOrder.totalAmount).toFixed(2)}</span></p>
+                    <p><span className="font-medium">Total:</span> <span className="text-purple-600 font-bold">{parseFloat(selectedOrder.totalAmount).toFixed(2)}{settings?.currencySymbol || '€'}</span></p>
                   </div>
                 </div>
                 

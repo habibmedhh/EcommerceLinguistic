@@ -307,6 +307,131 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Analytics routes
+  app.get("/api/analytics/orders", async (req, res) => {
+    try {
+      const stats = await storage.getOrderStats();
+      const orders = await storage.getOrders({ limit: 1000 });
+      
+      const deliveredOrders = orders.orders.filter(o => o.status === 'delivered').length;
+      const cancelledOrders = orders.orders.filter(o => o.status === 'cancelled').length;
+      
+      // Calculate profit (assuming 30% profit margin if no cost data)
+      const totalProfit = stats.totalRevenue * 0.3;
+      
+      // Calculate monthly growth (simplified)
+      const thisMonth = new Date();
+      thisMonth.setDate(1);
+      const lastMonth = new Date(thisMonth);
+      lastMonth.setMonth(lastMonth.getMonth() - 1);
+      
+      const thisMonthOrders = orders.orders.filter(o => 
+        new Date(o.createdAt!) >= thisMonth
+      );
+      const lastMonthOrders = orders.orders.filter(o => 
+        new Date(o.createdAt!) >= lastMonth && new Date(o.createdAt!) < thisMonth
+      );
+      
+      const thisMonthRevenue = thisMonthOrders.reduce((sum, o) => sum + parseFloat(o.totalAmount), 0);
+      const lastMonthRevenue = lastMonthOrders.reduce((sum, o) => sum + parseFloat(o.totalAmount), 0);
+      const monthlyGrowth = lastMonthRevenue > 0 ? ((thisMonthRevenue - lastMonthRevenue) / lastMonthRevenue) * 100 : 0;
+      
+      res.json({
+        ...stats,
+        totalProfit,
+        deliveredOrders,
+        cancelledOrders,
+        monthlyGrowth
+      });
+    } catch (error) {
+      console.error('Error fetching order analytics:', error);
+      res.status(500).json({ error: "Failed to fetch order analytics" });
+    }
+  });
+
+  app.get("/api/analytics/products", async (req, res) => {
+    try {
+      const orders = await storage.getOrders({ limit: 1000 });
+      const products = await storage.getProducts({ limit: 100 });
+      
+      const productStats = products.products.map(product => {
+        const productOrders = orders.orders.filter(order => 
+          order.items?.some(item => item.productId === product.id)
+        );
+        
+        const totalSales = productOrders.reduce((sum, order) => {
+          const item = order.items?.find(item => item.productId === product.id);
+          return sum + (item?.quantity || 0);
+        }, 0);
+        
+        const totalRevenue = productOrders.reduce((sum, order) => {
+          const item = order.items?.find(item => item.productId === product.id);
+          return sum + (parseFloat(item?.price || '0') * (item?.quantity || 0));
+        }, 0);
+        
+        const costPrice = parseFloat(product.costPrice || '0');
+        const salePrice = parseFloat(product.salePrice || product.price);
+        const profitPerUnit = costPrice > 0 ? salePrice - costPrice : salePrice * 0.3;
+        const totalProfit = totalSales * profitPerUnit;
+        
+        const averageOrderValue = totalSales > 0 ? totalRevenue / totalSales : 0;
+        
+        return {
+          id: product.id,
+          name: product.name,
+          totalSales,
+          totalRevenue,
+          totalProfit,
+          averageOrderValue,
+          conversionRate: 0 // Would need view data to calculate
+        };
+      });
+      
+      // Sort by total revenue
+      productStats.sort((a, b) => b.totalRevenue - a.totalRevenue);
+      
+      res.json(productStats);
+    } catch (error) {
+      console.error('Error fetching product analytics:', error);
+      res.status(500).json({ error: "Failed to fetch product analytics" });
+    }
+  });
+
+  app.get("/api/analytics/daily", async (req, res) => {
+    try {
+      const { days = 30 } = req.query;
+      const daysCount = parseInt(days as string);
+      
+      const orders = await storage.getOrders({ limit: 1000 });
+      
+      const dailyStats = [];
+      for (let i = daysCount - 1; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        const dateStr = date.toISOString().split('T')[0];
+        
+        const dayOrders = orders.orders.filter(order => 
+          order.createdAt && order.createdAt.startsWith(dateStr)
+        );
+        
+        const revenue = dayOrders.reduce((sum, order) => sum + parseFloat(order.totalAmount), 0);
+        const profit = revenue * 0.3; // Assuming 30% profit margin
+        
+        dailyStats.push({
+          date: dateStr,
+          orders: dayOrders.length,
+          revenue,
+          profit
+        });
+      }
+      
+      res.json(dailyStats);
+    } catch (error) {
+      console.error('Error fetching daily analytics:', error);
+      res.status(500).json({ error: "Failed to fetch daily analytics" });
+    }
+  });
+
   // Promotions
   app.get("/api/promotions", async (req, res) => {
     try {
