@@ -622,7 +622,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/admin/me", authenticateAdmin, async (req: any, res) => {
+  app.get("/api/admin/me", authenticateAdminSession, async (req: any, res) => {
     try {
       const admin = req.admin;
       res.json({
