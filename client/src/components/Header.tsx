@@ -6,7 +6,7 @@ import { LanguageSwitcher } from "./LanguageSwitcher";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Search, ShoppingCart, Menu, Store } from "lucide-react";
+import { Search, ShoppingCart, Menu, Store, Settings } from "lucide-react";
 
 export function Header() {
   const { t, direction } = useI18n();
@@ -70,6 +70,12 @@ export function Header() {
                 </Badge>
               )}
             </Button>
+
+            <Link href="/admin">
+              <Button variant="ghost" size="sm" className="p-2" title="Administration">
+                <Settings className="h-5 w-5" />
+              </Button>
+            </Link>
 
             {/* Mobile Menu */}
             <Sheet>
