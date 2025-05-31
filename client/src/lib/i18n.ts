@@ -98,6 +98,12 @@ export interface Translation {
     returns: string;
     support: string;
   };
+  // Notifications
+  notifications: {
+    newOrder: string;
+    newOrderMessage: string;
+    confirmOrderStatus: string;
+  };
   // Common
   common: {
     loading: string;
@@ -211,6 +217,11 @@ export const translations: Record<string, Translation> = {
       returns: "30-Day Returns",
       support: "24/7 Support"
     },
+    notifications: {
+      newOrder: "New Order Created",
+      newOrderMessage: "A new order has been created with amount",
+      confirmOrderStatus: "Please confirm the order status"
+    },
     common: {
       loading: "Loading...",
       error: "An error occurred",
@@ -321,6 +332,11 @@ export const translations: Record<string, Translation> = {
       returns: "Retours 30 jours",
       support: "Support 24/7"
     },
+    notifications: {
+      newOrder: "Nouvelle commande créée",
+      newOrderMessage: "Une nouvelle commande a été créée d'un montant de",
+      confirmOrderStatus: "Merci de confirmer le statut de la commande"
+    },
     common: {
       loading: "Chargement...",
       error: "Une erreur s'est produite",
@@ -430,6 +446,11 @@ export const translations: Record<string, Translation> = {
       securePayment: "دفع آمن",
       returns: "إرجاع 30 يوم",
       support: "دعم 24/7"
+    },
+    notifications: {
+      newOrder: "تم إنشاء طلب جديد",
+      newOrderMessage: "تم إنشاء طلب جديد بمبلغ",
+      confirmOrderStatus: "يرجى تأكيد حالة الطلب"
     },
     common: {
       loading: "جاري التحميل...",
