@@ -1,12 +1,17 @@
 import { 
   users, categories, products, orders, orderItems, promotions, settings,
+  admins, adminSessions,
   type User, type InsertUser, type Category, type InsertCategory,
   type Product, type InsertProduct, type Order, type InsertOrder,
   type OrderItem, type InsertOrderItem, type Promotion, type InsertPromotion,
-  type Settings, type InsertSettings
+  type Settings, type InsertSettings, type Admin, type InsertAdmin,
+  type AdminSession, type InsertAdminSession
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, asc, like, and, or, sql, count, sum } from "drizzle-orm";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import { nanoid } from "nanoid";
 
 export interface IStorage {
   // Users
@@ -71,6 +76,19 @@ export interface IStorage {
   getSetting(key: string): Promise<Settings | undefined>;
   setSetting(key: string, value: any, description?: string): Promise<Settings>;
   getSettings(): Promise<Settings[]>;
+
+  // Admin Authentication
+  getAdmin(id: number): Promise<Admin | undefined>;
+  getAdminByUsername(username: string): Promise<Admin | undefined>;
+  getAdminByEmail(email: string): Promise<Admin | undefined>;
+  createAdmin(admin: InsertAdmin): Promise<Admin>;
+  updateAdmin(id: number, admin: Partial<InsertAdmin>): Promise<Admin | undefined>;
+  deleteAdmin(id: number): Promise<boolean>;
+  authenticateAdmin(username: string, password: string): Promise<Admin | null>;
+  createAdminSession(adminId: number): Promise<AdminSession>;
+  getAdminSession(token: string): Promise<AdminSession | undefined>;
+  deleteAdminSession(token: string): Promise<boolean>;
+  getAdminBySession(token: string): Promise<Admin | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -439,6 +457,117 @@ export class DatabaseStorage implements IStorage {
 
   async getSettings(): Promise<Settings[]> {
     return await db.select().from(settings).orderBy(asc(settings.key));
+  }
+
+  // Admin Authentication Methods
+  async getAdmin(id: number): Promise<Admin | undefined> {
+    const [admin] = await db.select().from(admins).where(eq(admins.id, id));
+    return admin || undefined;
+  }
+
+  async getAdminByUsername(username: string): Promise<Admin | undefined> {
+    const [admin] = await db.select().from(admins).where(eq(admins.username, username));
+    return admin || undefined;
+  }
+
+  async getAdminByEmail(email: string): Promise<Admin | undefined> {
+    const [admin] = await db.select().from(admins).where(eq(admins.email, email));
+    return admin || undefined;
+  }
+
+  async createAdmin(adminData: InsertAdmin): Promise<Admin> {
+    const hashedPassword = await bcrypt.hash(adminData.password, 12);
+    const [admin] = await db
+      .insert(admins)
+      .values({
+        ...adminData,
+        password: hashedPassword,
+        updatedAt: new Date(),
+      })
+      .returning();
+    return admin;
+  }
+
+  async updateAdmin(id: number, adminData: Partial<InsertAdmin>): Promise<Admin | undefined> {
+    const updateData: any = { ...adminData, updatedAt: new Date() };
+    
+    if (adminData.password) {
+      updateData.password = await bcrypt.hash(adminData.password, 12);
+    }
+
+    const [admin] = await db
+      .update(admins)
+      .set(updateData)
+      .where(eq(admins.id, id))
+      .returning();
+    return admin || undefined;
+  }
+
+  async deleteAdmin(id: number): Promise<boolean> {
+    const result = await db.delete(admins).where(eq(admins.id, id));
+    return (result.rowCount || 0) > 0;
+  }
+
+  async authenticateAdmin(username: string, password: string): Promise<Admin | null> {
+    const admin = await this.getAdminByUsername(username);
+    if (!admin || !admin.isActive) {
+      return null;
+    }
+
+    const isValidPassword = await bcrypt.compare(password, admin.password);
+    if (!isValidPassword) {
+      return null;
+    }
+
+    // Update last login
+    await db
+      .update(admins)
+      .set({ lastLogin: new Date() })
+      .where(eq(admins.id, admin.id));
+
+    return admin;
+  }
+
+  async createAdminSession(adminId: number): Promise<AdminSession> {
+    const token = nanoid(32);
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+
+    const [session] = await db
+      .insert(adminSessions)
+      .values({
+        id: nanoid(),
+        adminId,
+        token,
+        expiresAt,
+      })
+      .returning();
+    
+    return session;
+  }
+
+  async getAdminSession(token: string): Promise<AdminSession | undefined> {
+    const [session] = await db
+      .select()
+      .from(adminSessions)
+      .where(and(
+        eq(adminSessions.token, token),
+        sql`${adminSessions.expiresAt} > NOW()`
+      ));
+    return session || undefined;
+  }
+
+  async deleteAdminSession(token: string): Promise<boolean> {
+    const result = await db.delete(adminSessions).where(eq(adminSessions.token, token));
+    return (result.rowCount || 0) > 0;
+  }
+
+  async getAdminBySession(token: string): Promise<Admin | undefined> {
+    const session = await this.getAdminSession(token);
+    if (!session) {
+      return undefined;
+    }
+
+    return await this.getAdmin(session.adminId);
   }
 }
 
