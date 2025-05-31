@@ -40,7 +40,7 @@ export default function AdminManagement() {
   const queryClient = useQueryClient();
 
   // Récupérer la liste des administrateurs
-  const { data: admins = [], isLoading } = useQuery({
+  const { data: admins = [], isLoading } = useQuery<Admin[]>({
     queryKey: ['/api/admin/list'],
     retry: false,
   });
@@ -48,10 +48,7 @@ export default function AdminManagement() {
   // Mutation pour créer un administrateur
   const createAdminMutation = useMutation({
     mutationFn: async (data: typeof createData) => {
-      return await apiRequest('/api/admin/create', {
-        method: 'POST',
-        body: JSON.stringify(data),
-      });
+      return await apiRequest('/api/admin/create', 'POST', data);
     },
     onSuccess: () => {
       toast({
@@ -81,10 +78,7 @@ export default function AdminManagement() {
   // Mutation pour activer/désactiver un administrateur
   const toggleAdminMutation = useMutation({
     mutationFn: async ({ id, isActive }: { id: number; isActive: boolean }) => {
-      return await apiRequest(`/api/admin/${id}/toggle`, {
-        method: 'PATCH',
-        body: JSON.stringify({ isActive }),
-      });
+      return await apiRequest(`/api/admin/${id}/toggle`, 'PATCH', { isActive });
     },
     onSuccess: () => {
       toast({

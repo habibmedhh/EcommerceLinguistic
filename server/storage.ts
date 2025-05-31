@@ -476,6 +476,10 @@ export class DatabaseStorage implements IStorage {
     return admin || undefined;
   }
 
+  async getAllAdmins(): Promise<Admin[]> {
+    return await db.select().from(admins);
+  }
+
   async createAdmin(adminData: InsertAdmin): Promise<Admin> {
     const hashedPassword = await bcrypt.hash(adminData.password, 12);
     const [admin] = await db

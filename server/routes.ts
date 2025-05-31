@@ -621,26 +621,65 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/admin/create", async (req, res) => {
+  // Admin management routes
+  app.get('/api/admin/list', authenticateAdmin, async (req, res) => {
+    try {
+      const adminList = await storage.getAllAdmins();
+      // Remove passwords from response
+      const sanitizedAdmins = adminList.map(({ password, ...admin }) => admin);
+      res.json(sanitizedAdmins);
+    } catch (error) {
+      console.error("Error fetching admins:", error);
+      res.status(500).json({ message: "Failed to fetch admins" });
+    }
+  });
+
+  app.post('/api/admin/create', authenticateAdmin, async (req, res) => {
     try {
       const adminData = insertAdminSchema.parse(req.body);
-      const admin = await storage.createAdmin(adminData);
       
-      res.status(201).json({
-        id: admin.id,
-        username: admin.username,
-        email: admin.email,
-        role: admin.role,
-        firstName: admin.firstName,
-        lastName: admin.lastName
-      });
+      // Check if username or email already exists
+      const existingByUsername = await storage.getAdminByUsername(adminData.username);
+      const existingByEmail = await storage.getAdminByEmail(adminData.email);
+      
+      if (existingByUsername) {
+        return res.status(400).json({ message: "Ce nom d'utilisateur existe déjà" });
+      }
+      
+      if (existingByEmail) {
+        return res.status(400).json({ message: "Cet email existe déjà" });
+      }
+
+      const newAdmin = await storage.createAdmin(adminData);
+      // Remove password from response
+      const { password, ...adminResponse } = newAdmin;
+      res.status(201).json(adminResponse);
     } catch (error) {
       if (error instanceof z.ZodError) {
         res.status(400).json({ error: "Données invalides", details: error.errors });
       } else {
-        console.error('Erreur création admin:', error);
-        res.status(500).json({ error: "Erreur lors de la création du compte admin" });
+        console.error("Error creating admin:", error);
+        res.status(500).json({ message: "Failed to create admin" });
       }
+    }
+  });
+
+  app.patch('/api/admin/:id/toggle', authenticateAdmin, async (req, res) => {
+    try {
+      const adminId = parseInt(req.params.id);
+      const { isActive } = req.body;
+
+      const updatedAdmin = await storage.updateAdmin(adminId, { isActive });
+      if (!updatedAdmin) {
+        return res.status(404).json({ message: "Admin not found" });
+      }
+
+      // Remove password from response
+      const { password, ...adminResponse } = updatedAdmin;
+      res.json(adminResponse);
+    } catch (error) {
+      console.error("Error updating admin:", error);
+      res.status(500).json({ message: "Failed to update admin" });
     }
   });
 
