@@ -62,10 +62,24 @@ export default function ProductEditorSimple() {
     brandAr: "",
     brandFr: "",
     tags: [] as string[],
+    reviews: [] as Array<{
+      id?: number;
+      customerName: string;
+      rating: number;
+      comment: string;
+      date?: string;
+    }>,
+    averageRating: 0,
+    reviewCount: 0,
   });
 
   const [newTag, setNewTag] = useState("");
   const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [newReview, setNewReview] = useState({
+    customerName: "",
+    rating: 5,
+    comment: ""
+  });
 
   useEffect(() => {
     if (product && isEdit) {
@@ -93,6 +107,9 @@ export default function ProductEditorSimple() {
         brandAr: product.brandAr || "",
         brandFr: product.brandFr || "",
         tags: Array.isArray(product.tags) ? product.tags : [],
+        reviews: Array.isArray(product.reviews) ? product.reviews : [],
+        averageRating: product.averageRating || 0,
+        reviewCount: product.reviewCount || 0,
       });
       
       // Initialiser les URLs d'images
@@ -154,6 +171,50 @@ export default function ProductEditorSimple() {
       ...prev,
       tags: prev.tags.filter(t => t !== tag)
     }));
+  };
+
+  const addReview = () => {
+    if (newReview.customerName.trim() && newReview.comment.trim()) {
+      const review = {
+        ...newReview,
+        date: new Date().toISOString(),
+        id: Date.now()
+      };
+      
+      setProductData(prev => {
+        const newReviews = [...prev.reviews, review];
+        const newAverageRating = newReviews.reduce((sum, r) => sum + r.rating, 0) / newReviews.length;
+        
+        return {
+          ...prev,
+          reviews: newReviews,
+          averageRating: newAverageRating,
+          reviewCount: newReviews.length
+        };
+      });
+      
+      setNewReview({
+        customerName: "",
+        rating: 5,
+        comment: ""
+      });
+    }
+  };
+
+  const removeReview = (reviewId: number) => {
+    setProductData(prev => {
+      const newReviews = prev.reviews.filter(r => r.id !== reviewId);
+      const newAverageRating = newReviews.length > 0 
+        ? newReviews.reduce((sum, r) => sum + r.rating, 0) / newReviews.length 
+        : 0;
+      
+      return {
+        ...prev,
+        reviews: newReviews,
+        averageRating: newAverageRating,
+        reviewCount: newReviews.length
+      };
+    });
   };
 
   const handleSave = async () => {
@@ -674,6 +735,120 @@ export default function ProductEditorSimple() {
                     placeholder="اسم العلامة التجارية"
                     dir="rtl"
                   />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Section Avis et Reviews */}
+            <Card className="mt-6">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Package className="h-5 w-5" />
+                  Avis et Reviews
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Statistiques des avis */}
+                <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
+                  <div>
+                    <Label>Note moyenne</Label>
+                    <div className="text-2xl font-bold text-yellow-600">
+                      {productData.averageRating.toFixed(1)} ⭐
+                    </div>
+                  </div>
+                  <div>
+                    <Label>Nombre d'avis</Label>
+                    <div className="text-2xl font-bold text-blue-600">
+                      {productData.reviewCount}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Ajouter un nouvel avis */}
+                <div className="border rounded-lg p-4 space-y-4">
+                  <h4 className="font-semibold">Ajouter un avis</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="reviewerName">Nom du client</Label>
+                      <Input
+                        id="reviewerName"
+                        value={newReview.customerName}
+                        onChange={(e) => setNewReview(prev => ({...prev, customerName: e.target.value}))}
+                        placeholder="Nom du client"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="rating">Note (1-5)</Label>
+                      <Select
+                        value={newReview.rating.toString()}
+                        onValueChange={(value) => setNewReview(prev => ({...prev, rating: parseInt(value)}))}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="1">1 ⭐</SelectItem>
+                          <SelectItem value="2">2 ⭐⭐</SelectItem>
+                          <SelectItem value="3">3 ⭐⭐⭐</SelectItem>
+                          <SelectItem value="4">4 ⭐⭐⭐⭐</SelectItem>
+                          <SelectItem value="5">5 ⭐⭐⭐⭐⭐</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <div>
+                    <Label htmlFor="reviewComment">Commentaire</Label>
+                    <Textarea
+                      id="reviewComment"
+                      value={newReview.comment}
+                      onChange={(e) => setNewReview(prev => ({...prev, comment: e.target.value}))}
+                      placeholder="Commentaire du client..."
+                      rows={3}
+                    />
+                  </div>
+                  <Button onClick={addReview} size="sm">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Ajouter l'avis
+                  </Button>
+                </div>
+
+                {/* Liste des avis existants */}
+                <div className="space-y-4">
+                  <h4 className="font-semibold">Avis existants ({productData.reviews.length})</h4>
+                  {productData.reviews.length > 0 ? (
+                    <div className="space-y-3 max-h-96 overflow-y-auto">
+                      {productData.reviews.map((review, index) => (
+                        <div key={review.id || index} className="border rounded-lg p-4 space-y-2">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <div className="font-medium">{review.customerName}</div>
+                              <div className="text-sm text-gray-500">
+                                {"⭐".repeat(review.rating)} ({review.rating}/5)
+                              </div>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => removeReview(review.id || index)}
+                              className="text-red-600 hover:text-red-800"
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                          <p className="text-sm text-gray-700">{review.comment}</p>
+                          {review.date && (
+                            <div className="text-xs text-gray-400">
+                              {new Date(review.date).toLocaleDateString('fr-FR')}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">
+                      Aucun avis pour ce produit
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>

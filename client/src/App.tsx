@@ -11,6 +11,7 @@ import ProductDetails from "@/pages/ProductDetails";
 import Dashboard from "@/pages/admin/Dashboard";
 import ProductsManagement from "@/pages/admin/ProductsManagement";
 import OrdersManagement from "@/pages/admin/OrdersManagement";
+import CategoriesManagement from "@/pages/admin/CategoriesManagement";
 import StoreSettings from "@/pages/admin/StoreSettings";
 import ProductEditorSimple from "@/pages/admin/ProductEditorSimple";
 import NotFound from "@/pages/not-found";
@@ -28,6 +29,7 @@ function Router() {
       <Route path="/admin/products/new" component={ProductEditorSimple} />
       <Route path="/admin/products/edit/:id" component={ProductEditorSimple} />
       <Route path="/admin/orders" component={OrdersManagement} />
+      <Route path="/admin/categories" component={CategoriesManagement} />
       <Route path="/admin/settings" component={StoreSettings} />
       <Route component={NotFound} />
     </Switch>
