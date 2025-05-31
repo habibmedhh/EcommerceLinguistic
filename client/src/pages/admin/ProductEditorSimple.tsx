@@ -231,6 +231,10 @@ export default function ProductEditorSimple() {
         categoryId: parseInt(productData.categoryId) || null,
         images: productData.images,
         tags: productData.tags,
+        averageRating: productData.averageRating.toString(),
+        reviewCount: productData.reviewCount,
+        displayReviewCount: productData.displayReviewCount,
+        reviews: productData.reviews,
       };
 
       if (isEdit) {
