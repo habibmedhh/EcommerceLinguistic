@@ -91,7 +91,7 @@ export default function CategoriesManagement() {
       if (editingCategory) {
         await updateCategory.mutateAsync({
           id: editingCategory.id!,
-          ...categoryData
+          data: categoryData
         });
         toast({
           title: "Succès",

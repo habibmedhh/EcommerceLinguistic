@@ -589,10 +589,53 @@ export default function ProductDetails() {
               <TabsContent value="reviews" className="mt-6">
                 <div>
                   <h3 className="text-lg font-semibold mb-3">{t.admin.reviews}</h3>
-                  <div className="text-center py-8 text-gray-500">
-                    <MessageCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                    <p>{t.common.loading}</p>
+                  
+                  {/* Statistiques des avis */}
+                  <div className="flex items-center gap-6 mb-6 p-4 bg-gray-50 rounded-lg">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-yellow-600">
+                        {product.averageRating ? parseFloat(product.averageRating).toFixed(1) : '0.0'} ⭐
+                      </div>
+                      <div className="text-sm text-gray-600">Note moyenne</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-blue-600">
+                        {product.reviewCount || 0}
+                      </div>
+                      <div className="text-sm text-gray-600">Avis clients</div>
+                    </div>
                   </div>
+
+                  {/* Liste des avis */}
+                  {product.reviews && product.reviews.length > 0 ? (
+                    <div className="space-y-4">
+                      {product.reviews.map((review: any, index: number) => (
+                        <div key={review.id || index} className="border rounded-lg p-4 bg-white">
+                          <div className="flex justify-between items-start mb-2">
+                            <div>
+                              <div className="font-medium text-gray-900">{review.customerName}</div>
+                              <div className="flex items-center gap-1">
+                                {"⭐".repeat(review.rating)}
+                                <span className="text-sm text-gray-500 ml-2">({review.rating}/5)</span>
+                              </div>
+                            </div>
+                            {review.date && (
+                              <div className="text-xs text-gray-400">
+                                {new Date(review.date).toLocaleDateString('fr-FR')}
+                              </div>
+                            )}
+                          </div>
+                          <p className="text-gray-700">{review.comment}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">
+                      <MessageCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                      <p>Aucun avis pour ce produit</p>
+                      <p className="text-sm mt-2">Soyez le premier à laisser un avis !</p>
+                    </div>
+                  )}
                 </div>
               </TabsContent>
             </Tabs>

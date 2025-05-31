@@ -52,7 +52,7 @@ export const products = pgTable("products", {
   brand: text("brand"),
   brandAr: text("brand_ar"),
   brandFr: text("brand_fr"),
-  rating: decimal("rating", { precision: 3, scale: 2 }).default("0"),
+  averageRating: decimal("average_rating", { precision: 3, scale: 2 }).default("0"),
   reviewCount: integer("review_count").default(0),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
