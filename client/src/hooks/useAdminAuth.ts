@@ -99,10 +99,20 @@ export const useAdminAuth = () => {
 
   const createAdminMutation = useMutation({
     mutationFn: async (adminData: any) => {
-      return await apiRequest('/api/admin/create', {
+      const response = await fetch('/api/admin/create', {
         method: 'POST',
-        body: adminData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(adminData),
       });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Erreur lors de la création du compte');
+      }
+
+      return await response.json();
     },
   });
 
