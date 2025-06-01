@@ -53,6 +53,7 @@ export interface Translation {
     fillForm: string;
     processing: string;
     confirmed: string;
+    validationMessage: string;
   };
   // Newsletter
   newsletter: {
@@ -239,7 +240,8 @@ export const translations: Record<string, Translation> = {
       ready: "Great! Your order is ready 🤩",
       fillForm: "Please fill in your information to complete the order",
       processing: "Processing your order... 🛒",
-      confirmed: "Order confirmed! Thank you 🎉"
+      confirmed: "Order confirmed! Thank you 🎉",
+      validationMessage: "Excellent! Your order is ready 🤩 Please fill in your information to validate your order"
     },
     newsletter: {
       title: "Stay Updated",
@@ -418,7 +420,8 @@ export const translations: Record<string, Translation> = {
       ready: "Très bien ! Votre commande est prête 🤩",
       fillForm: "Remplissez vos informations pour finaliser la commande",
       processing: "Traitement de votre commande... 🛒",
-      confirmed: "Commande confirmée ! Merci beaucoup 🎉"
+      confirmed: "Commande confirmée ! Merci beaucoup 🎉",
+      validationMessage: "Excellent ! Votre commande est prête 🎉 Remplissez vos informations pour valider votre commande"
     },
     newsletter: {
       title: "Restez Informé",
@@ -581,7 +584,8 @@ export const translations: Record<string, Translation> = {
       ready: "ممتاز! طلبك جاهز 🤩",
       fillForm: "يرجى ملء بياناتك لإتمام الطلب",
       processing: "جاري معالجة طلبك... 🛒",
-      confirmed: "تم تأكيد الطلب! شكراً لك 🎉"
+      confirmed: "تم تأكيد الطلب! شكراً لك 🎉",
+      validationMessage: "ممتاز! طلبك جاهز 🎉 يرجى ملء بياناتك لتأكيد طلبك"
     },
     newsletter: {
       title: "ابق على اطلاع",
