@@ -468,7 +468,16 @@ export default function Home() {
             {/* WhatsApp & Quick Links */}
             <div>
               <h3 className="text-lg font-bold mb-4">{t.footer.whatsapp}</h3>
-              <Button className="bg-green-500 hover:bg-green-600 text-white px-4 py-3 rounded-2xl font-bold mb-4 w-full">
+              <Button 
+                className="bg-green-500 hover:bg-green-600 text-white px-4 py-3 rounded-2xl font-bold mb-4 w-full"
+                onClick={() => {
+                  const whatsappNumber = settings?.whatsappNumber;
+                  if (whatsappNumber) {
+                    const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('Bonjour, je suis intéressé par vos produits')}`;
+                    window.open(whatsappUrl, '_blank');
+                  }
+                }}
+              >
                 <MessageCircle className="h-5 w-5 mr-2" />
                 Chat Now
               </Button>
