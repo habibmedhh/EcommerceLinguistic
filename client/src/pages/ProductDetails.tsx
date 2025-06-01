@@ -341,34 +341,67 @@ export default function ProductDetails() {
               
               {/* Rating */}
               <div className={`flex items-center gap-2 mb-4 ${direction === 'rtl' ? 'flex-row-reverse justify-end' : ''}`}>
-                <div className="flex items-center">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`h-4 w-4 ${
-                        i < Math.floor(parseFloat(product.averageRating || "0"))
-                          ? "text-yellow-400 fill-current"
-                          : "text-gray-300"
-                      }`}
-                    />
-                  ))}
-                </div>
-                <span className="text-sm text-gray-600">
-                  ({product.displayReviewCount || product.reviewCount || 0} reviews)
-                </span>
+                {direction === 'rtl' ? (
+                  <>
+                    <span className="text-sm text-gray-600">
+                      ({product.displayReviewCount || product.reviewCount || 0} تقييم)
+                    </span>
+                    <div className="flex items-center">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`h-4 w-4 ${
+                            i < Math.floor(parseFloat(product.averageRating || "0"))
+                              ? "text-yellow-400 fill-current"
+                              : "text-gray-300"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="flex items-center">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`h-4 w-4 ${
+                            i < Math.floor(parseFloat(product.averageRating || "0"))
+                              ? "text-yellow-400 fill-current"
+                              : "text-gray-300"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                    <span className="text-sm text-gray-600">
+                      ({product.displayReviewCount || product.reviewCount || 0} reviews)
+                    </span>
+                  </>
+                )}
               </div>
 
               {/* Price */}
               <div className={`flex items-center gap-3 mb-6 ${direction === 'rtl' ? 'flex-row-reverse justify-end' : ''}`}>
                 {discountedPrice ? (
-                  <>
-                    <span className="text-3xl font-bold text-purple-600">
-                      {discountedPrice.toFixed(2)}{settings?.currencySymbol || (language === 'ar' ? ' د.م' : '€')}
-                    </span>
-                    <span className="text-xl text-gray-500 line-through">
-                      {originalPrice.toFixed(2)}{settings?.currencySymbol || (language === 'ar' ? ' د.م' : '€')}
-                    </span>
-                  </>
+                  direction === 'rtl' ? (
+                    <>
+                      <span className="text-xl text-gray-500 line-through">
+                        {originalPrice.toFixed(2)}{settings?.currencySymbol || ' د.م'}
+                      </span>
+                      <span className="text-3xl font-bold text-purple-600">
+                        {discountedPrice.toFixed(2)}{settings?.currencySymbol || ' د.م'}
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-3xl font-bold text-purple-600">
+                        {discountedPrice.toFixed(2)}{settings?.currencySymbol || '€'}
+                      </span>
+                      <span className="text-xl text-gray-500 line-through">
+                        {originalPrice.toFixed(2)}{settings?.currencySymbol || '€'}
+                      </span>
+                    </>
+                  )
                 ) : (
                   <span className="text-3xl font-bold text-purple-600">
                     {originalPrice.toFixed(2)}{settings?.currencySymbol || (language === 'ar' ? ' د.م' : '€')}
@@ -386,7 +419,7 @@ export default function ProductDetails() {
 
             {/* Quantity and Actions */}
             <div className="space-y-4">
-              <div className={`flex items-center gap-4 ${direction === 'rtl' ? 'flex-row-reverse' : ''}`}>
+              <div className={`flex items-center gap-4 ${direction === 'rtl' ? 'flex-row-reverse justify-end' : ''}`}>
                 <label className={`font-medium text-gray-700 ${direction === 'rtl' ? 'text-right' : 'text-left'}`}>
                   {language === 'ar' ? 'الكمية:' : 
                    language === 'fr' ? 'Quantité:' : 
@@ -405,7 +438,7 @@ export default function ProductDetails() {
                     type="number"
                     value={quantity}
                     onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                    className={`w-20 text-center border-0 focus:ring-0 ${direction === 'rtl' ? 'text-right' : 'text-center'}`}
+                    className={`w-20 text-center border-0 focus:ring-0 ${direction === 'rtl' ? 'text-center' : 'text-center'}`}
                     min="1"
                     dir={direction}
                   />
