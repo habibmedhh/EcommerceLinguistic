@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation, Link } from "wouter";
 import { useFloatingAnimation, usePulseAnimation } from "@/hooks/useAnimations";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,6 +9,10 @@ import { MessageCircle, ShoppingCart, ArrowUp, Zap } from "lucide-react";
 export function FloatingActions() {
   const { cart } = useCart();
   const [showScrollTop, setShowScrollTop] = useState(false);
+  
+  const navigateToCart = () => {
+    window.location.href = '/cart';
+  };
   
   const whatsappRef = useFloatingAnimation(0);
   const cartRef = useFloatingAnimation(0.5);
@@ -50,7 +55,7 @@ export function FloatingActions() {
       {/* Cart Button */}
       <Button
         ref={cartRef}
-        onClick={() => navigate('/cart')}
+        onClick={navigateToCart}
         size="lg"
         className="w-16 h-16 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 shadow-lg hover:shadow-xl transition-all duration-300 p-0 relative animate-pulse group transform hover:scale-110"
         title={cart.count > 0 ? `${cart.count} articles dans votre panier - Cliquez pour finaliser !` : "Votre panier"}
