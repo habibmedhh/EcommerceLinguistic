@@ -579,6 +579,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/settings", async (req, res) => {
+    try {
+      const { key, value, description } = req.body;
+      console.log('POST /api/settings received:', { key, value: typeof value });
+      const setting = await storage.setSetting(key, value, description);
+      console.log('Setting saved successfully:', setting);
+      res.json(setting);
+    } catch (error) {
+      console.error('Failed to save setting:', error);
+      res.status(500).json({ error: "Failed to save setting" });
+    }
+  });
+
   // Routes d'authentification admin
   app.post("/api/admin/login", async (req, res) => {
     try {
