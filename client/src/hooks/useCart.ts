@@ -91,8 +91,8 @@ export const useCart = () => {
     return cart.items.find(item => item.product.id === productId);
   };
 
-  const getTotalPrice = (): number => {
-    return cart.total;
+  const getTotalPrice = (): string => {
+    return cart.total.toFixed(2);
   };
 
   const getTotalItems = (): number => {
