@@ -160,7 +160,7 @@ export function OrderForm({ open, onClose, initialItems = [], totalAmount = "0" 
               <Label htmlFor="customerPhone">{t.order.phone} *</Label>
               <Input
                 id="customerPhone"
-                type="tel"
+                type="text"
                 value={formData.customerPhone}
                 onChange={(e) => handleInputChange("customerPhone", e.target.value)}
                 placeholder={t.order.phone}
@@ -171,7 +171,7 @@ export function OrderForm({ open, onClose, initialItems = [], totalAmount = "0" 
               <Label htmlFor="customerEmail">Email</Label>
               <Input
                 id="customerEmail"
-                type="email"
+                type="text"
                 value={formData.customerEmail}
                 onChange={(e) => handleInputChange("customerEmail", e.target.value)}
                 placeholder="email@example.com"
