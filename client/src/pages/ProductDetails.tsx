@@ -825,40 +825,68 @@ export default function ProductDetails() {
           <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
             {/* Résumé de la commande */}
             <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-xl p-3 sm:p-4">
-              <div className={`flex items-center justify-between mb-2 ${direction === 'rtl' ? 'flex-row-reverse' : ''}`}>
-                <div className={`flex items-center gap-2 ${direction === 'rtl' ? 'flex-row-reverse' : ''}`}>
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg overflow-hidden">
-                    <img 
-                      src={currentImage} 
-                      alt={getLocalizedText('name')}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className={direction === 'rtl' ? 'text-right' : 'text-left'}>
-                    <h4 className="font-semibold text-gray-800 text-sm sm:text-base">{getLocalizedText('name')}</h4>
-                    <p className="text-xs sm:text-sm text-gray-600">
-                      {language === 'ar' ? `الكمية: ${quantity}` : 
-                       language === 'fr' ? `Quantité: ${quantity}` : 
-                       `Quantity: ${quantity}`}
-                    </p>
-                  </div>
-                </div>
-                <div className={`${direction === 'rtl' ? 'text-left' : 'text-right'}`}>
-                  <div className="text-xl sm:text-2xl font-bold text-purple-600">
-                    {language === 'ar' ? 
-                      `${(discountedPrice ? discountedPrice * quantity : originalPrice * quantity).toFixed(2)} ${settings?.currencySymbol || 'د.م'}` :
-                      `${(discountedPrice ? discountedPrice * quantity : originalPrice * quantity).toFixed(2)} ${settings?.currencySymbol || '€'}`
-                    }
-                  </div>
-                  {discountedPrice && (
-                    <div className="text-xs sm:text-sm text-gray-500 line-through">
-                      {language === 'ar' ? 
-                        `${(originalPrice * quantity).toFixed(2)} ${settings?.currencySymbol || 'د.م'}` :
-                        `${(originalPrice * quantity).toFixed(2)} ${settings?.currencySymbol || '€'}`
-                      }
+              <div className={`flex items-center justify-between mb-2`}>
+                {direction === 'rtl' ? (
+                  <>
+                    {/* En arabe: montant à gauche */}
+                    <div className="text-left">
+                      <div className="text-xl sm:text-2xl font-bold text-purple-600">
+                        {`${(discountedPrice ? discountedPrice * quantity : originalPrice * quantity).toFixed(2)} ${settings?.currencySymbol || 'د.م'}`}
+                      </div>
+                      {discountedPrice && (
+                        <div className="text-xs sm:text-sm text-gray-500 line-through">
+                          {`${(originalPrice * quantity).toFixed(2)} ${settings?.currencySymbol || 'د.م'}`}
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
+                    {/* En arabe: image et nom à droite */}
+                    <div className="flex items-center gap-2 flex-row-reverse">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg overflow-hidden">
+                        <img 
+                          src={currentImage} 
+                          alt={getLocalizedText('name')}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="text-right">
+                        <h4 className="font-semibold text-gray-800 text-sm sm:text-base">{getLocalizedText('name')}</h4>
+                        <p className="text-xs sm:text-sm text-gray-600">
+                          {`الكمية: ${quantity}`}
+                        </p>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {/* Langues occidentales: image et nom à gauche */}
+                    <div className="flex items-center gap-2">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg overflow-hidden">
+                        <img 
+                          src={currentImage} 
+                          alt={getLocalizedText('name')}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="text-left">
+                        <h4 className="font-semibold text-gray-800 text-sm sm:text-base">{getLocalizedText('name')}</h4>
+                        <p className="text-xs sm:text-sm text-gray-600">
+                          {language === 'fr' ? `Quantité: ${quantity}` : `Quantity: ${quantity}`}
+                        </p>
+                      </div>
+                    </div>
+                    {/* Langues occidentales: montant à droite */}
+                    <div className="text-right">
+                      <div className="text-xl sm:text-2xl font-bold text-purple-600">
+                        {`${(discountedPrice ? discountedPrice * quantity : originalPrice * quantity).toFixed(2)} ${settings?.currencySymbol || '€'}`}
+                      </div>
+                      {discountedPrice && (
+                        <div className="text-xs sm:text-sm text-gray-500 line-through">
+                          {`${(originalPrice * quantity).toFixed(2)} ${settings?.currencySymbol || '€'}`}
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
               </div>
             </div>
 
