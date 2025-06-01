@@ -43,7 +43,20 @@ export function OrderForm({ open, onClose, initialItems = [], totalAmount = "0" 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    console.log("Form data:", formData);
+    console.log("Validation check:", {
+      name: !formData.customerName,
+      phone: !formData.customerPhone,
+      address: !formData.deliveryAddress
+    });
+    
     if (!formData.customerName || !formData.customerPhone || !formData.deliveryAddress) {
+      console.log("Validation failed, showing toast");
+      console.log("Validation message:", t.order.validationMessage);
+      
+      // Essayer d'abord avec une alerte simple
+      alert(t.order.validationMessage);
+      
       toast({
         title: t.common.error,
         description: t.order.validationMessage,
