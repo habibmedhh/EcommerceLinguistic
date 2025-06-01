@@ -113,8 +113,8 @@ export default function ProductDetails() {
       return;
     }
     
-    // Sinon, ouvrir le formulaire pour que l'utilisateur puisse saisir ses informations
-    setIsOrderFormOpen(true);
+    // Afficher le message de validation et ouvrir le formulaire
+    navigateToForm();
   };
 
   const validatePhoneNumber = (phone: string) => {
