@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { useI18n } from "@/providers/I18nProvider";
 import { useCart } from "@/hooks/useCart";
+import { useNavigationHistory } from "@/hooks/useNavigationHistory";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,6 +29,7 @@ export default function Cart() {
   const { t, direction } = useI18n();
   const { toast } = useToast();
   const [, setLocation] = useLocation();
+  const { previousPath } = useNavigationHistory();
   const { 
     items, 
     getTotalPrice, 
@@ -118,7 +120,7 @@ export default function Cart() {
             <ShoppingCart className="h-24 w-24 mx-auto mb-6 text-gray-300" />
             <h1 className="text-2xl font-bold text-gray-900 mb-2">Panier vide</h1>
             <p className="text-gray-600 mb-8">Votre panier ne contient aucun article</p>
-            <Link href="/">
+            <Link href={previousPath}>
               <Button>
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Continuer les achats
@@ -135,7 +137,7 @@ export default function Cart() {
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
-          <Link href="/">
+          <Link href={previousPath}>
             <Button variant="ghost" size="sm">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Retour
