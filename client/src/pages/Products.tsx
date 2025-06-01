@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import { useI18n } from "@/providers/I18nProvider";
 import { useProducts } from "@/hooks/useProducts";
 import { useCategories } from "@/hooks/useCategories";
+import { useSettings } from "@/hooks/useSettings";
 import { Header } from "@/components/Header";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductModal } from "@/components/ProductModal";
@@ -19,6 +20,7 @@ import type { Product } from "@/types";
 export default function Products() {
   const { t, language } = useI18n();
   const { data: categories = [] } = useCategories();
+  const { data: settings } = useSettings();
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | undefined>();
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<string>("name");
@@ -210,8 +212,8 @@ export default function Products() {
                   className="w-full"
                 />
                 <div className="flex items-center justify-between text-sm text-gray-600">
-                  <span>${priceRange[0]}</span>
-                  <span>${priceRange[1]}</span>
+                  <span>{priceRange[0]}{settings?.currencySymbol || (language === 'ar' ? ' د.م' : '€')}</span>
+                  <span>{priceRange[1]}{settings?.currencySymbol || (language === 'ar' ? ' د.م' : '€')}</span>
                 </div>
               </div>
             </Card>

@@ -149,15 +149,15 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
           {salePrice ? (
             <>
               <span className="text-2xl font-bold text-purple-600">
-                {salePrice.toFixed(2)}{settings?.currencySymbol || (language === 'ar' ? ' د.ج' : '€')}
+                {salePrice.toFixed(2)}{settings?.currencySymbol || (language === 'ar' ? ' د.م' : '€')}
               </span>
               <span className="text-lg text-gray-500 line-through">
-                {price.toFixed(2)}{settings?.currencySymbol || (language === 'ar' ? ' د.ج' : '€')}
+                {price.toFixed(2)}{settings?.currencySymbol || (language === 'ar' ? ' د.م' : '€')}
               </span>
             </>
           ) : (
             <span className="text-2xl font-bold text-purple-600">
-              {price.toFixed(2)}{settings?.currencySymbol || (language === 'ar' ? ' د.ج' : '€')}
+              {price.toFixed(2)}{settings?.currencySymbol || (language === 'ar' ? ' د.م' : '€')}
             </span>
           )}
         </div>
