@@ -145,8 +145,8 @@ export default function Home() {
               <div className="relative">
                 <div className="glass-effect rounded-3xl p-8 shadow-2xl">
                   <img
-                    src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"
-                    alt="Modern fashion lifestyle"
+                    src={settings?.bannerImage || "https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"}
+                    alt={settings?.storeName || "Modern fashion lifestyle"}
                     className="rounded-2xl w-full h-80 object-cover shadow-lg"
                   />
                 </div>
