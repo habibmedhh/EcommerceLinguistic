@@ -98,7 +98,6 @@ export default function Home() {
     <div className="min-h-screen bg-gray-50">
       <Header />
       <PromoBanner />
-      
       {/* Hero Section */}
       <section 
         ref={heroRef}
@@ -145,7 +144,7 @@ export default function Home() {
             <div className="relative animate-fade-in-scale" style={{ animationDelay: '0.6s' }}>
               {/* Hero Product Showcase */}
               <div className="relative">
-                <div className="glass-effect rounded-3xl p-8 shadow-2xl">
+                <div className="glass-effect rounded-3xl p-8 shadow-2xl pl-[10px] pr-[10px] pt-[10px] pb-[10px]">
                   <img
                     src={settings?.bannerImage || "https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"}
                     alt={settings?.storeName || "Modern fashion lifestyle"}
@@ -167,7 +166,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
       {/* Categories Section */}
       <section ref={categoriesRef} className="py-12 bg-gradient-to-b from-gray-50 to-white">
         <div className="container mx-auto px-4">
@@ -196,7 +194,6 @@ export default function Home() {
 
         </div>
       </section>
-
       {/* Flash Sale Section */}
       <section id="flash-sale" className="py-16 bg-gradient-to-r from-red-500 via-pink-500 to-orange-500 relative overflow-hidden">
         <div className="absolute inset-0 bg-black/20" />
@@ -287,7 +284,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
       {/* Featured Products Section */}
       <section id="products" ref={productsRef} className="py-20 bg-white">
         <div className="container mx-auto px-4">
@@ -316,7 +312,6 @@ export default function Home() {
 
         </div>
       </section>
-
       {/* Stats Section */}
       <section ref={statsRef} className="py-20 purple-gradient text-white">
         <div className="container mx-auto px-4">
@@ -340,7 +335,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
       {/* Newsletter Section */}
       <section ref={newsletterRef} className="py-20 bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 relative overflow-hidden">
         <div className="absolute inset-0 bg-black/20" />
@@ -378,7 +372,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
       {/* Footer */}
       <footer id="contact" className="bg-gray-900 text-white py-16">
         <div className="container mx-auto px-4">
@@ -496,10 +489,8 @@ export default function Home() {
           </div>
         </div>
       </footer>
-
       {/* Floating Actions */}
       <FloatingActions />
-
       {/* Product Modal */}
       <ProductModal
         product={selectedProduct}
