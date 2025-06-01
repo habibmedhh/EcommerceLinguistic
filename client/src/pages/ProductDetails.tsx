@@ -340,7 +340,7 @@ export default function ProductDetails() {
               </p>
               
               {/* Rating */}
-              <div className="flex items-center gap-2 mb-4">
+              <div className={`flex items-center gap-2 mb-4 ${direction === 'rtl' ? 'flex-row-reverse justify-end' : ''}`}>
                 <div className="flex items-center">
                   {[...Array(5)].map((_, i) => (
                     <Star
@@ -359,7 +359,7 @@ export default function ProductDetails() {
               </div>
 
               {/* Price */}
-              <div className="flex items-center gap-3 mb-6">
+              <div className={`flex items-center gap-3 mb-6 ${direction === 'rtl' ? 'flex-row-reverse justify-end' : ''}`}>
                 {discountedPrice ? (
                   <>
                     <span className="text-3xl font-bold text-purple-600">
@@ -419,13 +419,13 @@ export default function ProductDetails() {
                 </div>
               </div>
 
-              <div className="flex gap-3">
+              <div className={`flex gap-3 ${direction === 'rtl' ? 'flex-row-reverse' : ''}`}>
                 <Button 
                   onClick={handleAddToCart}
-                  className="flex-1"
+                  className={`flex-1 ${direction === 'rtl' ? 'flex-row-reverse' : ''}`}
                   variant="outline"
                 >
-                  <ShoppingCart className="h-4 w-4 mr-2" />
+                  <ShoppingCart className={`h-4 w-4 ${direction === 'rtl' ? 'ml-2' : 'mr-2'}`} />
                   {t.products.addToCart}
                 </Button>
                 <Button 
@@ -436,18 +436,18 @@ export default function ProductDetails() {
                 </Button>
               </div>
 
-              <div className="flex gap-2">
+              <div className={`flex gap-2 ${direction === 'rtl' ? 'flex-row-reverse justify-end' : ''}`}>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => setIsFavorite(!isFavorite)}
-                  className={isFavorite ? "text-red-500" : ""}
+                  className={`${isFavorite ? "text-red-500" : ""} ${direction === 'rtl' ? 'flex-row-reverse' : ''}`}
                 >
-                  <Heart className={`h-4 w-4 mr-2 ${isFavorite ? 'fill-current' : ''}`} />
+                  <Heart className={`h-4 w-4 ${direction === 'rtl' ? 'ml-2' : 'mr-2'} ${isFavorite ? 'fill-current' : ''}`} />
                   {t.admin.wishlist}
                 </Button>
-                <Button variant="ghost" size="sm">
-                  <Share2 className="h-4 w-4 mr-2" />
+                <Button variant="ghost" size="sm" className={direction === 'rtl' ? 'flex-row-reverse' : ''}>
+                  <Share2 className={`h-4 w-4 ${direction === 'rtl' ? 'ml-2' : 'mr-2'}`} />
                   {t.admin.share}
                 </Button>
               </div>
