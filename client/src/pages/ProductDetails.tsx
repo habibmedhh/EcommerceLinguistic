@@ -737,43 +737,65 @@ export default function ProductDetails() {
                      'Order Summary'}
                   </h4>
                   <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span>
-                        {language === 'ar' ? 'المنتج:' : 
-                         language === 'fr' ? 'Produit:' : 
-                         'Product:'}
-                      </span>
-                      <span className="font-medium">{getLocalizedText('name')}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>
-                        {language === 'ar' ? 'الكمية:' : 
-                         language === 'fr' ? 'Quantité:' : 
-                         'Quantity:'}
-                      </span>
-                      <span className="font-medium">{quantity}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>
-                        {language === 'ar' ? 'السعر للوحدة:' : 
-                         language === 'fr' ? 'Prix unitaire:' : 
-                         'Unit Price:'}
-                      </span>
-                      <span className="font-medium">
-                        {(discountedPrice ? discountedPrice : originalPrice).toFixed(2)}{settings?.currencySymbol || (language === 'ar' ? ' د.م' : '€')}
-                      </span>
-                    </div>
-                    <Separator />
-                    <div className="flex justify-between text-lg font-bold">
-                      <span>
-                        {language === 'ar' ? 'المجموع:' : 
-                         language === 'fr' ? 'Total:' : 
-                         'Total:'}
-                      </span>
-                      <span>
-                        {(discountedPrice ? discountedPrice * quantity : originalPrice * quantity).toFixed(2)}{settings?.currencySymbol || (language === 'ar' ? ' د.م' : '€')}
-                      </span>
-                    </div>
+                    {direction === 'rtl' ? (
+                      <>
+                        {/* En arabe: montant à gauche, label à droite */}
+                        <div className="flex justify-between">
+                          <span className="font-medium">{getLocalizedText('name')}</span>
+                          <span>المنتج:</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="font-medium">{quantity}</span>
+                          <span>الكمية:</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="font-medium">
+                            {(discountedPrice ? discountedPrice : originalPrice).toFixed(2)} د.م
+                          </span>
+                          <span>السعر للوحدة:</span>
+                        </div>
+                        <Separator />
+                        <div className="flex justify-between text-lg font-bold">
+                          <span>
+                            {(discountedPrice ? discountedPrice * quantity : originalPrice * quantity).toFixed(2)} د.م
+                          </span>
+                          <span>المجموع:</span>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        {/* Langues occidentales: label à gauche, montant à droite */}
+                        <div className="flex justify-between">
+                          <span>
+                            {language === 'fr' ? 'Produit:' : 'Product:'}
+                          </span>
+                          <span className="font-medium">{getLocalizedText('name')}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>
+                            {language === 'fr' ? 'Quantité:' : 'Quantity:'}
+                          </span>
+                          <span className="font-medium">{quantity}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>
+                            {language === 'fr' ? 'Prix unitaire:' : 'Unit Price:'}
+                          </span>
+                          <span className="font-medium">
+                            {(discountedPrice ? discountedPrice : originalPrice).toFixed(2)}{settings?.currencySymbol || '€'}
+                          </span>
+                        </div>
+                        <Separator />
+                        <div className="flex justify-between text-lg font-bold">
+                          <span>
+                            {language === 'fr' ? 'Total:' : 'Total:'}
+                          </span>
+                          <span>
+                            {(discountedPrice ? discountedPrice * quantity : originalPrice * quantity).toFixed(2)}{settings?.currencySymbol || '€'}
+                          </span>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
                 
