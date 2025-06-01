@@ -142,15 +142,15 @@ export function PromoBanner() {
 
   return (
     <div className={`fixed top-16 left-0 right-0 z-40 transition-all duration-500 ${isVisible ? 'translate-y-0' : '-translate-y-full'}`}>
-      <Card className={`mx-4 my-2 overflow-hidden border-0 shadow-lg ${currentMessage.bgColor}`}>
-        <div className="px-4 py-3" dir={direction}>
+      <Card className={`mx-4 my-1 overflow-hidden border-0 shadow-lg ${currentMessage.bgColor}`}>
+        <div className="px-4 py-2" dir={direction}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3 flex-1">
               <div className={`${currentMessage.textColor} flex-shrink-0`}>
                 {getIcon()}
               </div>
               
-              <div className={`font-semibold text-center flex-1 ${currentMessage.textColor} animate-pulse`}>
+              <div className={`font-medium text-center flex-1 ${currentMessage.textColor} text-sm`}>
                 {getMessage()}
               </div>
               

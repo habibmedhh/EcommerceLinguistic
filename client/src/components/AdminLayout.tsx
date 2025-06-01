@@ -21,7 +21,8 @@ import {
   X,
   PlusCircle,
   BarChart3,
-  Bell
+  Bell,
+  Megaphone
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -132,6 +133,12 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       href: '/admin/categories',
       icon: FolderTree,
       active: location === '/admin/categories'
+    },
+    {
+      title: 'Messages Promotionnels',
+      href: '/admin/promo-messages',
+      icon: Megaphone,
+      active: location === '/admin/promo-messages'
     },
     {
       title: 'Administrateurs',
