@@ -17,7 +17,7 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, onQuickView }: ProductCardProps) {
-  const { t, language } = useI18n();
+  const { t, language, direction } = useI18n();
   const { addToCart } = useCart();
   const { data: settings } = useSettings();
   const { toast } = useToast();
@@ -145,16 +145,27 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
         )}
 
         {/* Price */}
-        <div className="flex items-center gap-2 mb-4">
+        <div className={`flex items-center gap-2 mb-4 ${direction === 'rtl' ? 'flex-row-reverse justify-end' : ''}`}>
           {salePrice ? (
-            <>
-              <span className="text-2xl font-bold text-purple-600">
-                {salePrice.toFixed(2)}{settings?.currencySymbol || (language === 'ar' ? ' د.م' : '€')}
-              </span>
-              <span className="text-lg text-gray-500 line-through">
-                {price.toFixed(2)}{settings?.currencySymbol || (language === 'ar' ? ' د.م' : '€')}
-              </span>
-            </>
+            direction === 'rtl' ? (
+              <>
+                <span className="text-lg text-gray-500 line-through">
+                  {price.toFixed(2)}{settings?.currencySymbol || ' د.م'}
+                </span>
+                <span className="text-2xl font-bold text-purple-600">
+                  {salePrice.toFixed(2)}{settings?.currencySymbol || ' د.م'}
+                </span>
+              </>
+            ) : (
+              <>
+                <span className="text-2xl font-bold text-purple-600">
+                  {salePrice.toFixed(2)}{settings?.currencySymbol || '€'}
+                </span>
+                <span className="text-lg text-gray-500 line-through">
+                  {price.toFixed(2)}{settings?.currencySymbol || '€'}
+                </span>
+              </>
+            )
           ) : (
             <span className="text-2xl font-bold text-purple-600">
               {price.toFixed(2)}{settings?.currencySymbol || (language === 'ar' ? ' د.م' : '€')}
