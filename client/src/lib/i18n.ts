@@ -53,7 +53,6 @@ export interface Translation {
     fillForm: string;
     processing: string;
     confirmed: string;
-    validationMessage: string;
   };
   // Newsletter
   newsletter: {
@@ -240,8 +239,7 @@ export const translations: Record<string, Translation> = {
       ready: "Great! Your order is ready 🤩",
       fillForm: "Please fill in your information to complete the order",
       processing: "Processing your order... 🛒",
-      confirmed: "Order confirmed! Thank you 🎉",
-      validationMessage: "Excellent! Your order is ready 🤩 Please fill in your information to validate your order"
+      confirmed: "Order confirmed! Thank you 🎉"
     },
     newsletter: {
       title: "Stay Updated",
@@ -420,8 +418,7 @@ export const translations: Record<string, Translation> = {
       ready: "Très bien ! Votre commande est prête 🤩",
       fillForm: "Remplissez vos informations pour finaliser la commande",
       processing: "Traitement de votre commande... 🛒",
-      confirmed: "Commande confirmée ! Merci beaucoup 🎉",
-      validationMessage: "Excellent ! Votre commande est prête 🎉 Remplissez vos informations pour valider votre commande"
+      confirmed: "Commande confirmée ! Merci beaucoup 🎉"
     },
     newsletter: {
       title: "Restez Informé",
@@ -534,8 +531,7 @@ export const translations: Record<string, Translation> = {
       total: "Total",
       status: "Statut",
       date: "Date",
-      actions: "Actions",
-      back: "Retour"
+      actions: "Actions"
     }
   },
   ar: {
@@ -585,8 +581,7 @@ export const translations: Record<string, Translation> = {
       ready: "ممتاز! طلبك جاهز 🤩",
       fillForm: "يرجى ملء بياناتك لإتمام الطلب",
       processing: "جاري معالجة طلبك... 🛒",
-      confirmed: "تم تأكيد الطلب! شكراً لك 🎉",
-      validationMessage: "ممتاز! طلبك جاهز 🎉 يرجى ملء بياناتك لتأكيد طلبك"
+      confirmed: "تم تأكيد الطلب! شكراً لك 🎉"
     },
     newsletter: {
       title: "ابق على اطلاع",
@@ -699,8 +694,7 @@ export const translations: Record<string, Translation> = {
       total: "المجموع",
       status: "الحالة",
       date: "التاريخ",
-      actions: "الإجراءات",
-      back: "رجوع"
+      actions: "الإجراءات"
     }
   }
 };

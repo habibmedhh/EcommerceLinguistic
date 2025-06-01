@@ -43,15 +43,10 @@ export function OrderForm({ open, onClose, initialItems = [], totalAmount = "0" 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    toast({
-      title: "Debug",
-      description: "Fonction handleSubmit appelée",
-    });
-    
-    if (!formData.customerName.trim() || !formData.customerPhone.trim() || !formData.deliveryAddress.trim()) {
+    if (!formData.customerName || !formData.customerPhone || !formData.deliveryAddress) {
       toast({
         title: t.common.error,
-        description: t.order.validationMessage,
+        description: "Please fill in all required fields",
         variant: "destructive",
       });
       return;
@@ -145,7 +140,7 @@ export function OrderForm({ open, onClose, initialItems = [], totalAmount = "0" 
           </Card>
 
           {/* Order Form */}
-          <div className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <Label htmlFor="customerName">{t.order.name} *</Label>
               <Input
@@ -153,6 +148,7 @@ export function OrderForm({ open, onClose, initialItems = [], totalAmount = "0" 
                 value={formData.customerName}
                 onChange={(e) => handleInputChange("customerName", e.target.value)}
                 placeholder={t.order.name}
+                required
               />
             </div>
 
@@ -160,10 +156,11 @@ export function OrderForm({ open, onClose, initialItems = [], totalAmount = "0" 
               <Label htmlFor="customerPhone">{t.order.phone} *</Label>
               <Input
                 id="customerPhone"
-                type="text"
+                type="tel"
                 value={formData.customerPhone}
                 onChange={(e) => handleInputChange("customerPhone", e.target.value)}
                 placeholder={t.order.phone}
+                required
               />
             </div>
 
@@ -171,7 +168,7 @@ export function OrderForm({ open, onClose, initialItems = [], totalAmount = "0" 
               <Label htmlFor="customerEmail">Email</Label>
               <Input
                 id="customerEmail"
-                type="text"
+                type="email"
                 value={formData.customerEmail}
                 onChange={(e) => handleInputChange("customerEmail", e.target.value)}
                 placeholder="email@example.com"
@@ -186,6 +183,7 @@ export function OrderForm({ open, onClose, initialItems = [], totalAmount = "0" 
                 onChange={(e) => handleInputChange("deliveryAddress", e.target.value)}
                 placeholder={t.order.address}
                 rows={3}
+                required
               />
             </div>
 
@@ -199,21 +197,14 @@ export function OrderForm({ open, onClose, initialItems = [], totalAmount = "0" 
                 {t.common.cancel}
               </Button>
               <Button
-                type="button"
+                type="submit"
                 disabled={createOrder.isPending}
                 className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
-                onClick={(e) => {
-                  toast({
-                    title: "Test Bouton",
-                    description: "Le bouton fonctionne!",
-                  });
-                  handleSubmit(e as any);
-                }}
               >
                 {createOrder.isPending ? t.common.loading : t.order.submit}
               </Button>
             </div>
-          </div>
+          </form>
         </div>
       </DialogContent>
     </Dialog>
