@@ -58,19 +58,24 @@ export function PromoBanner() {
   // Load promotional messages
   const loadPromoMessages = async () => {
     try {
-      const response = await fetch('/api/settings');
+      console.log('Loading promotional messages...');
+      const response = await fetch('/api/settings?_=' + Date.now());
       if (response.ok) {
         const settings = await response.json();
+        console.log('Settings loaded:', settings.length);
         const promoSettings = settings.find((s: any) => s.key === 'promo_messages');
         
         if (promoSettings && promoSettings.value) {
           const newMessages = JSON.parse(promoSettings.value);
+          console.log('Found promo messages in settings:', newMessages);
           setPromoMessages(newMessages);
-          console.log('Promotional messages loaded:', newMessages.length, 'messages');
+          setCurrentMessageIndex(0); // Reset to first message
         } else {
+          console.log('No promo messages found in settings, using defaults');
           setPromoMessages(defaultMessages);
         }
       } else {
+        console.log('Settings API failed, using defaults');
         setPromoMessages(defaultMessages);
       }
     } catch (error) {
@@ -121,9 +126,10 @@ export function PromoBanner() {
 
   useEffect(() => {
     // Auto-rotate messages every 4 seconds
-    if (promoMessages.length > 1 && isVisible) {
+    const activeMessages = promoMessages.filter(msg => msg.isActive);
+    if (activeMessages.length > 1 && isVisible) {
       const interval = setInterval(() => {
-        setCurrentMessageIndex((prev) => (prev + 1) % promoMessages.length);
+        setCurrentMessageIndex((prev) => (prev + 1) % activeMessages.length);
       }, 4000);
       
       return () => clearInterval(interval);
