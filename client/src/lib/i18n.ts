@@ -534,7 +534,8 @@ export const translations: Record<string, Translation> = {
       total: "Total",
       status: "Statut",
       date: "Date",
-      actions: "Actions"
+      actions: "Actions",
+      back: "Retour"
     }
   },
   ar: {
@@ -698,7 +699,8 @@ export const translations: Record<string, Translation> = {
       total: "المجموع",
       status: "الحالة",
       date: "التاريخ",
-      actions: "الإجراءات"
+      actions: "الإجراءات",
+      back: "رجوع"
     }
   }
 };

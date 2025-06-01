@@ -46,7 +46,7 @@ export function OrderForm({ open, onClose, initialItems = [], totalAmount = "0" 
     if (!formData.customerName || !formData.customerPhone || !formData.deliveryAddress) {
       toast({
         title: t.common.error,
-        description: "Please fill in all required fields",
+        description: t.order.validationMessage,
         variant: "destructive",
       });
       return;
