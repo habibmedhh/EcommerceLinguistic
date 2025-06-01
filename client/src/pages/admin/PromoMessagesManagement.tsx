@@ -146,6 +146,9 @@ export default function PromoMessagesManagement() {
         console.log('Dispatching promoMessagesUpdated event...');
         window.dispatchEvent(new CustomEvent('promoMessagesUpdated'));
         
+        // Set localStorage signal for banner update
+        localStorage.setItem('promo-messages-update', Date.now().toString());
+        
         // Force reload banner after a short delay
         setTimeout(() => {
           window.dispatchEvent(new CustomEvent('promoMessagesUpdated'));
@@ -244,6 +247,7 @@ export default function PromoMessagesManagement() {
               <Button 
                 onClick={() => {
                   console.log('Force updating banner...');
+                  localStorage.setItem('promo-messages-update', Date.now().toString());
                   window.dispatchEvent(new CustomEvent('promoMessagesUpdated'));
                 }}
                 variant="outline"

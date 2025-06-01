@@ -20,6 +20,7 @@ export function PromoBanner() {
   const [isVisible, setIsVisible] = useState(true);
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
   const [promoMessages, setPromoMessages] = useState<PromoMessage[]>([]);
+  const [lastUpdate, setLastUpdate] = useState(0);
 
   // Default promotional messages
   const defaultMessages: PromoMessage[] = [
@@ -90,8 +91,17 @@ export function PromoBanner() {
     
     window.addEventListener('promoMessagesUpdated', handlePromoUpdate);
 
-    // Reload messages every 10 seconds to catch updates as fallback
-    const interval = setInterval(loadPromoMessages, 10000);
+    // Check localStorage for update signals every 2 seconds
+    const checkForUpdates = () => {
+      const updateTimestamp = localStorage.getItem('promo-messages-update');
+      if (updateTimestamp && parseInt(updateTimestamp) > lastUpdate) {
+        console.log('Detected promo messages update via localStorage');
+        setLastUpdate(parseInt(updateTimestamp));
+        loadPromoMessages();
+      }
+    };
+    
+    const interval = setInterval(checkForUpdates, 2000);
     
     return () => {
       clearInterval(interval);
@@ -159,7 +169,7 @@ export function PromoBanner() {
   };
 
   return (
-    <div className={`fixed top-16 left-0 right-0 z-40 transition-all duration-500 ${isVisible ? 'translate-y-0' : '-translate-y-full'}`}>
+    <div className="fixed top-16 left-0 right-0 z-40 transition-all duration-500 translate-y-0 pl-[150px] pr-[150px]">
       <Card className={`mx-4 my-1 overflow-hidden border-0 shadow-lg ${currentMessage.bgColor}`}>
         <div className="px-4 py-2" dir={direction}>
           <div className="flex items-center justify-between">
