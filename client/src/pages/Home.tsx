@@ -33,6 +33,7 @@ import {
   Instagram,
   Twitter
 } from "lucide-react";
+import { SiFacebook, SiInstagram, SiX } from "react-icons/si";
 import type { Product } from "@/types";
 
 export default function Home() {
@@ -392,15 +393,36 @@ export default function Home() {
                 Your trusted partner for ultra-modern e-commerce experiences with premium quality products.
               </p>
               <div className="flex gap-4">
-                <Button variant="outline" size="sm" className="rounded-lg border-gray-700 hover:bg-purple-500 hover:border-purple-500">
-                  <Facebook className="h-4 w-4" />
-                </Button>
-                <Button variant="outline" size="sm" className="rounded-lg border-gray-700 hover:bg-purple-500 hover:border-purple-500">
-                  <Instagram className="h-4 w-4" />
-                </Button>
-                <Button variant="outline" size="sm" className="rounded-lg border-gray-700 hover:bg-purple-500 hover:border-purple-500">
-                  <Twitter className="h-4 w-4" />
-                </Button>
+                {settings?.facebook && (
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="rounded-lg border-gray-700 bg-blue-600 hover:bg-blue-700 border-blue-600 hover:border-blue-700 text-white"
+                    onClick={() => window.open(settings.facebook, '_blank')}
+                  >
+                    <SiFacebook className="h-4 w-4" />
+                  </Button>
+                )}
+                {settings?.instagram && (
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="rounded-lg border-gray-700 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 border-purple-500 text-white"
+                    onClick={() => window.open(settings.instagram, '_blank')}
+                  >
+                    <SiInstagram className="h-4 w-4" />
+                  </Button>
+                )}
+                {settings?.twitter && (
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="rounded-lg border-gray-700 bg-black hover:bg-gray-800 border-black hover:border-gray-800 text-white"
+                    onClick={() => window.open(settings.twitter, '_blank')}
+                  >
+                    <SiX className="h-4 w-4" />
+                  </Button>
+                )}
               </div>
             </div>
             

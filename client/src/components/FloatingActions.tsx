@@ -43,41 +43,7 @@ export function FloatingActions() {
   };
 
   return (
-    <div className="fixed right-6 bottom-6 flex flex-col gap-3 z-50">
-      {/* Social Media Buttons */}
-      {settings?.facebook && (
-        <Button
-          size="sm"
-          className="w-12 h-12 rounded-full bg-blue-600 hover:bg-blue-700 shadow-lg hover:shadow-xl transition-all duration-300 p-0"
-          onClick={() => window.open(settings.facebook, '_blank')}
-          title="Facebook"
-        >
-          <SiFacebook className="h-5 w-5 text-white" />
-        </Button>
-      )}
-      
-      {settings?.instagram && (
-        <Button
-          size="sm"
-          className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 shadow-lg hover:shadow-xl transition-all duration-300 p-0"
-          onClick={() => window.open(settings.instagram, '_blank')}
-          title="Instagram"
-        >
-          <SiInstagram className="h-5 w-5 text-white" />
-        </Button>
-      )}
-      
-      {settings?.twitter && (
-        <Button
-          size="sm"
-          className="w-12 h-12 rounded-full bg-black hover:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-300 p-0"
-          onClick={() => window.open(settings.twitter, '_blank')}
-          title="X (Twitter)"
-        >
-          <SiX className="h-5 w-5 text-white" />
-        </Button>
-      )}
-
+    <div className="fixed right-6 bottom-6 flex flex-col gap-4 z-50">
       {/* WhatsApp Button */}
       <Button
         ref={whatsappRef}
