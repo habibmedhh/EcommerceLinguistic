@@ -110,10 +110,23 @@ export function PromoBanner() {
   }, []);
 
   useEffect(() => {
-    // Check if banner was closed by user
+    // Check if banner was closed by user recently (reset after 24 hours)
     const bannerClosed = localStorage.getItem('promo-banner-closed');
-    if (bannerClosed === 'true') {
-      setIsVisible(false);
+    const closedTime = localStorage.getItem('promo-banner-closed-time');
+    
+    if (bannerClosed === 'true' && closedTime) {
+      const closedTimestamp = parseInt(closedTime);
+      const currentTime = Date.now();
+      const hoursSinceClosed = (currentTime - closedTimestamp) / (1000 * 60 * 60);
+      
+      // Show banner again after 24 hours
+      if (hoursSinceClosed > 24) {
+        localStorage.removeItem('promo-banner-closed');
+        localStorage.removeItem('promo-banner-closed-time');
+        setIsVisible(true);
+      } else {
+        setIsVisible(false);
+      }
     }
   }, []);
 
@@ -133,6 +146,7 @@ export function PromoBanner() {
   const handleClose = () => {
     setIsVisible(false);
     localStorage.setItem('promo-banner-closed', 'true');
+    localStorage.setItem('promo-banner-closed-time', Date.now().toString());
   };
 
   const activeMessages = promoMessages.filter(msg => msg.isActive);

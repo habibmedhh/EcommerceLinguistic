@@ -185,30 +185,108 @@ export default function PromoMessagesManagement() {
     setIsDialogOpen(true);
   };
 
-  const handleSaveMessage = () => {
+  const handleSaveMessage = async () => {
     if (!editingMessage) return;
 
     const existingIndex = messages.findIndex(m => m.id === editingMessage.id);
+    let updatedMessages;
     if (existingIndex >= 0) {
-      const updatedMessages = [...messages];
+      updatedMessages = [...messages];
       updatedMessages[existingIndex] = editingMessage;
-      setMessages(updatedMessages);
     } else {
-      setMessages([...messages, editingMessage]);
+      updatedMessages = [...messages, editingMessage];
+    }
+    
+    setMessages(updatedMessages);
+
+    // Auto-save after adding/editing a message
+    try {
+      const response = await fetch('/api/settings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          key: 'promo_messages',
+          value: JSON.stringify(updatedMessages),
+          description: 'Promotional banner messages configuration'
+        }),
+      });
+
+      if (response.ok) {
+        localStorage.setItem('promo-messages-update', Date.now().toString());
+        window.dispatchEvent(new CustomEvent('promoMessagesUpdated'));
+        toast({
+          title: "Succès",
+          description: "Message sauvegardé automatiquement",
+        });
+      }
+    } catch (error) {
+      console.error('Auto-save failed:', error);
     }
 
     setIsDialogOpen(false);
     setEditingMessage(null);
   };
 
-  const handleDeleteMessage = (id: string) => {
-    setMessages(messages.filter(m => m.id !== id));
+  const handleDeleteMessage = async (id: string) => {
+    const updatedMessages = messages.filter(m => m.id !== id);
+    setMessages(updatedMessages);
+
+    // Auto-save after deleting a message
+    try {
+      const response = await fetch('/api/settings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          key: 'promo_messages',
+          value: JSON.stringify(updatedMessages),
+          description: 'Promotional banner messages configuration'
+        }),
+      });
+
+      if (response.ok) {
+        localStorage.setItem('promo-messages-update', Date.now().toString());
+        window.dispatchEvent(new CustomEvent('promoMessagesUpdated'));
+        toast({
+          title: "Succès",
+          description: "Message supprimé",
+        });
+      }
+    } catch (error) {
+      console.error('Auto-save failed:', error);
+    }
   };
 
-  const toggleMessageActive = (id: string) => {
-    setMessages(messages.map(m => 
+  const toggleMessageActive = async (id: string) => {
+    const updatedMessages = messages.map(m => 
       m.id === id ? { ...m, isActive: !m.isActive } : m
-    ));
+    );
+    setMessages(updatedMessages);
+
+    // Auto-save after toggling message status
+    try {
+      const response = await fetch('/api/settings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          key: 'promo_messages',
+          value: JSON.stringify(updatedMessages),
+          description: 'Promotional banner messages configuration'
+        }),
+      });
+
+      if (response.ok) {
+        localStorage.setItem('promo-messages-update', Date.now().toString());
+        window.dispatchEvent(new CustomEvent('promoMessagesUpdated'));
+      }
+    } catch (error) {
+      console.error('Auto-save failed:', error);
+    }
   };
 
   const getIconComponent = (iconName: string) => {
@@ -254,6 +332,23 @@ export default function PromoMessagesManagement() {
               >
                 <div className="h-4 w-4 mr-2 rounded-full bg-orange-500" />
                 Actualiser bannière
+              </Button>
+              <Button 
+                onClick={() => {
+                  localStorage.removeItem('promo-banner-closed');
+                  localStorage.removeItem('promo-banner-closed-time');
+                  localStorage.setItem('promo-messages-update', Date.now().toString());
+                  window.dispatchEvent(new CustomEvent('promoMessagesUpdated'));
+                  toast({
+                    title: "Succès",
+                    description: "Bannière réinitialisée - elle sera visible sur toutes les pages",
+                  });
+                }}
+                variant="outline"
+                className="text-green-600 border-green-600 hover:bg-green-50"
+              >
+                <div className="h-4 w-4 mr-2 rounded-full bg-green-500" />
+                Réafficher bannière
               </Button>
               <Button onClick={handleAddMessage}>
                 <Plus className="h-4 w-4 mr-2" />
