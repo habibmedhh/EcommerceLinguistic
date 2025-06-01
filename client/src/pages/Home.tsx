@@ -384,10 +384,18 @@ export default function Home() {
             {/* Company Info */}
             <div>
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 purple-gradient rounded-lg flex items-center justify-center">
-                  <ShoppingCart className="h-6 w-6 text-white" />
-                </div>
-                <span className="text-xl font-bold">ModernShop</span>
+                {settings?.logo ? (
+                  <img 
+                    src={settings.logo} 
+                    alt={settings.storeName || "Store Logo"} 
+                    className="w-10 h-10 object-cover rounded-lg"
+                  />
+                ) : (
+                  <div className="w-10 h-10 purple-gradient rounded-lg flex items-center justify-center">
+                    <ShoppingCart className="h-6 w-6 text-white" />
+                  </div>
+                )}
+                <span className="text-xl font-bold">{settings?.storeName || "ModernShop"}</span>
               </div>
               <p className="text-gray-400 mb-4">
                 Your trusted partner for ultra-modern e-commerce experiences with premium quality products.

@@ -14,6 +14,9 @@ export interface StoreSettings {
   metaTitle: string;
   metaDescription: string;
   metaKeywords: string;
+  logo?: string;
+  favicon?: string;
+  bannerImage?: string;
   whatsapp?: string;
   facebook?: string;
   instagram?: string;
@@ -91,6 +94,15 @@ export const useSettings = () => {
             break;
           case 'social_twitter':
             settings.twitter = setting.value;
+            break;
+          case 'store_logo':
+            settings.logo = setting.value;
+            break;
+          case 'store_favicon':
+            settings.favicon = setting.value;
+            break;
+          case 'store_banner':
+            settings.bannerImage = setting.value;
             break;
         }
       });

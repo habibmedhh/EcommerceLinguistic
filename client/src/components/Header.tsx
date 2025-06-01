@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "wouter";
 import { useI18n } from "@/providers/I18nProvider";
 import { useCart } from "@/hooks/useCart";
+import { useSettings } from "@/hooks/useSettings";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +12,7 @@ import { Search, ShoppingCart, Menu, Store, Settings } from "lucide-react";
 export function Header() {
   const { t, direction } = useI18n();
   const { cart } = useCart();
+  const { data: settings } = useSettings();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   return (
@@ -19,11 +21,19 @@ export function Header() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-              <Store className="h-6 w-6 text-white" />
-            </div>
+            {settings?.logo ? (
+              <img 
+                src={settings.logo} 
+                alt={settings.storeName || "Store Logo"} 
+                className="w-10 h-10 object-cover rounded-lg"
+              />
+            ) : (
+              <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                <Store className="h-6 w-6 text-white" />
+              </div>
+            )}
             <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-              ModernShop
+              {settings?.storeName || "ModernShop"}
             </span>
           </Link>
 
@@ -86,10 +96,18 @@ export function Header() {
               <SheetContent side={direction === 'rtl' ? 'left' : 'right'} className="w-80 bg-gradient-to-b from-purple-50 to-white">
                 <div className="mt-8">
                   <div className="text-center mb-8">
-                    <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                      <ShoppingCart className="h-8 w-8 text-white" />
-                    </div>
-                    <h2 className="text-xl font-bold text-gray-800">ModernShop</h2>
+                    {settings?.logo ? (
+                      <img 
+                        src={settings.logo} 
+                        alt={settings.storeName || "Store Logo"} 
+                        className="w-16 h-16 object-cover rounded-2xl mx-auto mb-3"
+                      />
+                    ) : (
+                      <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                        <ShoppingCart className="h-8 w-8 text-white" />
+                      </div>
+                    )}
+                    <h2 className="text-xl font-bold text-gray-800">{settings?.storeName || "ModernShop"}</h2>
                   </div>
                   
                   <nav className="space-y-2">
