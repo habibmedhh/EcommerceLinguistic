@@ -47,7 +47,7 @@ export function Header() {
                 <Store className="h-6 w-6 text-white" />
               </div>
             )}
-            <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+            <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent text-left">
               {settings?.storeName || "ModernShop"}
             </span>
           </Link>
