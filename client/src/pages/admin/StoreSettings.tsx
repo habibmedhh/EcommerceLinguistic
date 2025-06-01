@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useI18n } from "@/providers/I18nProvider";
 import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
@@ -33,26 +33,27 @@ import {
 export default function StoreSettings() {
   const { t, language } = useI18n();
   const { toast } = useToast();
+  const [loading, setLoading] = useState(true);
 
   const [storeSettings, setStoreSettings] = useState({
     // Informations générales
-    storeName: "ModernShop",
-    storeNameAr: "متجر حديث",
-    storeNameFr: "Boutique Moderne",
-    description: "Ultra-modern e-commerce experience",
-    descriptionAr: "تجربة تجارة إلكترونية حديثة ومتقدمة",
-    descriptionFr: "Expérience e-commerce ultra-moderne",
+    storeName: "",
+    storeNameAr: "",
+    storeNameFr: "",
+    description: "",
+    descriptionAr: "",
+    descriptionFr: "",
     logo: "",
     favicon: "",
     bannerImage: "",
     
     // Contact
-    email: "contact@modernshop.com",
-    phone: "+33123456789",
-    whatsapp: "+33123456789",
-    address: "123 Commerce Street, Paris, France",
-    addressAr: "123 شارع التجارة، باريس، فرنسا",
-    addressFr: "123 Rue du Commerce, Paris, France",
+    email: "",
+    phone: "",
+    whatsapp: "",
+    address: "",
+    addressAr: "",
+    addressFr: "",
     
     // Réseaux sociaux
     facebook: "",
@@ -62,9 +63,9 @@ export default function StoreSettings() {
     // Paramètres financiers
     currency: "EUR",
     currencySymbol: "€",
-    taxRate: 20,
-    shippingCost: 5.99,
-    freeShippingThreshold: 50,
+    taxRate: 0,
+    shippingCost: 0,
+    freeShippingThreshold: 0,
     
     // Apparence
     primaryColor: "#8B5CF6",
@@ -72,10 +73,69 @@ export default function StoreSettings() {
     accentColor: "#06B6D4",
     
     // SEO
-    metaTitle: "ModernShop - E-commerce Platform",
-    metaDescription: "Discover premium products with fast delivery",
-    keywords: "e-commerce, shopping, premium products"
+    metaTitle: "",
+    metaDescription: "",
+    keywords: ""
   });
+
+  // Charger les paramètres existants depuis la base de données
+  useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        const response = await fetch('/api/settings');
+        const settings = await response.json();
+        
+        // Mapper les paramètres de la base vers l'état local
+        const settingsMap: any = {};
+        settings.forEach((setting: any) => {
+          settingsMap[setting.key] = setting.value;
+        });
+
+        setStoreSettings({
+          storeName: settingsMap.store_name || "",
+          storeNameAr: settingsMap.store_name_ar || "",
+          storeNameFr: settingsMap.store_name_fr || "",
+          description: settingsMap.store_description || "",
+          descriptionAr: settingsMap.store_description_ar || "",
+          descriptionFr: settingsMap.store_description_fr || "",
+          logo: settingsMap.store_logo || "",
+          favicon: settingsMap.store_favicon || "",
+          bannerImage: settingsMap.store_banner || "",
+          email: settingsMap.contact_email || "",
+          phone: settingsMap.contact_phone || "",
+          whatsapp: settingsMap.contact_whatsapp || "",
+          address: settingsMap.contact_address || "",
+          addressAr: settingsMap.contact_address_ar || "",
+          addressFr: settingsMap.contact_address_fr || "",
+          facebook: settingsMap.social_facebook || "",
+          instagram: settingsMap.social_instagram || "",
+          twitter: settingsMap.social_twitter || "",
+          currency: settingsMap.currency || "EUR",
+          currencySymbol: settingsMap.currency_symbol || "€",
+          taxRate: Number(settingsMap.tax_rate) || 0,
+          shippingCost: Number(settingsMap.shipping_cost) || 0,
+          freeShippingThreshold: Number(settingsMap.free_shipping_threshold) || 0,
+          primaryColor: settingsMap.primary_color || "#8B5CF6",
+          secondaryColor: settingsMap.secondary_color || "#EC4899",
+          accentColor: settingsMap.accent_color || "#06B6D4",
+          metaTitle: settingsMap.meta_title || "",
+          metaDescription: settingsMap.meta_description || "",
+          keywords: settingsMap.meta_keywords || ""
+        });
+      } catch (error) {
+        console.error('Erreur lors du chargement des paramètres:', error);
+        toast({
+          title: "Erreur",
+          description: "Impossible de charger les paramètres du store",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadSettings();
+  }, [toast]);
 
   const handleSettingChange = (field: string, value: string | number) => {
     setStoreSettings(prev => ({ ...prev, [field]: value }));
@@ -152,6 +212,22 @@ export default function StoreSettings() {
     };
     reader.readAsDataURL(file);
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
+        <Header />
+        <div className="container mx-auto px-4 pt-24 pb-16">
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+              <p className="text-gray-600">Chargement des paramètres du store...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
