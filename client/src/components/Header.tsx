@@ -13,7 +13,22 @@ export function Header() {
   const { t, direction } = useI18n();
   const { cart } = useCart();
   const { data: settings } = useSettings();
+  const [, setLocation] = useLocation();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      setLocation(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+      setIsSearchOpen(false);
+      setSearchQuery("");
+    }
+  };
+
+  const handleSearchClick = () => {
+    setLocation('/products');
+  };
 
   return (
     <header className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-gray-200 shadow-sm">
@@ -60,8 +75,9 @@ export function Header() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setIsSearchOpen(!isSearchOpen)}
+              onClick={handleSearchClick}
               className="p-2"
+              title={t.common.search}
             >
               <Search className="h-5 w-5" />
             </Button>
