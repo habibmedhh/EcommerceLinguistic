@@ -138,11 +138,13 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
         </h3>
 
         {/* Description */}
-        <div className="flex-grow">
-          {getDescription() && (
-            <p className="text-gray-600 text-sm mb-4 line-clamp-2 min-h-[2.5rem]">
+        <div className="flex-grow mb-4">
+          {getDescription() ? (
+            <p className="text-gray-600 text-sm line-clamp-2 min-h-[2.5rem]">
               {getDescription()}
             </p>
+          ) : (
+            <div className="min-h-[2.5rem]"></div>
           )}
         </div>
 
