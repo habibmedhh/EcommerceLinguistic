@@ -4,6 +4,7 @@ import { useI18n } from "@/providers/I18nProvider";
 import { useProducts } from "@/hooks/useProducts";
 import { useCategories } from "@/hooks/useCategories";
 import { useSettings } from "@/hooks/useSettings";
+import { useNavigationHistory } from "@/hooks/useNavigationHistory";
 import { Header } from "@/components/Header";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductModal } from "@/components/ProductModal";
@@ -22,6 +23,7 @@ export default function Products() {
   const [location] = useLocation();
   const { data: categories = [] } = useCategories();
   const { data: settings } = useSettings();
+  useNavigationHistory(); // Initialize navigation history tracking
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | undefined>();
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<string>("name");

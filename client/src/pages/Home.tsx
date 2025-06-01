@@ -5,6 +5,7 @@ import { useCategories } from "@/hooks/useCategories";
 import { useFeaturedProducts, useSaleProducts } from "@/hooks/useProducts";
 import { useSettings } from "@/hooks/useSettings";
 import { useScrollAnimation, useParallax } from "@/hooks/useAnimations";
+import { useNavigationHistory } from "@/hooks/useNavigationHistory";
 import { Header } from "@/components/Header";
 import { PromoBanner } from "@/components/PromoBanner";
 import { CategoryCard } from "@/components/CategoryCard";
@@ -42,6 +43,7 @@ export default function Home() {
   const { data: featuredProducts = [] } = useFeaturedProducts(8);
   const { data: saleProducts = [] } = useSaleProducts(6);
   const { data: settings } = useSettings();
+  useNavigationHistory(); // Initialize navigation history tracking
   
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [email, setEmail] = useState("");

@@ -5,6 +5,7 @@ import { useProduct } from "@/hooks/useProducts";
 import { useSettings } from "@/hooks/useSettings";
 import { useCart } from "@/hooks/useCart";
 import { useCreateOrder } from "@/hooks/useOrders";
+import { useNavigationHistory } from "@/hooks/useNavigationHistory";
 import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -42,6 +43,7 @@ export default function ProductDetails() {
   const { addToCart } = useCart();
   const createOrder = useCreateOrder();
   const { toast } = useToast();
+  useNavigationHistory(); // Initialize navigation history tracking
   
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
