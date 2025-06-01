@@ -143,7 +143,13 @@ export default function PromoMessagesManagement() {
           description: "Messages promotionnels sauvegardés",
         });
         // Trigger event to update promotional banner immediately
+        console.log('Dispatching promoMessagesUpdated event...');
         window.dispatchEvent(new CustomEvent('promoMessagesUpdated'));
+        
+        // Force reload banner after a short delay
+        setTimeout(() => {
+          window.dispatchEvent(new CustomEvent('promoMessagesUpdated'));
+        }, 1000);
       } else {
         throw new Error('Failed to save');
       }
@@ -234,6 +240,16 @@ export default function PromoMessagesManagement() {
               <Button onClick={saveMessages} className="bg-green-600 hover:bg-green-700">
                 <Save className="h-4 w-4 mr-2" />
                 Sauvegarder
+              </Button>
+              <Button 
+                onClick={() => {
+                  console.log('Force updating banner...');
+                  window.dispatchEvent(new CustomEvent('promoMessagesUpdated'));
+                }}
+                variant="outline"
+              >
+                <div className="h-4 w-4 mr-2 rounded-full bg-orange-500" />
+                Actualiser bannière
               </Button>
               <Button onClick={handleAddMessage}>
                 <Plus className="h-4 w-4 mr-2" />

@@ -59,13 +59,15 @@ export function PromoBanner() {
     // Load promotional messages from settings or use defaults
     const loadPromoMessages = async () => {
       try {
-        const response = await fetch('/api/settings');
+        const response = await fetch('/api/settings?_t=' + Date.now()); // Cache busting
         if (response.ok) {
           const settings = await response.json();
           const promoSettings = settings.find((s: any) => s.key === 'promo_messages');
           
           if (promoSettings && promoSettings.value) {
-            setPromoMessages(JSON.parse(promoSettings.value));
+            const newMessages = JSON.parse(promoSettings.value);
+            setPromoMessages(newMessages);
+            console.log('Promotional messages updated:', newMessages);
           } else {
             setPromoMessages(defaultMessages);
           }
@@ -82,13 +84,14 @@ export function PromoBanner() {
 
     // Listen for promo messages updates
     const handlePromoUpdate = () => {
+      console.log('Received promo update event, reloading messages...');
       loadPromoMessages();
     };
     
     window.addEventListener('promoMessagesUpdated', handlePromoUpdate);
 
-    // Reload messages every 30 seconds to catch updates as fallback
-    const interval = setInterval(loadPromoMessages, 30000);
+    // Reload messages every 10 seconds to catch updates as fallback
+    const interval = setInterval(loadPromoMessages, 10000);
     
     return () => {
       clearInterval(interval);
