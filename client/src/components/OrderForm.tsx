@@ -148,7 +148,6 @@ export function OrderForm({ open, onClose, initialItems = [], totalAmount = "0" 
                 value={formData.customerName}
                 onChange={(e) => handleInputChange("customerName", e.target.value)}
                 placeholder={t.order.name}
-                required
               />
             </div>
 
@@ -160,7 +159,6 @@ export function OrderForm({ open, onClose, initialItems = [], totalAmount = "0" 
                 value={formData.customerPhone}
                 onChange={(e) => handleInputChange("customerPhone", e.target.value)}
                 placeholder={t.order.phone}
-                required
               />
             </div>
 
@@ -183,7 +181,6 @@ export function OrderForm({ open, onClose, initialItems = [], totalAmount = "0" 
                 onChange={(e) => handleInputChange("deliveryAddress", e.target.value)}
                 placeholder={t.order.address}
                 rows={3}
-                required
               />
             </div>
 
