@@ -43,6 +43,7 @@ export function OrderForm({ open, onClose, initialItems = [], totalAmount = "0" 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    console.log("🔥 FORM SUBMITTED!");
     console.log("Form data:", formData);
     console.log("Validation check:", {
       name: !formData.customerName,
