@@ -43,21 +43,12 @@ export function OrderForm({ open, onClose, initialItems = [], totalAmount = "0" 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    console.log("🔥 FORM SUBMITTED!");
-    console.log("Form data:", formData);
-    console.log("Validation check:", {
-      name: !formData.customerName,
-      phone: !formData.customerPhone,
-      address: !formData.deliveryAddress
+    toast({
+      title: "Debug",
+      description: "Fonction handleSubmit appelée",
     });
     
     if (!formData.customerName.trim() || !formData.customerPhone.trim() || !formData.deliveryAddress.trim()) {
-      console.log("Validation failed, showing toast");
-      console.log("Validation message:", t.order.validationMessage);
-      
-      // Essayer d'abord avec une alerte simple
-      alert(t.order.validationMessage);
-      
       toast({
         title: t.common.error,
         description: t.order.validationMessage,
@@ -212,8 +203,10 @@ export function OrderForm({ open, onClose, initialItems = [], totalAmount = "0" 
                 disabled={createOrder.isPending}
                 className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
                 onClick={(e) => {
-                  alert("BUTTON TEST - Le bouton fonctionne!");
-                  console.log("🚀 BUTTON CLICKED!");
+                  toast({
+                    title: "Test Bouton",
+                    description: "Le bouton fonctionne!",
+                  });
                   handleSubmit(e as any);
                 }}
               >
