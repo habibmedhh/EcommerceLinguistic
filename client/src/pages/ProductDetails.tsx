@@ -861,7 +861,7 @@ export default function ProductDetails() {
             {/* Formulaire */}
             <div className="space-y-3 sm:space-y-4">
               <div>
-                <Label htmlFor="modal-customerName" className={`flex items-center gap-2 text-gray-700 font-medium mb-2 ${direction === 'rtl' ? 'flex-row-reverse' : ''}`}>
+                <Label htmlFor="modal-customerName" className={`flex items-center gap-2 text-gray-700 font-medium mb-2 ${direction === 'rtl' ? 'flex-row-reverse justify-end' : ''}`}>
                   <div className="w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-r from-blue-400 to-purple-500 rounded-lg flex items-center justify-center">
                     <User className="h-3 w-3 text-white" />
                   </div>
@@ -880,7 +880,7 @@ export default function ProductDetails() {
               </div>
               
               <div>
-                <Label htmlFor="modal-customerPhone" className={`flex items-center gap-2 text-gray-700 font-medium mb-2 ${direction === 'rtl' ? 'flex-row-reverse' : ''}`}>
+                <Label htmlFor="modal-customerPhone" className={`flex items-center gap-2 text-gray-700 font-medium mb-2 ${direction === 'rtl' ? 'flex-row-reverse justify-end' : ''}`}>
                   <div className="w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-r from-green-400 to-blue-500 rounded-lg flex items-center justify-center">
                     <Phone className="h-3 w-3 text-white" />
                   </div>
@@ -904,7 +904,7 @@ export default function ProductDetails() {
               </div>
               
               <div>
-                <Label htmlFor="modal-deliveryAddress" className={`flex items-center gap-2 text-gray-700 font-medium mb-2 ${direction === 'rtl' ? 'flex-row-reverse' : ''}`}>
+                <Label htmlFor="modal-deliveryAddress" className={`flex items-center gap-2 text-gray-700 font-medium mb-2 ${direction === 'rtl' ? 'flex-row-reverse justify-end' : ''}`}>
                   <div className="w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-r from-orange-400 to-red-500 rounded-lg flex items-center justify-center">
                     <MapPin className="h-3 w-3 text-white" />
                   </div>
