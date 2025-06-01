@@ -49,6 +49,26 @@ export default function Cart() {
     notes: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formErrors, setFormErrors] = useState<{[key: string]: string}>({});
+
+  const validateForm = () => {
+    const errors: {[key: string]: string} = {};
+    
+    if (!orderForm.customerName.trim()) {
+      errors.customerName = 'Le nom est obligatoire';
+    }
+    
+    if (!orderForm.customerPhone.trim()) {
+      errors.customerPhone = 'Le numéro de téléphone est obligatoire';
+    }
+    
+    if (!orderForm.deliveryAddress.trim()) {
+      errors.deliveryAddress = 'L\'adresse de livraison est obligatoire';
+    }
+    
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
   const handleQuantityChange = (productId: number, newQuantity: number) => {
     if (newQuantity <= 0) {
@@ -60,6 +80,16 @@ export default function Cart() {
 
   const handleOrderSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      toast({
+        title: "Erreur de validation",
+        description: "Veuillez remplir tous les champs obligatoires",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     setIsSubmitting(true);
 
     try {
@@ -311,7 +341,11 @@ export default function Cart() {
                       value={orderForm.customerName}
                       onChange={(e) => setOrderForm(prev => ({ ...prev, customerName: e.target.value }))}
                       placeholder="Votre nom complet"
+                      className={formErrors.customerName ? "border-red-500" : ""}
                     />
+                    {formErrors.customerName && (
+                      <p className="text-red-500 text-sm mt-1">{formErrors.customerName}</p>
+                    )}
                   </div>
 
                   <div>
@@ -326,7 +360,11 @@ export default function Cart() {
                       value={orderForm.customerPhone}
                       onChange={(e) => setOrderForm(prev => ({ ...prev, customerPhone: e.target.value }))}
                       placeholder="+212 6XX XXX XXX"
+                      className={formErrors.customerPhone ? "border-red-500" : ""}
                     />
+                    {formErrors.customerPhone && (
+                      <p className="text-red-500 text-sm mt-1">{formErrors.customerPhone}</p>
+                    )}
                   </div>
 
                   <div>
@@ -352,7 +390,11 @@ export default function Cart() {
                       onChange={(e) => setOrderForm(prev => ({ ...prev, deliveryAddress: e.target.value }))}
                       placeholder="Adresse complète de livraison"
                       rows={3}
+                      className={formErrors.deliveryAddress ? "border-red-500" : ""}
                     />
+                    {formErrors.deliveryAddress && (
+                      <p className="text-red-500 text-sm mt-1">{formErrors.deliveryAddress}</p>
+                    )}
                   </div>
 
                   <div>
