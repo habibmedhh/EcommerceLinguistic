@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { useI18n } from "@/providers/I18nProvider";
 import { useCart } from "@/hooks/useCart";
 import { useSettings } from "@/hooks/useSettings";

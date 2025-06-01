@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "wouter";
+import { useState, useEffect } from "react";
+import { Link, useLocation } from "wouter";
 import { useI18n } from "@/providers/I18nProvider";
 import { useProducts } from "@/hooks/useProducts";
 import { useCategories } from "@/hooks/useCategories";
@@ -19,6 +19,7 @@ import type { Product } from "@/types";
 
 export default function Products() {
   const { t, language } = useI18n();
+  const [location] = useLocation();
   const { data: categories = [] } = useCategories();
   const { data: settings } = useSettings();
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | undefined>();
@@ -46,6 +47,15 @@ export default function Products() {
 
   const products = productsData?.products || [];
   const totalProducts = productsData?.total || 0;
+
+  // Handle URL search parameters
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchParam = urlParams.get('search');
+    if (searchParam) {
+      setSearchQuery(searchParam);
+    }
+  }, [location]);
 
   const handleProductQuickView = (product: Product) => {
     setSelectedProduct(product);
