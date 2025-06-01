@@ -50,7 +50,7 @@ export function OrderForm({ open, onClose, initialItems = [], totalAmount = "0" 
       address: !formData.deliveryAddress
     });
     
-    if (!formData.customerName || !formData.customerPhone || !formData.deliveryAddress) {
+    if (!formData.customerName.trim() || !formData.customerPhone.trim() || !formData.deliveryAddress.trim()) {
       console.log("Validation failed, showing toast");
       console.log("Validation message:", t.order.validationMessage);
       
