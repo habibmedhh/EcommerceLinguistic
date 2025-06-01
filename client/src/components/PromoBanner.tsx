@@ -79,6 +79,21 @@ export function PromoBanner() {
     };
 
     loadPromoMessages();
+
+    // Listen for promo messages updates
+    const handlePromoUpdate = () => {
+      loadPromoMessages();
+    };
+    
+    window.addEventListener('promoMessagesUpdated', handlePromoUpdate);
+
+    // Reload messages every 30 seconds to catch updates as fallback
+    const interval = setInterval(loadPromoMessages, 30000);
+    
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('promoMessagesUpdated', handlePromoUpdate);
+    };
   }, []);
 
   useEffect(() => {

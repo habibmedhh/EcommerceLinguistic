@@ -142,6 +142,8 @@ export default function PromoMessagesManagement() {
           title: "Succès",
           description: "Messages promotionnels sauvegardés",
         });
+        // Trigger event to update promotional banner immediately
+        window.dispatchEvent(new CustomEvent('promoMessagesUpdated'));
       } else {
         throw new Error('Failed to save');
       }
