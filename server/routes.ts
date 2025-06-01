@@ -4,6 +4,32 @@ import { storage } from "./storage";
 import { insertProductSchema, insertCategorySchema, insertOrderSchema, insertPromotionSchema, insertAdminSchema } from "@shared/schema";
 import { z } from "zod";
 
+// Cache simple en mémoire pour améliorer les performances
+const cache = new Map();
+const CACHE_TTL = 30000; // 30 secondes
+
+function getCacheKey(path: string, query?: any): string {
+  return `${path}${query ? JSON.stringify(query) : ''}`;
+}
+
+function getFromCache(key: string) {
+  const cached = cache.get(key);
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+    return cached.data;
+  }
+  cache.delete(key);
+  return null;
+}
+
+function setCache(key: string, data: any) {
+  cache.set(key, { data, timestamp: Date.now() });
+  // Nettoyer le cache si trop d'entrées
+  if (cache.size > 100) {
+    const entries = Array.from(cache.entries());
+    entries.slice(0, 50).forEach(([key]) => cache.delete(key));
+  }
+}
+
 // Middleware d'authentification admin basé sur les sessions
 const authenticateAdminSession = async (req: any, res: any, next: any) => {
   try {
@@ -49,7 +75,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Categories
   app.get("/api/categories", async (req, res) => {
     try {
-      const categories = await storage.getCategories();
+      const cacheKey = getCacheKey('/api/categories');
+      let categories = getFromCache(cacheKey);
+      
+      if (!categories) {
+        categories = await storage.getCategories();
+        setCache(cacheKey, categories);
+      }
+      
       res.json(categories);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch categories" });
@@ -138,7 +171,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/products/featured", async (req, res) => {
     try {
       const limit = req.query.limit ? parseInt(req.query.limit as string) : 8;
-      const products = await storage.getFeaturedProducts(limit);
+      const cacheKey = getCacheKey('/api/products/featured', { limit });
+      let products = getFromCache(cacheKey);
+      
+      if (!products) {
+        products = await storage.getFeaturedProducts(limit);
+        setCache(cacheKey, products);
+      }
+      
       res.json(products);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch featured products" });
@@ -148,7 +188,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/products/sale", async (req, res) => {
     try {
       const limit = req.query.limit ? parseInt(req.query.limit as string) : 6;
-      const products = await storage.getSaleProducts(limit);
+      const cacheKey = getCacheKey('/api/products/sale', { limit });
+      let products = getFromCache(cacheKey);
+      
+      if (!products) {
+        products = await storage.getSaleProducts(limit);
+        setCache(cacheKey, products);
+      }
+      
       res.json(products);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch sale products" });
@@ -549,7 +596,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Settings
   app.get("/api/settings", async (req, res) => {
     try {
-      const settings = await storage.getSettings();
+      const cacheKey = getCacheKey('/api/settings');
+      let settings = getFromCache(cacheKey);
+      
+      if (!settings) {
+        settings = await storage.getSettings();
+        setCache(cacheKey, settings);
+      }
+      
       res.json(settings);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch settings" });
