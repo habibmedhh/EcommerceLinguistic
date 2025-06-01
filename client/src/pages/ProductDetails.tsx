@@ -386,13 +386,13 @@ export default function ProductDetails() {
 
             {/* Quantity and Actions */}
             <div className="space-y-4">
-              <div className="flex items-center gap-4">
-                <label className="font-medium text-gray-700">
+              <div className={`flex items-center gap-4 ${direction === 'rtl' ? 'flex-row-reverse' : ''}`}>
+                <label className={`font-medium text-gray-700 ${direction === 'rtl' ? 'text-right' : 'text-left'}`}>
                   {language === 'ar' ? 'الكمية:' : 
                    language === 'fr' ? 'Quantité:' : 
                    'Quantity:'}
                 </label>
-                <div className="flex items-center border rounded-lg">
+                <div className={`flex items-center border rounded-lg ${direction === 'rtl' ? 'flex-row-reverse' : ''}`}>
                   <Button
                     variant="ghost"
                     size="sm"
@@ -405,8 +405,9 @@ export default function ProductDetails() {
                     type="number"
                     value={quantity}
                     onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                    className="w-20 text-center border-0 focus:ring-0"
+                    className={`w-20 text-center border-0 focus:ring-0 ${direction === 'rtl' ? 'text-right' : 'text-center'}`}
                     min="1"
+                    dir={direction}
                   />
                   <Button
                     variant="ghost"
