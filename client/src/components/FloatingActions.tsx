@@ -50,27 +50,41 @@ export function FloatingActions() {
       {/* Cart Button */}
       <Button
         ref={cartRef}
+        onClick={() => navigate('/cart')}
         size="lg"
-        className="w-14 h-14 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 shadow-lg hover:shadow-xl transition-all duration-300 p-0 relative animate-pulse"
-        title="Cart"
+        className="w-16 h-16 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 shadow-lg hover:shadow-xl transition-all duration-300 p-0 relative animate-pulse group transform hover:scale-110"
+        title={cart.count > 0 ? `${cart.count} articles dans votre panier - Cliquez pour finaliser !` : "Votre panier"}
         style={{
           animation: 'cart-glow 2s ease-in-out infinite alternate, float 3s ease-in-out infinite',
-          boxShadow: '0 0 20px rgba(168, 85, 247, 0.5), 0 0 40px rgba(236, 72, 153, 0.3), 0 4px 20px rgba(0, 0, 0, 0.3)'
+          boxShadow: '0 0 25px rgba(168, 85, 247, 0.6), 0 0 50px rgba(236, 72, 153, 0.4), 0 4px 25px rgba(0, 0, 0, 0.3)'
         }}
       >
         <div className="relative">
-          <span className="text-2xl animate-bounce" style={{ animation: 'bounce 1s infinite' }}>🛒</span>
+          <span className="text-3xl animate-bounce" style={{ animation: 'bounce 1s infinite' }}>🛒</span>
           <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full opacity-20 animate-ping"></div>
+          {cart.count > 0 && (
+            <div className="absolute inset-0 bg-green-400 rounded-full opacity-30 animate-ping"></div>
+          )}
         </div>
         {cart.count > 0 && (
-          <Badge 
-            variant="destructive" 
-            className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0 text-xs flex items-center justify-center animate-pulse"
-            style={{ boxShadow: '0 0 10px rgba(239, 68, 68, 0.8)' }}
-          >
-            {cart.count}
-          </Badge>
+          <>
+            <Badge 
+              variant="destructive" 
+              className="absolute -top-2 -right-2 h-7 w-7 rounded-full p-0 text-sm flex items-center justify-center animate-pulse font-bold"
+              style={{ boxShadow: '0 0 15px rgba(239, 68, 68, 0.8)' }}
+            >
+              {cart.count}
+            </Badge>
+            {/* Additional visual cue for items in cart */}
+            <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-3 h-1 bg-green-400 rounded-full animate-pulse"></div>
+          </>
         )}
+        
+        {/* Enhanced tooltip */}
+        <div className="absolute -top-20 left-1/2 transform -translate-x-1/2 bg-black text-white px-4 py-2 rounded-lg text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-50">
+          {cart.count > 0 ? `Finaliser ma commande (${cart.count} article${cart.count > 1 ? 's' : ''})` : "Découvrir nos produits"}
+          <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-black"></div>
+        </div>
       </Button>
 
       {/* Flash Order Button */}
