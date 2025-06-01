@@ -325,7 +325,7 @@ export default function Cart() {
                       required
                       value={orderForm.customerPhone}
                       onChange={(e) => setOrderForm(prev => ({ ...prev, customerPhone: e.target.value }))}
-                      placeholder="+212 6XX XXX XXX"
+                      placeholder="0612345678"
                     />
                   </div>
 

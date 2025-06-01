@@ -232,7 +232,7 @@ export const translations: Record<string, Translation> = {
     order: {
       title: "Order Now",
       name: "Full Name",
-      phone: "Phone Number",
+      phone: "0612345678",
       address: "Delivery Address",
       submit: "Place Order",
       success: "Order placed successfully!",
@@ -411,7 +411,7 @@ export const translations: Record<string, Translation> = {
     order: {
       title: "Commander maintenant",
       name: "Nom complet",
-      phone: "Numéro de téléphone",
+      phone: "0612345678",
       address: "Adresse de livraison",
       submit: "Passer la commande",
       success: "Commande passée avec succès!",
@@ -574,7 +574,7 @@ export const translations: Record<string, Translation> = {
     order: {
       title: "اطلب الآن",
       name: "الاسم الكامل",
-      phone: "رقم الهاتف",
+      phone: "0612345678",
       address: "عنوان التوصيل",
       submit: "إرسال الطلب",
       success: "تم إرسال الطلب بنجاح!",

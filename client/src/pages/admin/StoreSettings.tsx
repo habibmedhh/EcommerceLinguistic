@@ -650,11 +650,11 @@ export default function StoreSettings() {
                           id="whatsapp"
                           value={storeSettings.whatsapp}
                           onChange={(e) => handleSettingChange('whatsapp', e.target.value)}
-                          placeholder="+33123456789"
+                          placeholder="0612345678"
                           className="bg-white"
                         />
                         <p className="text-sm text-green-700 mt-2">
-                          Format international avec indicatif pays (ex: +33123456789)
+                          Format marocain recommandé (ex: 0612345678)
                         </p>
                       </div>
                       {storeSettings.whatsapp && (

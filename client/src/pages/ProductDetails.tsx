@@ -674,7 +674,7 @@ export default function ProductDetails() {
                     id="customerPhone"
                     value={orderForm.customerPhone}
                     onChange={(e) => handleOrderFormChange('customerPhone', e.target.value)}
-                    placeholder="+33 6 12 34 56 78"
+                    placeholder="0612345678"
                     className="mt-1"
                   />
                 </div>
