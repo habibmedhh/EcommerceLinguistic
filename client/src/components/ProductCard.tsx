@@ -59,10 +59,10 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
   const discount = salePrice ? Math.round(((price - salePrice) / price) * 100) : 0;
 
   return (
-    <Link href={`/product/${product.id}`} className="block h-full">
+    <Link href={`/product/${product.id}`} className="block">
       <Card 
         ref={animationRef}
-        className="group overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:scale-105 bg-white cursor-pointer h-full flex flex-col"
+        className="group overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:scale-105 bg-white cursor-pointer"
       >
         <div className="relative overflow-hidden">
         {/* Badges */}
@@ -118,7 +118,7 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
         </div>
       </div>
 
-      <div className="p-6 flex flex-col flex-grow">
+      <div className="p-6">
         {/* Rating */}
         <div className="flex items-center gap-2 mb-2">
           <div className="flex text-yellow-400">
@@ -133,20 +133,16 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
         </div>
 
         {/* Product Name */}
-        <h3 className="text-lg font-bold text-gray-800 mb-2 line-clamp-2 min-h-[3.5rem]">
+        <h3 className="text-lg font-bold text-gray-800 mb-2 line-clamp-2">
           {getName()}
         </h3>
 
         {/* Description */}
-        <div className="flex-grow mb-4">
-          {getDescription() ? (
-            <p className="text-gray-600 text-sm line-clamp-2 min-h-[2.5rem]">
-              {getDescription()}
-            </p>
-          ) : (
-            <div className="min-h-[2.5rem]"></div>
-          )}
-        </div>
+        {getDescription() && (
+          <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+            {getDescription()}
+          </p>
+        )}
 
         {/* Price */}
         <div className={`flex items-center gap-2 mb-4 ${direction === 'rtl' ? 'flex-row-reverse justify-end' : ''}`}>
@@ -178,7 +174,7 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
         </div>
 
         {/* Actions */}
-        <div className="flex gap-2 mt-auto">
+        <div className="flex gap-2">
           <Button 
             className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
             onClick={handleAddToCart}
