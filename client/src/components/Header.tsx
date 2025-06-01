@@ -155,12 +155,7 @@ export function Header() {
                       <span className="font-medium text-gray-700 group-hover:text-purple-600">{t.nav.contact}</span>
                     </Link>
                     
-                    <Link href="/admin" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/50 hover:bg-white transition-all duration-200 group">
-                      <div className="w-8 h-8 bg-gradient-to-r from-gray-400 to-gray-600 rounded-lg flex items-center justify-center">
-                        <span className="text-white text-sm">⚙️</span>
-                      </div>
-                      <span className="font-medium text-gray-700 group-hover:text-purple-600">{t.nav.admin}</span>
-                    </Link>
+
                   </nav>
                   
                   <div className="mt-8 px-4">
