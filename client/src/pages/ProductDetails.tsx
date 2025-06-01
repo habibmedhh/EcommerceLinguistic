@@ -146,13 +146,22 @@ export default function ProductDetails() {
   };
 
   const navigateToForm = () => {
+    // Afficher le message selon la langue
+    const message = language === 'ar' ? 'ممتاز! طلبك جاهز 🤩' :
+                   language === 'fr' ? 'Très bien ! Votre commande est prête 🤩' :
+                   'Great! Your order is ready 🤩';
+    
+    const fillFormMessage = language === 'ar' ? 'يرجى ملء بياناتك لإتمام الطلب' :
+                           language === 'fr' ? 'Remplissez vos informations pour finaliser la commande' :
+                           'Please fill in your information to complete the order';
+
     toast({
-      title: t.order.ready,
-      description: t.order.fillForm,
+      title: message,
+      description: fillFormMessage,
       className: "bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0",
     });
     
-    // Toujours ouvrir le modal de formulaire pour une expérience cohérente
+    // Ouvrir le formulaire
     setIsOrderFormOpen(true);
   };
 
@@ -185,6 +194,8 @@ export default function ProductDetails() {
       }, i * 100);
     }
   };
+
+
 
   const handleSubmitOrder = async () => {
     // Validation du téléphone avant soumission
