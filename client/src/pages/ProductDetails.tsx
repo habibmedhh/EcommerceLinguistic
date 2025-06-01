@@ -421,7 +421,7 @@ export default function ProductDetails() {
             <div className="space-y-4">
               <div className={`flex items-center gap-4 ${direction === 'rtl' ? 'flex-row-reverse justify-end' : ''}`}>
                 <label className={`font-medium text-gray-700 ${direction === 'rtl' ? 'text-right' : 'text-left'}`}>
-                  {language === 'ar' ? 'الكمية:' : 
+                  {language === 'ar' ? 'الكمية' : 
                    language === 'fr' ? 'Quantité:' : 
                    'Quantity:'}
                 </label>
