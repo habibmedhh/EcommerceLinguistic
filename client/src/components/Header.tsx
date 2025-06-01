@@ -96,7 +96,7 @@ export function Header() {
               </Button>
             </Link>
 
-            <Link href="/admin">
+            <Link href="/admin" className="hidden md:block">
               <Button variant="ghost" size="sm" className="p-2" title="Administration">
                 <Settings className="h-5 w-5" />
               </Button>
