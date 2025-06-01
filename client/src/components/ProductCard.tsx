@@ -125,7 +125,7 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
             {[...Array(5)].map((_, i) => (
               <Star 
                 key={i} 
-                className={`h-4 w-4 ${i < Math.floor(parseFloat(product.rating || "0")) ? 'fill-current' : ''}`} 
+                className={`h-4 w-4 ${i < Math.floor(parseFloat(product.averageRating || "0")) ? 'fill-current' : ''}`} 
               />
             ))}
           </div>
