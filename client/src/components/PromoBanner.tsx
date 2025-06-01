@@ -183,7 +183,7 @@ export function PromoBanner() {
   };
 
   return (
-    <div className="fixed top-16 left-0 right-0 z-40 transition-all duration-500 translate-y-0 pl-[150px] pr-[150px]">
+    <div className="fixed top-16 left-0 right-0 z-40 transition-all duration-500 translate-y-0 pl-[200px] pr-[200px]">
       <Card className={`mx-4 my-1 overflow-hidden border-0 shadow-lg ${currentMessage.bgColor}`}>
         <div className="px-4 py-2" dir={direction}>
           <div className="flex items-center justify-between">
