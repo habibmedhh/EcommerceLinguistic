@@ -827,8 +827,12 @@ export default function ProductDetails() {
             <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-xl p-3 sm:p-4">
               <div className={`flex items-center justify-between mb-2 ${direction === 'rtl' ? 'flex-row-reverse' : ''}`}>
                 <div className={`flex items-center gap-2 ${direction === 'rtl' ? 'flex-row-reverse' : ''}`}>
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-                    <span className="text-white text-sm">📱</span>
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg overflow-hidden">
+                    <img 
+                      src={currentImage} 
+                      alt={getLocalizedText('name')}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                   <div className={direction === 'rtl' ? 'text-right' : 'text-left'}>
                     <h4 className="font-semibold text-gray-800 text-sm sm:text-base">{getLocalizedText('name')}</h4>
