@@ -208,12 +208,12 @@ export function OrderForm({ open, onClose, initialItems = [], totalAmount = "0" 
                 {t.common.cancel}
               </Button>
               <Button
-                type="submit"
+                type="button"
                 disabled={createOrder.isPending}
                 className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
                 onClick={(e) => {
                   console.log("🚀 BUTTON CLICKED!");
-                  // Ne pas empêcher l'événement submit du formulaire
+                  handleSubmit(e as any);
                 }}
               >
                 {createOrder.isPending ? t.common.loading : t.order.submit}
