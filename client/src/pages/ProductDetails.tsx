@@ -519,16 +519,39 @@ export default function ProductDetails() {
                 
                 {/* Résumé de commande avec animation LED */}
                 <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-4 rounded-xl border-2 border-dashed border-gray-300">
-                  <div className="flex justify-between items-center">
-                    <span className="text-lg font-semibold text-gray-700">💰 Total</span>
-                    <span className="text-2xl font-bold text-green-600 animate-pulse">
-                      {(discountedPrice ? discountedPrice * quantity : originalPrice * quantity).toFixed(2)} DH
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center mt-2">
-                    <span className="text-sm text-gray-600">📦 Quantité</span>
-                    <span className="text-lg font-semibold text-gray-700">{quantity}</span>
-                  </div>
+                  {direction === 'rtl' ? (
+                    <>
+                      {/* En arabe: montant à gauche, description à droite */}
+                      <div className="flex justify-between items-center">
+                        <span className="text-2xl font-bold text-green-600 animate-pulse">
+                          {(discountedPrice ? discountedPrice * quantity : originalPrice * quantity).toFixed(2)} {settings?.currencySymbol || 'د.م'}
+                        </span>
+                        <span className="text-lg font-semibold text-gray-700">💰 المجموع</span>
+                      </div>
+                      <div className="flex justify-between items-center mt-2">
+                        <span className="text-lg font-semibold text-gray-700">{quantity}</span>
+                        <span className="text-sm text-gray-600">📦 الكمية</span>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {/* Langues occidentales: description à gauche, montant à droite */}
+                      <div className="flex justify-between items-center">
+                        <span className="text-lg font-semibold text-gray-700">
+                          💰 {language === 'fr' ? 'Total' : 'Total'}
+                        </span>
+                        <span className="text-2xl font-bold text-green-600 animate-pulse">
+                          {(discountedPrice ? discountedPrice * quantity : originalPrice * quantity).toFixed(2)} {settings?.currencySymbol || '€'}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center mt-2">
+                        <span className="text-sm text-gray-600">
+                          📦 {language === 'fr' ? 'Quantité' : 'Quantity'}
+                        </span>
+                        <span className="text-lg font-semibold text-gray-700">{quantity}</span>
+                      </div>
+                    </>
+                  )}
                 </div>
                 
                 <Button 
