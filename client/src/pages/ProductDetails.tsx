@@ -246,7 +246,7 @@ export default function ProductDetails() {
   };
 
   const handleWhatsAppOrder = () => {
-    const message = `Bonjour, je souhaite commander:\n\n${getLocalizedText('name')}\nQuantité: ${quantity}\nPrix: ${discountedPrice ? discountedPrice * quantity : originalPrice * quantity}€`;
+    const message = `Bonjour, je souhaite commander:\n\n${getLocalizedText('name')}\nQuantité: ${quantity}\nPrix: ${discountedPrice ? discountedPrice * quantity : originalPrice * quantity}${settings?.currencySymbol || (language === 'ar' ? ' د.م' : '€')}`;
     const whatsappUrl = `https://wa.me/+33123456789?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
@@ -350,15 +350,15 @@ export default function ProductDetails() {
                 {discountedPrice ? (
                   <>
                     <span className="text-3xl font-bold text-purple-600">
-                      {discountedPrice.toFixed(2)}{settings?.currencySymbol || (language === 'ar' ? ' د.ج' : '€')}
+                      {discountedPrice.toFixed(2)}{settings?.currencySymbol || (language === 'ar' ? ' د.م' : '€')}
                     </span>
                     <span className="text-xl text-gray-500 line-through">
-                      {originalPrice.toFixed(2)}{settings?.currencySymbol || (language === 'ar' ? ' د.ج' : '€')}
+                      {originalPrice.toFixed(2)}{settings?.currencySymbol || (language === 'ar' ? ' د.م' : '€')}
                     </span>
                   </>
                 ) : (
                   <span className="text-3xl font-bold text-purple-600">
-                    {originalPrice.toFixed(2)}{settings?.currencySymbol || (language === 'ar' ? ' د.ج' : '€')}
+                    {originalPrice.toFixed(2)}{settings?.currencySymbol || (language === 'ar' ? ' د.م' : '€')}
                   </span>
                 )}
               </div>
@@ -724,7 +724,7 @@ export default function ProductDetails() {
                          'Unit Price:'}
                       </span>
                       <span className="font-medium">
-                        {(discountedPrice ? discountedPrice : originalPrice).toFixed(2)}{settings?.currencySymbol || (language === 'ar' ? ' د.ج' : '€')}
+                        {(discountedPrice ? discountedPrice : originalPrice).toFixed(2)}{settings?.currencySymbol || (language === 'ar' ? ' د.م' : '€')}
                       </span>
                     </div>
                     <Separator />
@@ -735,7 +735,7 @@ export default function ProductDetails() {
                          'Total:'}
                       </span>
                       <span>
-                        {(discountedPrice ? discountedPrice * quantity : originalPrice * quantity).toFixed(2)}{settings?.currencySymbol || (language === 'ar' ? ' د.ج' : '€')}
+                        {(discountedPrice ? discountedPrice * quantity : originalPrice * quantity).toFixed(2)}{settings?.currencySymbol || (language === 'ar' ? ' د.م' : '€')}
                       </span>
                     </div>
                   </div>
@@ -829,15 +829,15 @@ export default function ProductDetails() {
                 <div className={`${direction === 'rtl' ? 'text-left' : 'text-right'}`}>
                   <div className="text-xl sm:text-2xl font-bold text-purple-600">
                     {language === 'ar' ? 
-                      `${(discountedPrice ? discountedPrice * quantity : originalPrice * quantity).toFixed(2)} د.ج` :
-                      `${(discountedPrice ? discountedPrice * quantity : originalPrice * quantity).toFixed(2)}€`
+                      `${(discountedPrice ? discountedPrice * quantity : originalPrice * quantity).toFixed(2)} ${settings?.currencySymbol || 'د.م'}` :
+                      `${(discountedPrice ? discountedPrice * quantity : originalPrice * quantity).toFixed(2)} ${settings?.currencySymbol || '€'}`
                     }
                   </div>
                   {discountedPrice && (
                     <div className="text-xs sm:text-sm text-gray-500 line-through">
                       {language === 'ar' ? 
-                        `${(originalPrice * quantity).toFixed(2)} د.ج` :
-                        `${(originalPrice * quantity).toFixed(2)}€`
+                        `${(originalPrice * quantity).toFixed(2)} ${settings?.currencySymbol || 'د.م'}` :
+                        `${(originalPrice * quantity).toFixed(2)} ${settings?.currencySymbol || '€'}`
                       }
                     </div>
                   )}
