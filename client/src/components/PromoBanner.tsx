@@ -90,10 +90,8 @@ export function PromoBanner() {
 
     // Listen for updates from admin panel
     const handlePromoUpdate = () => {
-      console.log('Promo messages update triggered');
-      setTimeout(() => {
-        loadPromoMessages();
-      }, 500);
+      console.log('Promo messages update event received - reloading...');
+      loadPromoMessages();
     };
     
     window.addEventListener('promoMessagesUpdated', handlePromoUpdate);
