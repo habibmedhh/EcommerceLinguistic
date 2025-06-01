@@ -14,6 +14,10 @@ export interface StoreSettings {
   metaTitle: string;
   metaDescription: string;
   metaKeywords: string;
+  whatsapp?: string;
+  facebook?: string;
+  instagram?: string;
+  twitter?: string;
 }
 
 const defaultSettings: StoreSettings = {
@@ -75,6 +79,18 @@ export const useSettings = () => {
             break;
           case 'meta_keywords':
             settings.metaKeywords = setting.value;
+            break;
+          case 'contact_whatsapp':
+            settings.whatsapp = setting.value;
+            break;
+          case 'social_facebook':
+            settings.facebook = setting.value;
+            break;
+          case 'social_instagram':
+            settings.instagram = setting.value;
+            break;
+          case 'social_twitter':
+            settings.twitter = setting.value;
             break;
         }
       });

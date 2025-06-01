@@ -4,10 +4,13 @@ import { useFloatingAnimation, usePulseAnimation } from "@/hooks/useAnimations";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useCart } from "@/hooks/useCart";
+import { useSettings } from "@/hooks/useSettings";
 import { MessageCircle, ShoppingCart, ArrowUp, Zap } from "lucide-react";
+import { SiWhatsapp, SiFacebook, SiInstagram, SiX } from "react-icons/si";
 
 export function FloatingActions() {
   const { cart } = useCart();
+  const { data: settings } = useSettings();
   const [showScrollTop, setShowScrollTop] = useState(false);
   
   const navigateToCart = () => {
@@ -33,14 +36,48 @@ export function FloatingActions() {
   };
 
   const openWhatsApp = () => {
-    const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER || "+1234567890";
+    const whatsappNumber = settings?.whatsapp || "+1234567890";
     const message = "Hello! I'm interested in your products.";
     const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
   };
 
   return (
-    <div className="fixed right-6 bottom-6 flex flex-col gap-4 z-50">
+    <div className="fixed right-6 bottom-6 flex flex-col gap-3 z-50">
+      {/* Social Media Buttons */}
+      {settings?.facebook && (
+        <Button
+          size="sm"
+          className="w-12 h-12 rounded-full bg-blue-600 hover:bg-blue-700 shadow-lg hover:shadow-xl transition-all duration-300 p-0"
+          onClick={() => window.open(settings.facebook, '_blank')}
+          title="Facebook"
+        >
+          <SiFacebook className="h-5 w-5 text-white" />
+        </Button>
+      )}
+      
+      {settings?.instagram && (
+        <Button
+          size="sm"
+          className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 shadow-lg hover:shadow-xl transition-all duration-300 p-0"
+          onClick={() => window.open(settings.instagram, '_blank')}
+          title="Instagram"
+        >
+          <SiInstagram className="h-5 w-5 text-white" />
+        </Button>
+      )}
+      
+      {settings?.twitter && (
+        <Button
+          size="sm"
+          className="w-12 h-12 rounded-full bg-black hover:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-300 p-0"
+          onClick={() => window.open(settings.twitter, '_blank')}
+          title="X (Twitter)"
+        >
+          <SiX className="h-5 w-5 text-white" />
+        </Button>
+      )}
+
       {/* WhatsApp Button */}
       <Button
         ref={whatsappRef}
@@ -49,7 +86,7 @@ export function FloatingActions() {
         onClick={openWhatsApp}
         title="WhatsApp"
       >
-        <MessageCircle className="h-6 w-6 text-white" />
+        <SiWhatsapp className="h-6 w-6 text-white" />
       </Button>
 
       {/* Cart Button */}
