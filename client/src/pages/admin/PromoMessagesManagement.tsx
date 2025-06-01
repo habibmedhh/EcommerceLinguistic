@@ -145,14 +145,6 @@ export default function PromoMessagesManagement() {
         // Trigger event to update promotional banner immediately
         console.log('Dispatching promoMessagesUpdated event...');
         window.dispatchEvent(new CustomEvent('promoMessagesUpdated'));
-        
-        // Set localStorage signal for banner update
-        localStorage.setItem('promo-messages-update', Date.now().toString());
-        
-        // Force reload banner after a short delay
-        setTimeout(() => {
-          window.dispatchEvent(new CustomEvent('promoMessagesUpdated'));
-        }, 1000);
       } else {
         throw new Error('Failed to save');
       }
@@ -214,7 +206,6 @@ export default function PromoMessagesManagement() {
       });
 
       if (response.ok) {
-        localStorage.setItem('promo-messages-update', Date.now().toString());
         window.dispatchEvent(new CustomEvent('promoMessagesUpdated'));
         toast({
           title: "Succès",
@@ -281,7 +272,6 @@ export default function PromoMessagesManagement() {
       });
 
       if (response.ok) {
-        localStorage.setItem('promo-messages-update', Date.now().toString());
         window.dispatchEvent(new CustomEvent('promoMessagesUpdated'));
       }
     } catch (error) {
@@ -325,7 +315,6 @@ export default function PromoMessagesManagement() {
               <Button 
                 onClick={() => {
                   console.log('Force updating banner...');
-                  localStorage.setItem('promo-messages-update', Date.now().toString());
                   window.dispatchEvent(new CustomEvent('promoMessagesUpdated'));
                 }}
                 variant="outline"
@@ -337,7 +326,6 @@ export default function PromoMessagesManagement() {
                 onClick={() => {
                   localStorage.removeItem('promo-banner-closed');
                   localStorage.removeItem('promo-banner-closed-time');
-                  localStorage.setItem('promo-messages-update', Date.now().toString());
                   window.dispatchEvent(new CustomEvent('promoMessagesUpdated'));
                   toast({
                     title: "Succès",

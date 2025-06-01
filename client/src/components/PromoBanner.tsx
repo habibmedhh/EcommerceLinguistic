@@ -20,7 +20,6 @@ export function PromoBanner() {
   const [isVisible, setIsVisible] = useState(true);
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
   const [promoMessages, setPromoMessages] = useState<PromoMessage[]>([]);
-  const [lastUpdate, setLastUpdate] = useState(0);
 
   // Default promotional messages
   const defaultMessages: PromoMessage[] = [
@@ -56,55 +55,45 @@ export function PromoBanner() {
     }
   ];
 
-  useEffect(() => {
-    // Load promotional messages from settings or use defaults
-    const loadPromoMessages = async () => {
-      try {
-        const response = await fetch('/api/settings?_t=' + Date.now()); // Cache busting
-        if (response.ok) {
-          const settings = await response.json();
-          const promoSettings = settings.find((s: any) => s.key === 'promo_messages');
-          
-          if (promoSettings && promoSettings.value) {
-            const newMessages = JSON.parse(promoSettings.value);
-            setPromoMessages(newMessages);
-            console.log('Promotional messages updated:', newMessages);
-          } else {
-            setPromoMessages(defaultMessages);
-          }
+  // Load promotional messages
+  const loadPromoMessages = async () => {
+    try {
+      const response = await fetch('/api/settings');
+      if (response.ok) {
+        const settings = await response.json();
+        const promoSettings = settings.find((s: any) => s.key === 'promo_messages');
+        
+        if (promoSettings && promoSettings.value) {
+          const newMessages = JSON.parse(promoSettings.value);
+          setPromoMessages(newMessages);
+          console.log('Promotional messages loaded:', newMessages.length, 'messages');
         } else {
           setPromoMessages(defaultMessages);
         }
-      } catch (error) {
-        console.error('Failed to load promo messages:', error);
+      } else {
         setPromoMessages(defaultMessages);
       }
-    };
+    } catch (error) {
+      console.error('Failed to load promo messages:', error);
+      setPromoMessages(defaultMessages);
+    }
+  };
 
+  useEffect(() => {
+    // Initial load
     loadPromoMessages();
 
-    // Listen for promo messages updates
+    // Listen for updates from admin panel
     const handlePromoUpdate = () => {
-      console.log('Received promo update event, reloading messages...');
-      loadPromoMessages();
+      console.log('Promo messages update triggered');
+      setTimeout(() => {
+        loadPromoMessages();
+      }, 500);
     };
     
     window.addEventListener('promoMessagesUpdated', handlePromoUpdate);
-
-    // Check localStorage for update signals every 2 seconds
-    const checkForUpdates = () => {
-      const updateTimestamp = localStorage.getItem('promo-messages-update');
-      if (updateTimestamp && parseInt(updateTimestamp) > lastUpdate) {
-        console.log('Detected promo messages update via localStorage');
-        setLastUpdate(parseInt(updateTimestamp));
-        loadPromoMessages();
-      }
-    };
-    
-    const interval = setInterval(checkForUpdates, 2000);
     
     return () => {
-      clearInterval(interval);
       window.removeEventListener('promoMessagesUpdated', handlePromoUpdate);
     };
   }, []);
@@ -134,11 +123,9 @@ export function PromoBanner() {
     // Auto-rotate messages every 4 seconds
     if (promoMessages.length > 1 && isVisible) {
       const interval = setInterval(() => {
-        setCurrentMessageIndex(prev => 
-          (prev + 1) % promoMessages.filter(msg => msg.isActive).length
-        );
+        setCurrentMessageIndex((prev) => (prev + 1) % promoMessages.length);
       }, 4000);
-
+      
       return () => clearInterval(interval);
     }
   }, [promoMessages, isVisible]);
@@ -155,8 +142,7 @@ export function PromoBanner() {
     return null;
   }
 
-  const currentMessage = activeMessages[currentMessageIndex];
-  if (!currentMessage) return null;
+  const currentMessage = activeMessages[currentMessageIndex % activeMessages.length];
 
   const getMessage = () => {
     switch (language) {
@@ -173,8 +159,6 @@ export function PromoBanner() {
     switch (currentMessage.icon) {
       case 'truck':
         return <Truck className="h-5 w-5" />;
-      case 'gift':
-        return <Gift className="h-5 w-5" />;
       case 'trophy':
         return <Trophy className="h-5 w-5" />;
       default:
