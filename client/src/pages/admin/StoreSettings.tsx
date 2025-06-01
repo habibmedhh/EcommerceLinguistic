@@ -91,7 +91,8 @@ export default function StoreSettings() {
           settingsMap[setting.key] = setting.value;
         });
 
-        setStoreSettings({
+        setStoreSettings(prev => ({
+          ...prev,
           storeName: settingsMap.store_name || "",
           storeNameAr: settingsMap.store_name_ar || "",
           storeNameFr: settingsMap.store_name_fr || "",
@@ -121,7 +122,7 @@ export default function StoreSettings() {
           metaTitle: settingsMap.meta_title || "",
           metaDescription: settingsMap.meta_description || "",
           keywords: settingsMap.meta_keywords || ""
-        });
+        }));
       } catch (error) {
         console.error('Erreur lors du chargement des paramètres:', error);
         toast({
@@ -143,7 +144,6 @@ export default function StoreSettings() {
 
   const handleSaveSettings = async () => {
     try {
-      // Sauvegarder chaque paramètre individuellement
       const settingsToSave = [
         { key: 'store_name', value: storeSettings.storeName },
         { key: 'store_name_ar', value: storeSettings.storeNameAr },
@@ -176,8 +176,9 @@ export default function StoreSettings() {
         { key: 'meta_keywords', value: storeSettings.keywords },
       ];
 
-      // Utiliser fetch pour sauvegarder chaque paramètre
-      for (const setting of settingsToSave) {
+      // Sauvegarder avec un délai entre les requêtes pour éviter la surcharge
+      for (let i = 0; i < settingsToSave.length; i++) {
+        const setting = settingsToSave[i];
         await fetch(`/api/settings/${setting.key}`, {
           method: 'PUT',
           headers: {
@@ -188,29 +189,90 @@ export default function StoreSettings() {
             description: `Store setting: ${setting.key}`
           }),
         });
+        
+        // Petit délai pour éviter la surcharge du serveur
+        if (i < settingsToSave.length - 1) {
+          await new Promise(resolve => setTimeout(resolve, 50));
+        }
       }
 
       toast({
-        title: "✅ Paramètres sauvegardés",
+        title: "Paramètres sauvegardés",
         description: "Les paramètres du store ont été mis à jour avec succès",
         className: "bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0",
       });
     } catch (error) {
+      console.error('Erreur sauvegarde:', error);
       toast({
-        title: "❌ Erreur",
+        title: "Erreur",
         description: "Impossible de sauvegarder les paramètres",
         variant: "destructive",
       });
     }
   };
 
-  const handleImageUpload = (field: string, file: File) => {
-    // Logique d'upload d'image
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      handleSettingChange(field, e.target?.result as string);
-    };
-    reader.readAsDataURL(file);
+  const handleImageUpload = async (field: string, file: File) => {
+    if (!file) return;
+    
+    // Vérifier la taille du fichier (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: "Fichier trop volumineux",
+        description: "La taille maximale autorisée est de 5MB",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Vérifier le type de fichier
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: "Type de fichier non supporté",
+        description: "Veuillez sélectionner une image (PNG, JPG, etc.)",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const result = e.target?.result as string;
+        
+        // Mettre à jour l'état local immédiatement
+        handleSettingChange(field, result);
+        
+        // Sauvegarder automatiquement l'image
+        const settingKey = field === 'logo' ? 'store_logo' : 
+                          field === 'favicon' ? 'store_favicon' : 
+                          field === 'bannerImage' ? 'store_banner' : field;
+        
+        await fetch(`/api/settings/${settingKey}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            value: result,
+            description: `Store ${field}`
+          }),
+        });
+
+        toast({
+          title: "Image mise à jour",
+          description: `${field === 'logo' ? 'Logo' : field === 'favicon' ? 'Favicon' : 'Banner'} sauvegardé avec succès`,
+          className: "bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0",
+        });
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error('Erreur upload image:', error);
+      toast({
+        title: "Erreur d'upload",
+        description: "Impossible de sauvegarder l'image",
+        variant: "destructive",
+      });
+    }
   };
 
   if (loading) {
