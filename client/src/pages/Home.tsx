@@ -169,9 +169,9 @@ export default function Home() {
       </section>
 
       {/* Categories Section */}
-      <section ref={categoriesRef} className="py-20 bg-gradient-to-b from-gray-50 to-white">
+      <section ref={categoriesRef} className="py-12 bg-gradient-to-b from-gray-50 to-white">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
             <h2 className="text-4xl lg:text-5xl font-bold text-gray-800 mb-4">
               {t.categories.title}
             </h2>
@@ -198,7 +198,7 @@ export default function Home() {
       </section>
 
       {/* Flash Sale Section */}
-      <section id="flash-sale" className="py-20 bg-gradient-to-r from-red-500 via-pink-500 to-orange-500 relative overflow-hidden">
+      <section id="flash-sale" className="py-16 bg-gradient-to-r from-red-500 via-pink-500 to-orange-500 relative overflow-hidden">
         <div className="absolute inset-0 bg-black/20" />
         
         <div className="container mx-auto px-4 relative z-10">
