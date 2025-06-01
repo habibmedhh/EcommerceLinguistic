@@ -86,7 +86,7 @@ export function FloatingActions() {
         )}
         
         {/* Enhanced tooltip */}
-        <div className="absolute -top-20 left-1/2 transform -translate-x-1/2 bg-black text-white px-4 py-2 rounded-lg text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-50">
+        <div className="absolute -top-20 left-1/2 transform -translate-x-1/2 bg-black text-white px-4 py-2 rounded-lg text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none z-50">
           {cart.count > 0 ? `Finaliser ma commande (${cart.count} article${cart.count > 1 ? 's' : ''})` : "Découvrir nos produits"}
           <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-black"></div>
         </div>

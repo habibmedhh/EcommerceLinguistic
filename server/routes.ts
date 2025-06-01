@@ -6,7 +6,7 @@ import { z } from "zod";
 
 // Cache simple en mémoire pour améliorer les performances
 const cache = new Map();
-const CACHE_TTL = 30000; // 30 secondes
+const CACHE_TTL = 60000; // 60 secondes pour une meilleure performance
 
 function getCacheKey(path: string, query?: any): string {
   return `${path}${query ? JSON.stringify(query) : ''}`;
