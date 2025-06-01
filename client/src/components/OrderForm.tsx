@@ -145,7 +145,7 @@ export function OrderForm({ open, onClose, initialItems = [], totalAmount = "0" 
           </Card>
 
           {/* Order Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-4">
             <div>
               <Label htmlFor="customerName">{t.order.name} *</Label>
               <Input
@@ -213,7 +213,7 @@ export function OrderForm({ open, onClose, initialItems = [], totalAmount = "0" 
                 {createOrder.isPending ? t.common.loading : t.order.submit}
               </Button>
             </div>
-          </form>
+          </div>
         </div>
       </DialogContent>
     </Dialog>
