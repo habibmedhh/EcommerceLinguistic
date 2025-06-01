@@ -488,19 +488,19 @@ export default function ProductDetails() {
 
             {/* Features */}
             <div className="grid grid-cols-2 gap-4 pt-6 border-t">
-              <div className="flex items-center gap-2">
+              <div className={`flex items-center gap-2 ${direction === 'rtl' ? 'flex-row-reverse justify-end' : ''}`}>
                 <Truck className="h-5 w-5 text-green-600" />
                 <span className="text-sm text-gray-700">{t.admin.freeShipping}</span>
               </div>
-              <div className="flex items-center gap-2">
+              <div className={`flex items-center gap-2 ${direction === 'rtl' ? 'flex-row-reverse justify-end' : ''}`}>
                 <Shield className="h-5 w-5 text-blue-600" />
                 <span className="text-sm text-gray-700">{t.admin.securePayment}</span>
               </div>
-              <div className="flex items-center gap-2">
+              <div className={`flex items-center gap-2 ${direction === 'rtl' ? 'flex-row-reverse justify-end' : ''}`}>
                 <RotateCcw className="h-5 w-5 text-purple-600" />
                 <span className="text-sm text-gray-700">{t.admin.returns}</span>
               </div>
-              <div className="flex items-center gap-2">
+              <div className={`flex items-center gap-2 ${direction === 'rtl' ? 'flex-row-reverse justify-end' : ''}`}>
                 <MessageCircle className="h-5 w-5 text-orange-600" />
                 <span className="text-sm text-gray-700">{t.admin.support}</span>
               </div>
