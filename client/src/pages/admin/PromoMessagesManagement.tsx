@@ -180,19 +180,17 @@ export default function PromoMessagesManagement() {
   const handleSaveMessage = async () => {
     if (!editingMessage) return;
 
-    const existingIndex = messages.findIndex(m => m.id === editingMessage.id);
-    let updatedMessages;
-    if (existingIndex >= 0) {
-      updatedMessages = [...messages];
-      updatedMessages[existingIndex] = editingMessage;
-    } else {
-      updatedMessages = [...messages, editingMessage];
-    }
-    
-    setMessages(updatedMessages);
-
-    // Auto-save after adding/editing a message
     try {
+      const existingIndex = messages.findIndex(m => m.id === editingMessage.id);
+      let updatedMessages;
+      if (existingIndex >= 0) {
+        updatedMessages = [...messages];
+        updatedMessages[existingIndex] = editingMessage;
+      } else {
+        updatedMessages = [...messages, editingMessage];
+      }
+
+      // Save to database first
       const response = await fetch('/api/settings', {
         method: 'POST',
         headers: {
@@ -206,26 +204,33 @@ export default function PromoMessagesManagement() {
       });
 
       if (response.ok) {
+        // Only update local state after successful save
+        setMessages(updatedMessages);
         window.dispatchEvent(new CustomEvent('promoMessagesUpdated'));
         toast({
           title: "Succès",
-          description: "Message sauvegardé automatiquement",
+          description: "Message sauvegardé",
         });
+        setIsDialogOpen(false);
+        setEditingMessage(null);
+      } else {
+        throw new Error('Failed to save to database');
       }
     } catch (error) {
-      console.error('Auto-save failed:', error);
+      console.error('Save failed:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de sauvegarder le message",
+        variant: "destructive",
+      });
     }
-
-    setIsDialogOpen(false);
-    setEditingMessage(null);
   };
 
   const handleDeleteMessage = async (id: string) => {
-    const updatedMessages = messages.filter(m => m.id !== id);
-    setMessages(updatedMessages);
-
-    // Auto-save after deleting a message
     try {
+      const updatedMessages = messages.filter(m => m.id !== id);
+
+      // Save to database first
       const response = await fetch('/api/settings', {
         method: 'POST',
         headers: {
@@ -239,26 +244,33 @@ export default function PromoMessagesManagement() {
       });
 
       if (response.ok) {
-        localStorage.setItem('promo-messages-update', Date.now().toString());
+        // Only update local state after successful save
+        setMessages(updatedMessages);
         window.dispatchEvent(new CustomEvent('promoMessagesUpdated'));
         toast({
           title: "Succès",
           description: "Message supprimé",
         });
+      } else {
+        throw new Error('Failed to delete from database');
       }
     } catch (error) {
-      console.error('Auto-save failed:', error);
+      console.error('Delete failed:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de supprimer le message",
+        variant: "destructive",
+      });
     }
   };
 
   const toggleMessageActive = async (id: string) => {
-    const updatedMessages = messages.map(m => 
-      m.id === id ? { ...m, isActive: !m.isActive } : m
-    );
-    setMessages(updatedMessages);
-
-    // Auto-save after toggling message status
     try {
+      const updatedMessages = messages.map(m => 
+        m.id === id ? { ...m, isActive: !m.isActive } : m
+      );
+
+      // Save to database first
       const response = await fetch('/api/settings', {
         method: 'POST',
         headers: {
@@ -272,10 +284,19 @@ export default function PromoMessagesManagement() {
       });
 
       if (response.ok) {
+        // Only update local state after successful save
+        setMessages(updatedMessages);
         window.dispatchEvent(new CustomEvent('promoMessagesUpdated'));
+      } else {
+        throw new Error('Failed to update in database');
       }
     } catch (error) {
-      console.error('Auto-save failed:', error);
+      console.error('Toggle failed:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de modifier le statut du message",
+        variant: "destructive",
+      });
     }
   };
 
