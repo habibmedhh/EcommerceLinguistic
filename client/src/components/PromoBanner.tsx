@@ -66,10 +66,22 @@ export function PromoBanner() {
         const promoSettings = settings.find((s: any) => s.key === 'promo_messages');
         
         if (promoSettings && promoSettings.value) {
-          const newMessages = JSON.parse(promoSettings.value);
-          console.log('Found promo messages in settings:', newMessages);
-          setPromoMessages(newMessages);
-          setCurrentMessageIndex(0); // Reset to first message
+          try {
+            let newMessages;
+            // Check if value is already an object or needs parsing
+            if (typeof promoSettings.value === 'string') {
+              newMessages = JSON.parse(promoSettings.value);
+            } else {
+              newMessages = promoSettings.value;
+            }
+            console.log('Found promo messages in settings:', newMessages);
+            setPromoMessages(newMessages);
+            setCurrentMessageIndex(0); // Reset to first message
+          } catch (parseError) {
+            console.error('Failed to parse promo messages:', parseError);
+            console.log('Raw value:', promoSettings.value);
+            setPromoMessages(defaultMessages);
+          }
         } else {
           console.log('No promo messages found in settings, using defaults');
           setPromoMessages(defaultMessages);
