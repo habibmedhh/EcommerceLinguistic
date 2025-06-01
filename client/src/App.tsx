@@ -19,6 +19,7 @@ import CategoriesManagement from "@/pages/admin/CategoriesManagement";
 import StoreSettings from "@/pages/admin/StoreSettings";
 import AdminManagement from "@/pages/admin/AdminManagement";
 import ProductEditorSimple from "@/pages/admin/ProductEditorSimple";
+import PromoMessagesManagement from "@/pages/admin/PromoMessagesManagement";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -39,6 +40,7 @@ function Router() {
       <Route path="/admin/categories" component={() => <AdminLayout><CategoriesManagement /></AdminLayout>} />
       <Route path="/admin/admins" component={() => <AdminLayout><AdminManagement /></AdminLayout>} />
       <Route path="/admin/settings" component={() => <AdminLayout><StoreSettings /></AdminLayout>} />
+      <Route path="/admin/promo-messages" component={() => <AdminLayout><PromoMessagesManagement /></AdminLayout>} />
       <Route component={NotFound} />
     </Switch>
   );

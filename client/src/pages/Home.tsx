@@ -6,6 +6,7 @@ import { useFeaturedProducts, useSaleProducts } from "@/hooks/useProducts";
 import { useSettings } from "@/hooks/useSettings";
 import { useScrollAnimation, useParallax } from "@/hooks/useAnimations";
 import { Header } from "@/components/Header";
+import { PromoBanner } from "@/components/PromoBanner";
 import { CategoryCard } from "@/components/CategoryCard";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductModal } from "@/components/ProductModal";
@@ -93,6 +94,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
+      <PromoBanner />
       
       {/* Hero Section */}
       <section 
