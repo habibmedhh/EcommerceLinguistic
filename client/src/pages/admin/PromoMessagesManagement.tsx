@@ -73,7 +73,19 @@ export default function PromoMessagesManagement() {
         const promoSettings = settings.find((s: any) => s.key === 'promo_messages');
         
         if (promoSettings && promoSettings.value) {
-          setMessages(JSON.parse(promoSettings.value));
+          try {
+            let messages;
+            // Check if value is already an object or needs parsing
+            if (typeof promoSettings.value === 'string') {
+              messages = JSON.parse(promoSettings.value);
+            } else {
+              messages = promoSettings.value;
+            }
+            setMessages(messages);
+          } catch (parseError) {
+            console.error('Failed to parse messages in admin:', parseError);
+            throw parseError; // Re-throw to trigger the outer catch
+          }
         } else {
           // Initialize with default messages
           const defaultMessages: PromoMessage[] = [
