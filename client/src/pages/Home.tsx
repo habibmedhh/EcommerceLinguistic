@@ -471,7 +471,7 @@ export default function Home() {
               <Button 
                 className="bg-green-500 hover:bg-green-600 text-white px-4 py-3 rounded-2xl font-bold mb-4 w-full"
                 onClick={() => {
-                  const whatsappNumber = settings?.whatsappNumber;
+                  const whatsappNumber = settings?.whatsapp;
                   if (whatsappNumber) {
                     const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('Bonjour, je suis intéressé par vos produits')}`;
                     window.open(whatsappUrl, '_blank');
