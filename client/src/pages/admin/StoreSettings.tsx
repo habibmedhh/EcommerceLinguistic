@@ -20,7 +20,14 @@ import {
   Palette,
   Globe,
   Image,
-  Save
+  Save,
+  Camera,
+  MessageCircle,
+  Instagram,
+  Facebook,
+  Twitter,
+  Monitor,
+  Smartphone
 } from "lucide-react";
 
 export default function StoreSettings() {
@@ -36,6 +43,8 @@ export default function StoreSettings() {
     descriptionAr: "تجربة تجارة إلكترونية حديثة ومتقدمة",
     descriptionFr: "Expérience e-commerce ultra-moderne",
     logo: "",
+    favicon: "",
+    bannerImage: "",
     
     // Contact
     email: "contact@modernshop.com",
@@ -44,6 +53,11 @@ export default function StoreSettings() {
     address: "123 Commerce Street, Paris, France",
     addressAr: "123 شارع التجارة، باريس، فرنسا",
     addressFr: "123 Rue du Commerce, Paris, France",
+    
+    // Réseaux sociaux
+    facebook: "",
+    instagram: "",
+    twitter: "",
     
     // Paramètres financiers
     currency: "EUR",
@@ -78,12 +92,17 @@ export default function StoreSettings() {
         { key: 'store_description_ar', value: storeSettings.descriptionAr },
         { key: 'store_description_fr', value: storeSettings.descriptionFr },
         { key: 'store_logo', value: storeSettings.logo },
+        { key: 'store_favicon', value: storeSettings.favicon },
+        { key: 'store_banner', value: storeSettings.bannerImage },
         { key: 'contact_email', value: storeSettings.email },
         { key: 'contact_phone', value: storeSettings.phone },
         { key: 'contact_whatsapp', value: storeSettings.whatsapp },
         { key: 'contact_address', value: storeSettings.address },
         { key: 'contact_address_ar', value: storeSettings.addressAr },
         { key: 'contact_address_fr', value: storeSettings.addressFr },
+        { key: 'social_facebook', value: storeSettings.facebook },
+        { key: 'social_instagram', value: storeSettings.instagram },
+        { key: 'social_twitter', value: storeSettings.twitter },
         { key: 'currency', value: storeSettings.currency },
         { key: 'currency_symbol', value: storeSettings.currencySymbol },
         { key: 'tax_rate', value: storeSettings.taxRate },
@@ -152,10 +171,14 @@ export default function StoreSettings() {
         </div>
 
         <Tabs defaultValue="general" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="general" className="flex items-center gap-2">
               <Store className="h-4 w-4" />
               Général
+            </TabsTrigger>
+            <TabsTrigger value="media" className="flex items-center gap-2">
+              <Camera className="h-4 w-4" />
+              Médias
             </TabsTrigger>
             <TabsTrigger value="contact" className="flex items-center gap-2">
               <Phone className="h-4 w-4" />
@@ -185,37 +208,6 @@ export default function StoreSettings() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
-                {/* Logo du store */}
-                <div>
-                  <Label className="flex items-center gap-2 mb-2">
-                    <Image className="h-4 w-4" />
-                    Logo du store
-                  </Label>
-                  <div className="flex items-center gap-4">
-                    {storeSettings.logo && (
-                      <img 
-                        src={storeSettings.logo} 
-                        alt="Store Logo" 
-                        className="w-16 h-16 object-cover rounded-lg border"
-                      />
-                    )}
-                    <div className="flex-1">
-                      <Input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) handleImageUpload('logo', file);
-                        }}
-                        className="mb-2"
-                      />
-                      <p className="text-sm text-gray-500">Format recommandé: PNG, JPG (200x200px)</p>
-                    </div>
-                  </div>
-                </div>
-
-                <Separator />
-
                 {/* Nom du store multilingue */}
                 <div className="grid md:grid-cols-3 gap-4">
                   <div>
@@ -286,6 +278,181 @@ export default function StoreSettings() {
             </Card>
           </TabsContent>
 
+          {/* Onglet Médias */}
+          <TabsContent value="media">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Camera className="h-5 w-5" />
+                  Éléments visuels du store
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-8">
+                {/* Logo du store */}
+                <div>
+                  <Label className="flex items-center gap-2 mb-4 text-lg font-semibold">
+                    <Image className="h-5 w-5" />
+                    Logo du store
+                  </Label>
+                  <div className="bg-gray-50 rounded-xl p-6">
+                    <div className="flex items-center gap-6">
+                      {storeSettings.logo ? (
+                        <div className="relative">
+                          <img 
+                            src={storeSettings.logo} 
+                            alt="Store Logo" 
+                            className="w-24 h-24 object-cover rounded-xl border-2 border-gray-200 shadow-sm"
+                          />
+                          <Button 
+                            size="sm" 
+                            variant="destructive" 
+                            className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0"
+                            onClick={() => handleSettingChange('logo', '')}
+                          >
+                            ×
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="w-24 h-24 bg-gray-200 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center">
+                          <Image className="h-8 w-8 text-gray-400" />
+                        </div>
+                      )}
+                      <div className="flex-1">
+                        <Input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) handleImageUpload('logo', file);
+                          }}
+                          className="mb-3"
+                        />
+                        <div className="grid grid-cols-2 gap-2 text-sm text-gray-600">
+                          <div className="flex items-center gap-2">
+                            <Monitor className="h-4 w-4" />
+                            Desktop: 200x200px
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Smartphone className="h-4 w-4" />
+                            Mobile: 120x120px
+                          </div>
+                        </div>
+                        <p className="text-sm text-gray-500 mt-2">
+                          Formats recommandés: PNG avec fond transparent, JPG, SVG
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Favicon */}
+                <div>
+                  <Label className="flex items-center gap-2 mb-4 text-lg font-semibold">
+                    <Globe className="h-5 w-5" />
+                    Favicon (icône du navigateur)
+                  </Label>
+                  <div className="bg-gray-50 rounded-xl p-6">
+                    <div className="flex items-center gap-6">
+                      {storeSettings.favicon ? (
+                        <div className="relative">
+                          <img 
+                            src={storeSettings.favicon} 
+                            alt="Favicon" 
+                            className="w-16 h-16 object-cover rounded-lg border-2 border-gray-200 shadow-sm"
+                          />
+                          <Button 
+                            size="sm" 
+                            variant="destructive" 
+                            className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0"
+                            onClick={() => handleSettingChange('favicon', '')}
+                          >
+                            ×
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="w-16 h-16 bg-gray-200 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center">
+                          <Globe className="h-6 w-6 text-gray-400" />
+                        </div>
+                      )}
+                      <div className="flex-1">
+                        <Input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) handleImageUpload('favicon', file);
+                          }}
+                          className="mb-2"
+                        />
+                        <p className="text-sm text-gray-500">
+                          Format recommandé: ICO, PNG 32x32px ou 16x16px
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Banner principal */}
+                <div>
+                  <Label className="flex items-center gap-2 mb-4 text-lg font-semibold">
+                    <Camera className="h-5 w-5" />
+                    Banner principal de la page d'accueil
+                  </Label>
+                  <div className="bg-gray-50 rounded-xl p-6">
+                    <div className="space-y-4">
+                      {storeSettings.bannerImage ? (
+                        <div className="relative">
+                          <img 
+                            src={storeSettings.bannerImage} 
+                            alt="Store Banner" 
+                            className="w-full h-48 object-cover rounded-xl border-2 border-gray-200 shadow-sm"
+                          />
+                          <Button 
+                            size="sm" 
+                            variant="destructive" 
+                            className="absolute top-2 right-2"
+                            onClick={() => handleSettingChange('bannerImage', '')}
+                          >
+                            Supprimer
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="w-full h-48 bg-gray-200 rounded-xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center">
+                          <Camera className="h-12 w-12 text-gray-400 mb-2" />
+                          <p className="text-gray-500">Aucune image de banner</p>
+                        </div>
+                      )}
+                      <div>
+                        <Input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) handleImageUpload('bannerImage', file);
+                          }}
+                          className="mb-3"
+                        />
+                        <div className="grid grid-cols-2 gap-2 text-sm text-gray-600">
+                          <div className="flex items-center gap-2">
+                            <Monitor className="h-4 w-4" />
+                            Desktop: 1920x600px
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Smartphone className="h-4 w-4" />
+                            Mobile: 800x400px
+                          </div>
+                        </div>
+                        <p className="text-sm text-gray-500 mt-2">
+                          Format recommandé: JPG ou PNG, optimisé pour le web
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           {/* Onglet Contact */}
           <TabsContent value="contact">
             <Card>
@@ -295,48 +462,123 @@ export default function StoreSettings() {
                   Informations de contact
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="email" className="flex items-center gap-2">
-                      <Mail className="h-4 w-4" />
-                      Email de contact
-                    </Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={storeSettings.email}
-                      onChange={(e) => handleSettingChange('email', e.target.value)}
-                      placeholder="contact@modernshop.com"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="phone" className="flex items-center gap-2">
-                      <Phone className="h-4 w-4" />
-                      Téléphone
-                    </Label>
-                    <Input
-                      id="phone"
-                      value={storeSettings.phone}
-                      onChange={(e) => handleSettingChange('phone', e.target.value)}
-                      placeholder="+33123456789"
-                    />
+              <CardContent className="space-y-8">
+                {/* Informations de contact principales */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-4">Informations de contact</h3>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="email" className="flex items-center gap-2">
+                        <Mail className="h-4 w-4" />
+                        Email de contact
+                      </Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        value={storeSettings.email}
+                        onChange={(e) => handleSettingChange('email', e.target.value)}
+                        placeholder="contact@modernshop.com"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="phone" className="flex items-center gap-2">
+                        <Phone className="h-4 w-4" />
+                        Téléphone
+                      </Label>
+                      <Input
+                        id="phone"
+                        value={storeSettings.phone}
+                        onChange={(e) => handleSettingChange('phone', e.target.value)}
+                        placeholder="+33123456789"
+                      />
+                    </div>
                   </div>
                 </div>
 
+                {/* WhatsApp Business */}
                 <div>
-                  <Label htmlFor="whatsapp" className="flex items-center gap-2">
-                    <Phone className="h-4 w-4 text-green-600" />
-                    Numéro WhatsApp
-                  </Label>
-                  <Input
-                    id="whatsapp"
-                    value={storeSettings.whatsapp}
-                    onChange={(e) => handleSettingChange('whatsapp', e.target.value)}
-                    placeholder="+33123456789"
-                  />
-                  <p className="text-sm text-gray-500 mt-1">
-                    Format international avec indicatif pays (ex: +33123456789)
+                  <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                    <MessageCircle className="h-5 w-5 text-green-600" />
+                    WhatsApp Business
+                  </h3>
+                  <div className="bg-green-50 rounded-xl p-6">
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="whatsapp" className="flex items-center gap-2">
+                          <Phone className="h-4 w-4 text-green-600" />
+                          Numéro WhatsApp Business
+                        </Label>
+                        <Input
+                          id="whatsapp"
+                          value={storeSettings.whatsapp}
+                          onChange={(e) => handleSettingChange('whatsapp', e.target.value)}
+                          placeholder="+33123456789"
+                          className="bg-white"
+                        />
+                        <p className="text-sm text-green-700 mt-2">
+                          Format international avec indicatif pays (ex: +33123456789)
+                        </p>
+                      </div>
+                      {storeSettings.whatsapp && (
+                        <div className="bg-white rounded-lg p-4 border border-green-200">
+                          <p className="text-sm text-green-800 mb-2">Aperçu du lien WhatsApp :</p>
+                          <a 
+                            href={`https://wa.me/${storeSettings.whatsapp.replace(/[^0-9]/g, '')}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-green-600 hover:text-green-800 underline"
+                          >
+                            https://wa.me/{storeSettings.whatsapp.replace(/[^0-9]/g, '')}
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Réseaux sociaux */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-4">Réseaux sociaux</h3>
+                  <div className="grid md:grid-cols-3 gap-4">
+                    <div>
+                      <Label htmlFor="facebook" className="flex items-center gap-2">
+                        <Facebook className="h-4 w-4 text-blue-600" />
+                        Facebook
+                      </Label>
+                      <Input
+                        id="facebook"
+                        value={storeSettings.facebook}
+                        onChange={(e) => handleSettingChange('facebook', e.target.value)}
+                        placeholder="https://facebook.com/votre-page"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="instagram" className="flex items-center gap-2">
+                        <Instagram className="h-4 w-4 text-pink-600" />
+                        Instagram
+                      </Label>
+                      <Input
+                        id="instagram"
+                        value={storeSettings.instagram}
+                        onChange={(e) => handleSettingChange('instagram', e.target.value)}
+                        placeholder="https://instagram.com/votre-compte"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="twitter" className="flex items-center gap-2">
+                        <Twitter className="h-4 w-4 text-blue-400" />
+                        Twitter/X
+                      </Label>
+                      <Input
+                        id="twitter"
+                        value={storeSettings.twitter}
+                        onChange={(e) => handleSettingChange('twitter', e.target.value)}
+                        placeholder="https://twitter.com/votre-compte"
+                      />
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-500 mt-3">
+                    Ajoutez l'URL complète de vos profils de réseaux sociaux
                   </p>
                 </div>
 
