@@ -7,6 +7,7 @@ import { useCart } from "@/hooks/useCart";
 import { useCreateOrder } from "@/hooks/useOrders";
 import { useNavigationHistory } from "@/hooks/useNavigationHistory";
 import { Header } from "@/components/Header";
+import { SEOHead } from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";

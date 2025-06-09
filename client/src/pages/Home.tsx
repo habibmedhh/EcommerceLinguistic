@@ -97,6 +97,11 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <SEOHead 
+        title={settings?.storeName ? `${settings.storeName} - Boutique en ligne premium` : undefined}
+        description={settings?.storeDescription || "Découvrez notre collection exclusive de produits premium avec livraison rapide et service client exceptionnel"}
+        keywords="e-commerce, boutique en ligne, produits premium, livraison rapide, shopping"
+      />
       <Header />
       <PromoBanner />
       {/* Hero Section */}
