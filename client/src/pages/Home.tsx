@@ -7,6 +7,7 @@ import { useSettings } from "@/hooks/useSettings";
 import { useScrollAnimation, useParallax } from "@/hooks/useAnimations";
 import { useNavigationHistory } from "@/hooks/useNavigationHistory";
 import { Header } from "@/components/Header";
+import { SEOHead } from "@/components/SEOHead";
 import { PromoBanner } from "@/components/PromoBanner";
 import { CategoryCard } from "@/components/CategoryCard";
 import { ProductCard } from "@/components/ProductCard";

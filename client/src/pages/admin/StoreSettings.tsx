@@ -75,7 +75,35 @@ export default function StoreSettings() {
     // SEO
     metaTitle: "",
     metaDescription: "",
-    keywords: ""
+    keywords: "",
+    
+    // SEO Avancé & Publicités
+    ogTitle: "",
+    ogDescription: "",
+    ogImage: "",
+    twitterTitle: "",
+    twitterDescription: "",
+    twitterImage: "",
+    canonicalUrl: "",
+    robotsTxt: "index, follow",
+    structuredData: "",
+    
+    // Pixels de suivi
+    googleAnalyticsId: "",
+    googleTagManagerId: "",
+    facebookPixelId: "",
+    googleAdsId: "",
+    
+    // Verification
+    googleSiteVerification: "",
+    bingSiteVerification: "",
+    
+    // Langues et géolocalisation
+    hreflangEn: "",
+    hreflangFr: "",
+    hreflangAr: "",
+    defaultLanguage: "en",
+    targetCountries: ""
   });
 
   // Charger les paramètres existants depuis la base de données
@@ -121,7 +149,35 @@ export default function StoreSettings() {
           accentColor: settingsMap.accent_color || "#06B6D4",
           metaTitle: settingsMap.meta_title || "",
           metaDescription: settingsMap.meta_description || "",
-          keywords: settingsMap.meta_keywords || ""
+          keywords: settingsMap.meta_keywords || "",
+          
+          // SEO Avancé & Publicités
+          ogTitle: settingsMap.og_title || "",
+          ogDescription: settingsMap.og_description || "",
+          ogImage: settingsMap.og_image || "",
+          twitterTitle: settingsMap.twitter_title || "",
+          twitterDescription: settingsMap.twitter_description || "",
+          twitterImage: settingsMap.twitter_image || "",
+          canonicalUrl: settingsMap.canonical_url || "",
+          robotsTxt: settingsMap.robots_txt || "index, follow",
+          structuredData: settingsMap.structured_data || "",
+          
+          // Pixels de suivi
+          googleAnalyticsId: settingsMap.google_analytics_id || "",
+          googleTagManagerId: settingsMap.google_tag_manager_id || "",
+          facebookPixelId: settingsMap.facebook_pixel_id || "",
+          googleAdsId: settingsMap.google_ads_id || "",
+          
+          // Verification
+          googleSiteVerification: settingsMap.google_site_verification || "",
+          bingSiteVerification: settingsMap.bing_site_verification || "",
+          
+          // Langues et géolocalisation
+          hreflangEn: settingsMap.hreflang_en || "",
+          hreflangFr: settingsMap.hreflang_fr || "",
+          hreflangAr: settingsMap.hreflang_ar || "",
+          defaultLanguage: settingsMap.default_language || "en",
+          targetCountries: settingsMap.target_countries || ""
         }));
       } catch (error) {
         console.error('Erreur lors du chargement des paramètres:', error);
@@ -174,6 +230,34 @@ export default function StoreSettings() {
         { key: 'meta_title', value: storeSettings.metaTitle },
         { key: 'meta_description', value: storeSettings.metaDescription },
         { key: 'meta_keywords', value: storeSettings.keywords },
+        
+        // SEO Avancé & Publicités
+        { key: 'og_title', value: storeSettings.ogTitle },
+        { key: 'og_description', value: storeSettings.ogDescription },
+        { key: 'og_image', value: storeSettings.ogImage },
+        { key: 'twitter_title', value: storeSettings.twitterTitle },
+        { key: 'twitter_description', value: storeSettings.twitterDescription },
+        { key: 'twitter_image', value: storeSettings.twitterImage },
+        { key: 'canonical_url', value: storeSettings.canonicalUrl },
+        { key: 'robots_txt', value: storeSettings.robotsTxt },
+        { key: 'structured_data', value: storeSettings.structuredData },
+        
+        // Pixels de suivi
+        { key: 'google_analytics_id', value: storeSettings.googleAnalyticsId },
+        { key: 'google_tag_manager_id', value: storeSettings.googleTagManagerId },
+        { key: 'facebook_pixel_id', value: storeSettings.facebookPixelId },
+        { key: 'google_ads_id', value: storeSettings.googleAdsId },
+        
+        // Verification
+        { key: 'google_site_verification', value: storeSettings.googleSiteVerification },
+        { key: 'bing_site_verification', value: storeSettings.bingSiteVerification },
+        
+        // Langues et géolocalisation
+        { key: 'hreflang_en', value: storeSettings.hreflangEn },
+        { key: 'hreflang_fr', value: storeSettings.hreflangFr },
+        { key: 'hreflang_ar', value: storeSettings.hreflangAr },
+        { key: 'default_language', value: storeSettings.defaultLanguage },
+        { key: 'target_countries', value: storeSettings.targetCountries },
       ];
 
       // Sauvegarder avec un délai entre les requêtes pour éviter la surcharge
@@ -924,55 +1008,368 @@ export default function StoreSettings() {
 
           {/* Onglet SEO */}
           <TabsContent value="seo">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Globe className="h-5 w-5" />
-                  Optimisation SEO
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div>
-                  <Label htmlFor="metaTitle">Titre de la page (Meta Title)</Label>
-                  <Input
-                    id="metaTitle"
-                    value={storeSettings.metaTitle}
-                    onChange={(e) => handleSettingChange('metaTitle', e.target.value)}
-                    placeholder="ModernShop - E-commerce Platform"
-                  />
-                  <p className="text-sm text-gray-500 mt-1">
-                    Recommandé: 50-60 caractères
-                  </p>
-                </div>
+            <div className="space-y-6">
+              {/* SEO de base */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Globe className="h-5 w-5" />
+                    SEO de base
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div>
+                    <Label htmlFor="metaTitle">Titre de la page (Meta Title)</Label>
+                    <Input
+                      id="metaTitle"
+                      value={storeSettings.metaTitle}
+                      onChange={(e) => handleSettingChange('metaTitle', e.target.value)}
+                      placeholder="ModernShop - E-commerce Platform"
+                    />
+                    <p className="text-sm text-gray-500 mt-1">
+                      Recommandé: 50-60 caractères ({storeSettings.metaTitle.length}/60)
+                    </p>
+                  </div>
 
-                <div>
-                  <Label htmlFor="metaDescription">Description (Meta Description)</Label>
-                  <Textarea
-                    id="metaDescription"
-                    value={storeSettings.metaDescription}
-                    onChange={(e) => handleSettingChange('metaDescription', e.target.value)}
-                    placeholder="Discover premium products with fast delivery"
-                    rows={3}
-                  />
-                  <p className="text-sm text-gray-500 mt-1">
-                    Recommandé: 150-160 caractères
-                  </p>
-                </div>
+                  <div>
+                    <Label htmlFor="metaDescription">Description (Meta Description)</Label>
+                    <Textarea
+                      id="metaDescription"
+                      value={storeSettings.metaDescription}
+                      onChange={(e) => handleSettingChange('metaDescription', e.target.value)}
+                      placeholder="Découvrez des produits premium avec livraison rapide et service client exceptionnel"
+                      rows={3}
+                    />
+                    <p className="text-sm text-gray-500 mt-1">
+                      Recommandé: 150-160 caractères ({storeSettings.metaDescription.length}/160)
+                    </p>
+                  </div>
 
-                <div>
-                  <Label htmlFor="keywords">Mots-clés</Label>
-                  <Input
-                    id="keywords"
-                    value={storeSettings.keywords}
-                    onChange={(e) => handleSettingChange('keywords', e.target.value)}
-                    placeholder="e-commerce, shopping, premium products"
-                  />
-                  <p className="text-sm text-gray-500 mt-1">
-                    Séparer par des virgules
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+                  <div>
+                    <Label htmlFor="keywords">Mots-clés</Label>
+                    <Input
+                      id="keywords"
+                      value={storeSettings.keywords}
+                      onChange={(e) => handleSettingChange('keywords', e.target.value)}
+                      placeholder="e-commerce, boutique en ligne, produits premium, livraison rapide"
+                    />
+                    <p className="text-sm text-gray-500 mt-1">
+                      Séparer par des virgules
+                    </p>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="canonicalUrl">URL Canonique</Label>
+                      <Input
+                        id="canonicalUrl"
+                        value={storeSettings.canonicalUrl}
+                        onChange={(e) => handleSettingChange('canonicalUrl', e.target.value)}
+                        placeholder="https://www.votre-site.com"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="robotsTxt">Robots.txt</Label>
+                      <Input
+                        id="robotsTxt"
+                        value={storeSettings.robotsTxt}
+                        onChange={(e) => handleSettingChange('robotsTxt', e.target.value)}
+                        placeholder="index, follow"
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Open Graph (Facebook) */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Facebook className="h-5 w-5 text-blue-600" />
+                    Open Graph (Facebook/Meta)
+                  </CardTitle>
+                  <p className="text-sm text-gray-600">Optimisez l'apparence de votre site sur Facebook et Meta Ads</p>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div>
+                    <Label htmlFor="ogTitle">Titre Open Graph</Label>
+                    <Input
+                      id="ogTitle"
+                      value={storeSettings.ogTitle}
+                      onChange={(e) => handleSettingChange('ogTitle', e.target.value)}
+                      placeholder="ModernShop - Boutique Premium en Ligne"
+                    />
+                    <p className="text-sm text-gray-500 mt-1">
+                      Recommandé: 60-90 caractères ({storeSettings.ogTitle.length}/90)
+                    </p>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="ogDescription">Description Open Graph</Label>
+                    <Textarea
+                      id="ogDescription"
+                      value={storeSettings.ogDescription}
+                      onChange={(e) => handleSettingChange('ogDescription', e.target.value)}
+                      placeholder="Découvrez notre collection exclusive de produits premium avec livraison gratuite dès 50€"
+                      rows={3}
+                    />
+                    <p className="text-sm text-gray-500 mt-1">
+                      Recommandé: 200-300 caractères ({storeSettings.ogDescription.length}/300)
+                    </p>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="ogImage">Image Open Graph (URL)</Label>
+                    <Input
+                      id="ogImage"
+                      value={storeSettings.ogImage}
+                      onChange={(e) => handleSettingChange('ogImage', e.target.value)}
+                      placeholder="https://votre-site.com/og-image.jpg"
+                    />
+                    <p className="text-sm text-gray-500 mt-1">
+                      Recommandé: 1200x630px pour un affichage optimal
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Twitter Cards */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Twitter className="h-5 w-5 text-blue-400" />
+                    Twitter Cards
+                  </CardTitle>
+                  <p className="text-sm text-gray-600">Optimisez l'apparence de votre site sur Twitter/X</p>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div>
+                    <Label htmlFor="twitterTitle">Titre Twitter</Label>
+                    <Input
+                      id="twitterTitle"
+                      value={storeSettings.twitterTitle}
+                      onChange={(e) => handleSettingChange('twitterTitle', e.target.value)}
+                      placeholder="ModernShop - Produits Premium"
+                    />
+                    <p className="text-sm text-gray-500 mt-1">
+                      Recommandé: 70 caractères maximum ({storeSettings.twitterTitle.length}/70)
+                    </p>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="twitterDescription">Description Twitter</Label>
+                    <Textarea
+                      id="twitterDescription"
+                      value={storeSettings.twitterDescription}
+                      onChange={(e) => handleSettingChange('twitterDescription', e.target.value)}
+                      placeholder="Boutique en ligne premium avec livraison rapide et service client 24/7"
+                      rows={2}
+                    />
+                    <p className="text-sm text-gray-500 mt-1">
+                      Recommandé: 200 caractères maximum ({storeSettings.twitterDescription.length}/200)
+                    </p>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="twitterImage">Image Twitter (URL)</Label>
+                    <Input
+                      id="twitterImage"
+                      value={storeSettings.twitterImage}
+                      onChange={(e) => handleSettingChange('twitterImage', e.target.value)}
+                      placeholder="https://votre-site.com/twitter-image.jpg"
+                    />
+                    <p className="text-sm text-gray-500 mt-1">
+                      Recommandé: 1200x600px pour Twitter Cards
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Pixels de suivi et Analytics */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Monitor className="h-5 w-5" />
+                    Pixels de suivi et Analytics
+                  </CardTitle>
+                  <p className="text-sm text-gray-600">Configurez le suivi pour Google Ads et Meta Ads</p>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="googleAnalyticsId">Google Analytics ID</Label>
+                      <Input
+                        id="googleAnalyticsId"
+                        value={storeSettings.googleAnalyticsId}
+                        onChange={(e) => handleSettingChange('googleAnalyticsId', e.target.value)}
+                        placeholder="G-XXXXXXXXXX"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="googleTagManagerId">Google Tag Manager ID</Label>
+                      <Input
+                        id="googleTagManagerId"
+                        value={storeSettings.googleTagManagerId}
+                        onChange={(e) => handleSettingChange('googleTagManagerId', e.target.value)}
+                        placeholder="GTM-XXXXXXX"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="facebookPixelId">Facebook Pixel ID</Label>
+                      <Input
+                        id="facebookPixelId"
+                        value={storeSettings.facebookPixelId}
+                        onChange={(e) => handleSettingChange('facebookPixelId', e.target.value)}
+                        placeholder="123456789012345"
+                      />
+                      <p className="text-sm text-gray-500 mt-1">
+                        Essentiel pour Meta Ads et le suivi des conversions
+                      </p>
+                    </div>
+                    <div>
+                      <Label htmlFor="googleAdsId">Google Ads ID</Label>
+                      <Input
+                        id="googleAdsId"
+                        value={storeSettings.googleAdsId}
+                        onChange={(e) => handleSettingChange('googleAdsId', e.target.value)}
+                        placeholder="AW-XXXXXXXXXX"
+                      />
+                      <p className="text-sm text-gray-500 mt-1">
+                        Pour le suivi des conversions Google Ads
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Verification des moteurs de recherche */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Globe className="h-5 w-5" />
+                    Vérification des moteurs de recherche
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="googleSiteVerification">Google Search Console</Label>
+                      <Input
+                        id="googleSiteVerification"
+                        value={storeSettings.googleSiteVerification}
+                        onChange={(e) => handleSettingChange('googleSiteVerification', e.target.value)}
+                        placeholder="Code de vérification Google"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="bingSiteVerification">Bing Webmaster Tools</Label>
+                      <Input
+                        id="bingSiteVerification"
+                        value={storeSettings.bingSiteVerification}
+                        onChange={(e) => handleSettingChange('bingSiteVerification', e.target.value)}
+                        placeholder="Code de vérification Bing"
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Géolocalisation et langues */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <MapPin className="h-5 w-5" />
+                    Géolocalisation et langues
+                  </CardTitle>
+                  <p className="text-sm text-gray-600">Configurez le ciblage géographique et linguistique</p>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid md:grid-cols-3 gap-4">
+                    <div>
+                      <Label htmlFor="hreflangEn">Hreflang Anglais</Label>
+                      <Input
+                        id="hreflangEn"
+                        value={storeSettings.hreflangEn}
+                        onChange={(e) => handleSettingChange('hreflangEn', e.target.value)}
+                        placeholder="https://site.com/en/"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="hreflangFr">Hreflang Français</Label>
+                      <Input
+                        id="hreflangFr"
+                        value={storeSettings.hreflangFr}
+                        onChange={(e) => handleSettingChange('hreflangFr', e.target.value)}
+                        placeholder="https://site.com/fr/"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="hreflangAr">Hreflang Arabe</Label>
+                      <Input
+                        id="hreflangAr"
+                        value={storeSettings.hreflangAr}
+                        onChange={(e) => handleSettingChange('hreflangAr', e.target.value)}
+                        placeholder="https://site.com/ar/"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="defaultLanguage">Langue par défaut</Label>
+                      <Input
+                        id="defaultLanguage"
+                        value={storeSettings.defaultLanguage}
+                        onChange={(e) => handleSettingChange('defaultLanguage', e.target.value)}
+                        placeholder="en"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="targetCountries">Pays cibles</Label>
+                      <Input
+                        id="targetCountries"
+                        value={storeSettings.targetCountries}
+                        onChange={(e) => handleSettingChange('targetCountries', e.target.value)}
+                        placeholder="FR,MA,DZ,TN,BE,CH"
+                      />
+                      <p className="text-sm text-gray-500 mt-1">
+                        Codes pays ISO séparés par des virgules
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Données structurées */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Settings className="h-5 w-5" />
+                    Données structurées (JSON-LD)
+                  </CardTitle>
+                  <p className="text-sm text-gray-600">Améliorez l'affichage dans les résultats de recherche</p>
+                </CardHeader>
+                <CardContent>
+                  <div>
+                    <Label htmlFor="structuredData">Schema.org JSON-LD</Label>
+                    <Textarea
+                      id="structuredData"
+                      value={storeSettings.structuredData}
+                      onChange={(e) => handleSettingChange('structuredData', e.target.value)}
+                      placeholder='{"@context":"https://schema.org","@type":"Store","name":"ModernShop","description":"Boutique en ligne premium"}'
+                      rows={6}
+                      className="font-mono text-sm"
+                    />
+                    <p className="text-sm text-gray-500 mt-1">
+                      JSON-LD pour rich snippets (Organisation, LocalBusiness, etc.)
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
         </Tabs>
 
