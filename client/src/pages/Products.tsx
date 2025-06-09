@@ -6,6 +6,7 @@ import { useCategories } from "@/hooks/useCategories";
 import { useSettings } from "@/hooks/useSettings";
 import { useNavigationHistory } from "@/hooks/useNavigationHistory";
 import { Header } from "@/components/Header";
+import { SEOHead } from "@/components/SEOHead";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductModal } from "@/components/ProductModal";
 import { Button } from "@/components/ui/button";

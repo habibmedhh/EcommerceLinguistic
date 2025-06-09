@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useI18n } from "@/providers/I18nProvider";
 import { Header } from "@/components/Header";
+import { SEOChecker } from "@/components/SEOChecker";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -393,7 +394,7 @@ export default function StoreSettings() {
         </div>
 
         <Tabs defaultValue="general" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="general" className="flex items-center gap-2">
               <Store className="h-4 w-4" />
               Général
@@ -417,6 +418,10 @@ export default function StoreSettings() {
             <TabsTrigger value="seo" className="flex items-center gap-2">
               <Globe className="h-4 w-4" />
               SEO
+            </TabsTrigger>
+            <TabsTrigger value="seo-check" className="flex items-center gap-2">
+              <Settings className="h-4 w-4" />
+              Vérifier
             </TabsTrigger>
           </TabsList>
 
@@ -1370,6 +1375,11 @@ export default function StoreSettings() {
                 </CardContent>
               </Card>
             </div>
+          </TabsContent>
+
+          {/* Onglet Vérification SEO */}
+          <TabsContent value="seo-check">
+            <SEOChecker />
           </TabsContent>
         </Tabs>
 

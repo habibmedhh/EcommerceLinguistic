@@ -276,6 +276,15 @@ export default function ProductDetails() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
+      <SEOHead 
+        title={`${getLocalizedText('name')} - ${settings?.storeName || 'Store'}`}
+        description={getLocalizedText('description') || `Découvrez ${getLocalizedText('name')} au meilleur prix avec livraison rapide`}
+        keywords={`${getLocalizedText('name')}, produit, shopping, e-commerce`}
+        ogTitle={`${getLocalizedText('name')} - ${settings?.storeName || 'Store'}`}
+        ogDescription={getLocalizedText('description') || `Découvrez ${getLocalizedText('name')} au meilleur prix`}
+        ogImage={currentImage}
+        ogUrl={window.location.href}
+      />
       <Header />
       <div className="container mx-auto px-4 pt-24 pb-16">
 
