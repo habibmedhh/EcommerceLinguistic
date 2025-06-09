@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test SEO Page</title>
+    <script>
+        // Simuler les fonctions de tracking pour tester
+        window.gtag = function() { console.log('Google Analytics:', arguments); };
+        window.fbq = function() { console.log('Facebook Pixel:', arguments); };
+        
+        // Test du système SEO
+        setTimeout(() => {
+            fetch('/api/settings')
+                .then(response => response.json())
+                .then(settings => {
+                    console.log('Settings loaded:', settings.length);
+                    
+                    // Créer les meta tags de test
+                    const metaTitle = document.createElement('title');
+                    metaTitle.textContent = 'Test SEO Title - ModernShop E-commerce';
+                    document.head.appendChild(metaTitle);
+                    
+                    const metaDescription = document.createElement('meta');
+                    metaDescription.name = 'description';
+                    metaDescription.content = 'This is a test meta description for SEO verification. It should be between 150-160 characters long for optimal search engine display.';
+                    document.head.appendChild(metaDescription);
+                    
+                    const metaKeywords = document.createElement('meta');
+                    metaKeywords.name = 'keywords';
+                    metaKeywords.content = 'test, seo, meta tags, e-commerce, verification';
+                    document.head.appendChild(metaKeywords);
+                    
+                    console.log('SEO tags created successfully');
+                })
+                .catch(error => console.error('Error loading settings:', error));
+        }, 1000);
+    </script>
+</head>
+<body>
+    <h1>SEO Test Page</h1>
+    <p>This page is used to test SEO functionality.</p>
+</body>
+</html>

@@ -166,7 +166,7 @@ export function SEOChecker() {
     // Vérification des pixels de suivi
     const checkTrackingPixels = () => {
       // Google Analytics
-      if (window.gtag) {
+      if (window.gtag && typeof window.gtag === 'function') {
         checks.push({
           category: 'Pixels de suivi',
           item: 'Google Analytics',
@@ -190,7 +190,7 @@ export function SEOChecker() {
       }
 
       // Facebook Pixel
-      if (window.fbq) {
+      if (window.fbq && typeof window.fbq === 'function') {
         checks.push({
           category: 'Pixels de suivi',
           item: 'Facebook Pixel',
