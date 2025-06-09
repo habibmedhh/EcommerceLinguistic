@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useLocation, Link } from "wouter";
 import { useFloatingAnimation, usePulseAnimation } from "@/hooks/useAnimations";
+import { useI18n } from "@/providers/I18nProvider";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useCart } from "@/hooks/useCart";
@@ -11,6 +12,7 @@ import { SiWhatsapp, SiFacebook, SiInstagram, SiX } from "react-icons/si";
 export function FloatingActions() {
   const { cart } = useCart();
   const { data: settings } = useSettings();
+  const { language } = useI18n();
   const [showScrollTop, setShowScrollTop] = useState(false);
   
   const navigateToCart = () => {
@@ -36,8 +38,12 @@ export function FloatingActions() {
   };
 
   const openWhatsApp = () => {
+    // Messages traduits selon la langue
+    const message = language === 'ar' ? 'السلام عليكم، أنا مهتم بمنتجاتكم.' :
+                   language === 'fr' ? 'Bonjour, je suis intéressé par vos produits.' :
+                   'Hello! I\'m interested in your products.';
+    
     const whatsappNumber = settings?.whatsapp || "+1234567890";
-    const message = "Hello! I'm interested in your products.";
     const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
   };

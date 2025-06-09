@@ -260,8 +260,27 @@ export default function ProductDetails() {
   };
 
   const handleWhatsAppOrder = () => {
-    const message = `Bonjour, je souhaite commander:\n\n${getLocalizedText('name')}\nQuantité: ${quantity}\nPrix: ${discountedPrice ? discountedPrice * quantity : originalPrice * quantity}${settings?.currencySymbol || (language === 'ar' ? ' د.م' : '€')}`;
-    const whatsappUrl = `https://wa.me/+33123456789?text=${encodeURIComponent(message)}`;
+    // Messages traduits selon la langue
+    const greetingText = language === 'ar' ? 'السلام عليكم، أريد طلب:' :
+                        language === 'fr' ? 'Bonjour, je souhaite commander:' :
+                        'Hello, I would like to order:';
+    
+    const quantityText = language === 'ar' ? 'الكمية:' :
+                        language === 'fr' ? 'Quantité:' :
+                        'Quantity:';
+    
+    const priceText = language === 'ar' ? 'السعر:' :
+                     language === 'fr' ? 'Prix:' :
+                     'Price:';
+    
+    const totalPrice = discountedPrice ? discountedPrice * quantity : originalPrice * quantity;
+    const currency = settings?.currencySymbol || (language === 'ar' ? ' د.م' : '€');
+    
+    const message = `${greetingText}\n\n${getLocalizedText('name')}\n${quantityText} ${quantity}\n${priceText} ${totalPrice.toFixed(2)}${currency}`;
+    
+    // Utiliser le numéro WhatsApp des paramètres ou un numéro par défaut
+    const whatsappNumber = settings?.whatsapp || '+33123456789';
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
 
