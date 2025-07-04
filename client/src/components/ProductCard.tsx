@@ -61,7 +61,7 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
   return (
     <Link href={`/product/${product.id}`} className="block">
       <Card 
-        ref={animationRef}
+        ref={animationRef as any}
         className="group overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:scale-105 bg-white cursor-pointer"
       >
         <div className="relative overflow-hidden">
@@ -97,15 +97,14 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
         {/* Hover Overlay */}
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
           <div className="transform translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300 flex gap-2">
-            <Link href={`/product/${product.id}`}>
-              <Button
-                size="sm"
-                variant="secondary"
-                className="rounded-full"
-              >
-                <Eye className="h-4 w-4" />
-              </Button>
-            </Link>
+            <Button
+              size="sm"
+              variant="secondary"
+              className="rounded-full"
+              onClick={handleQuickView}
+            >
+              <Eye className="h-4 w-4" />
+            </Button>
             <Button
               size="sm"
               variant="secondary"
