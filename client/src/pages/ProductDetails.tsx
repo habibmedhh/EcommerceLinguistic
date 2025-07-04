@@ -305,73 +305,7 @@ export default function ProductDetails() {
         ogUrl={window.location.href}
       />
       <Header />
-      
-      {/* Product Header Section */}
-      <div className="bg-gradient-to-r from-purple-50 to-pink-50 pt-20 pb-8">
-        <div className="container mx-auto px-4">
-          {/* Breadcrumb Navigation */}
-          <nav className="flex items-center space-x-2 text-sm text-gray-600 mb-4" dir={direction}>
-            <Link href="/" className="hover:text-purple-600 transition-colors">
-              {t.nav.home}
-            </Link>
-            <span className="text-gray-400">/</span>
-            <Link href="/products" className="hover:text-purple-600 transition-colors">
-              {t.nav.products}
-            </Link>
-            <span className="text-gray-400">/</span>
-            <span className="text-gray-800 font-medium">
-              {getLocalizedText('name')}
-            </span>
-          </nav>
-
-          {/* Product Title and Quick Info */}
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <div>
-              <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2" dir={direction}>
-                {getLocalizedText('name')}
-              </h1>
-              <div className="flex items-center gap-4 flex-wrap">
-                {product.salePrice && (
-                  <Badge variant="destructive" className="text-sm">
-                    -{discountPercentage}% {t('sale')}
-                  </Badge>
-                )}
-                {product.featured && (
-                  <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 text-sm">
-                    ⭐ {t('featured')}
-                  </Badge>
-                )}
-                <div className="flex items-center text-gray-600">
-                  <span className="text-sm">{t('sku')}: {product.sku}</span>
-                </div>
-              </div>
-            </div>
-            
-            {/* Quick Action Buttons */}
-            <div className="flex items-center gap-2">
-              <Button 
-                variant="outline" 
-                size="sm"
-                className="text-gray-600 hover:text-purple-600"
-              >
-                <Heart className="h-4 w-4 mr-1" />
-                {t.admin.wishlist}
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm"
-                className="text-gray-600 hover:text-purple-600"
-                onClick={() => navigator.share?.({ url: window.location.href, title: getLocalizedText('name') })}
-              >
-                <Share2 className="h-4 w-4 mr-1" />
-                {t.admin.share}
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 pt-24 pb-16">
 
 
         {/* Product Details */}
