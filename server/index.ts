@@ -13,7 +13,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: false, // Set to true in production with HTTPS
+    secure: process.env.NODE_ENV === "production", // Use HTTPS in production
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000 // 24 hours
   }
@@ -63,10 +63,55 @@ app.use((req, res, next) => {
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route
   // doesn't interfere with the other routes
-  if (app.get("env") === "development") {
+  if (process.env.NODE_ENV === "development") {
     await setupVite(app, server);
   } else {
-    serveStatic(app);
+    // Production static file serving
+    try {
+      serveStatic(app);
+    } catch (error) {
+      console.error("Failed to setup static file serving:", error);
+      // Fallback static serving for production
+      const path = await import("path");
+      const fs = await import("fs");
+      
+      // Try multiple possible locations for the built assets
+      const possiblePaths = [
+        path.resolve(process.cwd(), "dist", "public"),
+        path.resolve(process.cwd(), "public"),
+        path.resolve(import.meta.dirname, "public"),
+        path.resolve(import.meta.dirname, "..", "dist", "public")
+      ];
+      
+      let distPath = null;
+      for (const testPath of possiblePaths) {
+        if (fs.existsSync(testPath)) {
+          distPath = testPath;
+          break;
+        }
+      }
+      
+      if (distPath) {
+        console.log(`Serving static files from: ${distPath}`);
+        app.use(express.static(distPath));
+        
+        // fall through to index.html if the file doesn't exist
+        app.use("*", (_req, res) => {
+          res.sendFile(path.resolve(distPath, "index.html"));
+        });
+      } else {
+        console.error("Could not find built assets in any expected location");
+        console.log("Searched paths:", possiblePaths);
+        // Serve a basic error page
+        app.use("*", (_req, res) => {
+          res.status(503).json({ 
+            error: "Application is being deployed", 
+            message: "Please try again in a moment.",
+            paths: possiblePaths 
+          });
+        });
+      }
+    }
   }
 
   // ALWAYS serve the app on port 5000
