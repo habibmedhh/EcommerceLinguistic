@@ -646,6 +646,68 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Route pour vérifier si c'est la première installation
+  app.get('/api/admin/first-install', async (req, res) => {
+    try {
+      const admins = await storage.getAllAdmins();
+      res.json({ isFirstInstall: admins.length === 0 });
+    } catch (error) {
+      console.error("Error checking first install:", error);
+      res.status(500).json({ message: "Erreur lors de la vérification" });
+    }
+  });
+
+  // Route pour créer le premier administrateur (uniquement si la base est vide)
+  app.post('/api/admin/first-install', async (req, res) => {
+    try {
+      const admins = await storage.getAllAdmins();
+      
+      // Vérifier que la base de données est vraiment vide
+      if (admins.length > 0) {
+        return res.status(400).json({ message: "La base de données contient déjà des administrateurs" });
+      }
+
+      const { username, password, email, firstName, lastName } = req.body;
+
+      // Validation des données
+      if (!username || !password || !email || !firstName || !lastName) {
+        return res.status(400).json({ message: "Tous les champs sont requis" });
+      }
+
+      if (username.length < 3) {
+        return res.status(400).json({ message: "Le nom d'utilisateur doit contenir au moins 3 caractères" });
+      }
+
+      if (password.length < 6) {
+        return res.status(400).json({ message: "Le mot de passe doit contenir au moins 6 caractères" });
+      }
+
+      // Créer le premier administrateur
+      const newAdmin = {
+        username,
+        password,
+        email,
+        firstName,
+        lastName,
+        role: 'super_admin' as const,
+        isActive: true
+      };
+
+      const admin = await storage.createAdmin(newAdmin);
+      
+      // Retourner les informations sans le mot de passe
+      const { password: _, ...adminResponse } = admin;
+      
+      res.status(201).json({ 
+        message: "Premier administrateur créé avec succès",
+        admin: adminResponse 
+      });
+    } catch (error) {
+      console.error("Error creating first admin:", error);
+      res.status(500).json({ message: "Erreur lors de la création du premier administrateur" });
+    }
+  });
+
   // Routes d'authentification admin
   app.post("/api/admin/login", async (req, res) => {
     try {

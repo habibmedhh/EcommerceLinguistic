@@ -12,6 +12,7 @@ import Products from "@/pages/Products";
 import ProductDetails from "@/pages/ProductDetails";
 import Cart from "@/pages/Cart";
 import AdminLogin from "@/pages/AdminLogin";
+import FirstInstall from "@/pages/FirstInstall";
 import Dashboard from "@/pages/admin/Dashboard";
 import ProductsManagement from "@/pages/admin/ProductsManagement";
 import OrdersManagement from "@/pages/admin/OrdersManagement";
@@ -31,6 +32,7 @@ function Router() {
       <Route path="/product/:id" component={ProductDetails} />
       <Route path="/cart" component={Cart} />
       <Route path="/admin/login" component={AdminLogin} />
+      <Route path="/admin/first-install" component={FirstInstall} />
       <Route path="/admin" component={() => <AdminLayout><Dashboard /></AdminLayout>} />
       <Route path="/admin/dashboard" component={() => <AdminLayout><Dashboard /></AdminLayout>} />
       <Route path="/admin/products" component={() => <AdminLayout><ProductsManagement /></AdminLayout>} />

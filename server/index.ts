@@ -8,41 +8,24 @@ const app = express();
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: false, limit: '50mb' }));
 
-// Fonction pour créer un admin par défaut si aucun n'existe
-async function createDefaultAdmin() {
+// Fonction pour vérifier si la base de données est vide (première installation)
+async function checkFirstInstall() {
   try {
     const admins = await storage.getAllAdmins();
     
-    // Créer un admin par défaut si AUCUN admin n'existe dans la base de données
     if (admins.length === 0) {
-      log("=== BASE DE DONNÉES VIDE - CRÉATION DU COMPTE ADMINISTRATEUR PAR DÉFAUT ===");
-      
-      const defaultAdmin = {
-        username: 'admin',
-        password: 'admin123',
-        email: 'admin@store.com',
-        firstName: 'Administrateur',
-        lastName: 'Principal',
-        role: 'super_admin' as const,
-        isActive: true
-      };
-
-      await storage.createAdmin(defaultAdmin);
-      log("✅ Compte administrateur par défaut créé avec succès !");
-      log("📋 IDENTIFIANTS DE CONNEXION AUTOMATIQUES :");
-      log("   👤 Nom d'utilisateur: admin");
-      log("   🔑 Mot de passe: admin123");
-      log("   📧 Email: admin@store.com");
-      log("🔐 IMPORTANT: Changez le mot de passe après la première connexion !");
-      log("================================================================");
-      return;
+      log("=== PREMIÈRE INSTALLATION DÉTECTÉE ===");
+      log("Aucun administrateur trouvé dans la base de données");
+      log("L'utilisateur devra créer son premier compte admin via l'interface de configuration");
+      log("=========================================");
+      return true;
     }
 
     // Si des admins existent, vérifier qu'au moins un est actif
     const activeAdmins = admins.filter(admin => admin.isActive);
     
     if (activeAdmins.length === 0) {
-      log("⚠️  Aucun administrateur actif trouvé, réactivation du compte par défaut...");
+      log("⚠️  Aucun administrateur actif trouvé, réactivation nécessaire...");
       
       // Vérifier si un compte admin existe déjà mais est inactif
       const existingAdmin = await storage.getAdminByUsername('admin');
@@ -55,37 +38,13 @@ async function createDefaultAdmin() {
           lastName: 'Principal'
         });
         log("✅ Compte administrateur par défaut réactivé");
-        log("📋 IDENTIFIANTS DE CONNEXION :");
-        log("   👤 Nom d'utilisateur: admin");
-        log("   🔑 Mot de passe: admin123");
-      } else {
-        // Créer un nouveau compte si aucun compte 'admin' n'existe
-        const defaultAdmin = {
-          username: 'admin',
-          password: 'admin123',
-          email: 'admin@store.com',
-          firstName: 'Administrateur',
-          lastName: 'Principal',
-          role: 'super_admin' as const,
-          isActive: true
-        };
-
-        await storage.createAdmin(defaultAdmin);
-        log("✅ Nouveau compte administrateur par défaut créé");
-        log("📋 IDENTIFIANTS DE CONNEXION :");
-        log("   👤 Nom d'utilisateur: admin");
-        log("   🔑 Mot de passe: admin123");
-      }
-    } else {
-      // S'assurer que le compte admin par défaut reste actif si tous les autres sont inactifs
-      const defaultAdmin = await storage.getAdminByUsername('admin');
-      if (defaultAdmin && !defaultAdmin.isActive && activeAdmins.length === 0) {
-        await storage.updateAdmin(defaultAdmin.id, { isActive: true });
-        log("🔧 Compte administrateur par défaut réactivé pour sécurité");
       }
     }
+    
+    return false;
   } catch (error) {
-    console.error("❌ Erreur lors de la gestion de l'admin par défaut:", error);
+    console.error("❌ Erreur lors de la vérification de la première installation:", error);
+    return false;
   }
 }
 
@@ -134,8 +93,8 @@ app.use((req, res, next) => {
 (async () => {
   const server = await registerRoutes(app);
   
-  // Créer un admin par défaut si nécessaire
-  await createDefaultAdmin();
+  // Vérifier si c'est la première installation
+  await checkFirstInstall();
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
