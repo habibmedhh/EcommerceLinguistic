@@ -182,22 +182,22 @@ export default function Home() {
             <div className="w-24 h-1 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto" />
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-            {categories.slice(0, 6).map((category, index) => (
-              <div
-                key={category.id}
-                className="animate-slide-up"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <CategoryCard 
-                  category={category}
-                  onClick={() => scrollToSection('products')}
-                />
+          <div className="flex justify-center">
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-6 max-w-4xl">
+                {categories.slice(0, 4).map((category, index) => (
+                  <div
+                    key={category.id}
+                    className="animate-slide-up"
+                    style={{ animationDelay: `${index * 0.1}s` }}
+                  >
+                    <CategoryCard 
+                      category={category}
+                      onClick={() => scrollToSection('products')}
+                    />
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-          
-
+            </div>
         </div>
       </section>
       {/* Flash Sale Section */}
