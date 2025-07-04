@@ -749,6 +749,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Route pour modifier un administrateur
+  app.patch('/api/admin/:id', authenticateAdminSession, async (req, res) => {
+    try {
+      const adminId = parseInt(req.params.id);
+      const updates = req.body;
+
+      // Vérifier que l'admin existe
+      const existingAdmin = await storage.getAdmin(adminId);
+      if (!existingAdmin) {
+        return res.status(404).json({ message: "Administrateur non trouvé" });
+      }
+
+      // Vérifier l'unicité du nom d'utilisateur et de l'email si modifiés
+      if (updates.username && updates.username !== existingAdmin.username) {
+        const existingByUsername = await storage.getAdminByUsername(updates.username);
+        if (existingByUsername) {
+          return res.status(400).json({ message: "Ce nom d'utilisateur existe déjà" });
+        }
+      }
+
+      if (updates.email && updates.email !== existingAdmin.email) {
+        const existingByEmail = await storage.getAdminByEmail(updates.email);
+        if (existingByEmail) {
+          return res.status(400).json({ message: "Cet email existe déjà" });
+        }
+      }
+
+      const updatedAdmin = await storage.updateAdmin(adminId, updates);
+      if (!updatedAdmin) {
+        return res.status(404).json({ message: "Échec de la mise à jour" });
+      }
+
+      // Remove password from response
+      const { password, ...adminResponse } = updatedAdmin;
+      res.json(adminResponse);
+    } catch (error) {
+      console.error("Error updating admin:", error);
+      res.status(500).json({ message: "Erreur lors de la modification" });
+    }
+  });
+
   app.patch('/api/admin/:id/toggle', authenticateAdminSession, async (req, res) => {
     try {
       const adminId = parseInt(req.params.id);
@@ -765,6 +806,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error updating admin:", error);
       res.status(500).json({ message: "Failed to update admin" });
+    }
+  });
+
+  // Route pour supprimer un administrateur
+  app.delete('/api/admin/:id', authenticateAdminSession, async (req, res) => {
+    try {
+      const adminId = parseInt(req.params.id);
+      
+      // Vérifier que l'admin existe
+      const existingAdmin = await storage.getAdmin(adminId);
+      if (!existingAdmin) {
+        return res.status(404).json({ message: "Administrateur non trouvé" });
+      }
+
+      // Empêcher la suppression si c'est le seul admin actif
+      const allAdmins = await storage.getAllAdmins();
+      const activeAdmins = allAdmins.filter(admin => admin.isActive && admin.id !== adminId);
+      
+      if (activeAdmins.length === 0) {
+        return res.status(400).json({ message: "Impossible de supprimer le dernier administrateur actif" });
+      }
+
+      const success = await storage.deleteAdmin(adminId);
+      if (!success) {
+        return res.status(500).json({ message: "Échec de la suppression" });
+      }
+
+      res.json({ message: "Administrateur supprimé avec succès" });
+    } catch (error) {
+      console.error("Error deleting admin:", error);
+      res.status(500).json({ message: "Erreur lors de la suppression" });
     }
   });
 

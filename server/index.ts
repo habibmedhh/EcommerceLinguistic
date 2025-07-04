@@ -2,10 +2,41 @@ import express, { type Request, Response, NextFunction } from "express";
 import session from "express-session";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { storage } from "./storage";
 
 const app = express();
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: false, limit: '50mb' }));
+
+// Fonction pour créer un admin par défaut si aucun n'existe
+async function createDefaultAdmin() {
+  try {
+    const admins = await storage.getAllAdmins();
+    
+    if (admins.length === 0) {
+      log("Aucun administrateur trouvé, création d'un compte par défaut...");
+      
+      const defaultAdmin = {
+        username: 'admin',
+        password: 'admin123',
+        email: 'admin@store.com',
+        firstName: 'Administrateur',
+        lastName: 'Principal',
+        role: 'super_admin' as const,
+        isActive: true
+      };
+
+      await storage.createAdmin(defaultAdmin);
+      log("Compte administrateur par défaut créé:");
+      log("  - Nom d'utilisateur: admin");
+      log("  - Mot de passe: admin123");
+      log("  - Email: admin@store.com");
+      log("IMPORTANT: Changez le mot de passe par défaut après la première connexion!");
+    }
+  } catch (error) {
+    console.error("Erreur lors de la création de l'admin par défaut:", error);
+  }
+}
 
 // Configure sessions
 app.use(session({
@@ -51,6 +82,9 @@ app.use((req, res, next) => {
 
 (async () => {
   const server = await registerRoutes(app);
+  
+  // Créer un admin par défaut si nécessaire
+  await createDefaultAdmin();
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
