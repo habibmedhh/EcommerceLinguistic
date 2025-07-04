@@ -12,11 +12,37 @@ app.use(express.urlencoded({ extended: false, limit: '50mb' }));
 async function createDefaultAdmin() {
   try {
     const admins = await storage.getAllAdmins();
+    
+    // Créer un admin par défaut si AUCUN admin n'existe dans la base de données
+    if (admins.length === 0) {
+      log("=== BASE DE DONNÉES VIDE - CRÉATION DU COMPTE ADMINISTRATEUR PAR DÉFAUT ===");
+      
+      const defaultAdmin = {
+        username: 'admin',
+        password: 'admin123',
+        email: 'admin@store.com',
+        firstName: 'Administrateur',
+        lastName: 'Principal',
+        role: 'super_admin' as const,
+        isActive: true
+      };
+
+      await storage.createAdmin(defaultAdmin);
+      log("✅ Compte administrateur par défaut créé avec succès !");
+      log("📋 IDENTIFIANTS DE CONNEXION AUTOMATIQUES :");
+      log("   👤 Nom d'utilisateur: admin");
+      log("   🔑 Mot de passe: admin123");
+      log("   📧 Email: admin@store.com");
+      log("🔐 IMPORTANT: Changez le mot de passe après la première connexion !");
+      log("================================================================");
+      return;
+    }
+
+    // Si des admins existent, vérifier qu'au moins un est actif
     const activeAdmins = admins.filter(admin => admin.isActive);
     
-    // Créer un admin par défaut si aucun admin actif n'existe
     if (activeAdmins.length === 0) {
-      log("Aucun administrateur actif trouvé, création/activation d'un compte par défaut...");
+      log("⚠️  Aucun administrateur actif trouvé, réactivation du compte par défaut...");
       
       // Vérifier si un compte admin existe déjà mais est inactif
       const existingAdmin = await storage.getAdminByUsername('admin');
@@ -28,9 +54,12 @@ async function createDefaultAdmin() {
           firstName: 'Administrateur',
           lastName: 'Principal'
         });
-        log("Compte administrateur par défaut réactivé");
+        log("✅ Compte administrateur par défaut réactivé");
+        log("📋 IDENTIFIANTS DE CONNEXION :");
+        log("   👤 Nom d'utilisateur: admin");
+        log("   🔑 Mot de passe: admin123");
       } else {
-        // Créer un nouveau compte
+        // Créer un nouveau compte si aucun compte 'admin' n'existe
         const defaultAdmin = {
           username: 'admin',
           password: 'admin123',
@@ -42,24 +71,21 @@ async function createDefaultAdmin() {
         };
 
         await storage.createAdmin(defaultAdmin);
-        log("Compte administrateur par défaut créé");
+        log("✅ Nouveau compte administrateur par défaut créé");
+        log("📋 IDENTIFIANTS DE CONNEXION :");
+        log("   👤 Nom d'utilisateur: admin");
+        log("   🔑 Mot de passe: admin123");
       }
-      
-      log("Identifiants de connexion:");
-      log("  - Nom d'utilisateur: admin");
-      log("  - Mot de passe: admin123");
-      log("  - Email: admin@store.com");
-      log("IMPORTANT: Changez le mot de passe par défaut après la première connexion!");
     } else {
-      // S'assurer que le compte admin par défaut reste actif
+      // S'assurer que le compte admin par défaut reste actif si tous les autres sont inactifs
       const defaultAdmin = await storage.getAdminByUsername('admin');
-      if (defaultAdmin && !defaultAdmin.isActive) {
+      if (defaultAdmin && !defaultAdmin.isActive && activeAdmins.length === 0) {
         await storage.updateAdmin(defaultAdmin.id, { isActive: true });
-        log("Compte administrateur par défaut réactivé pour sécurité");
+        log("🔧 Compte administrateur par défaut réactivé pour sécurité");
       }
     }
   } catch (error) {
-    console.error("Erreur lors de la gestion de l'admin par défaut:", error);
+    console.error("❌ Erreur lors de la gestion de l'admin par défaut:", error);
   }
 }
 
