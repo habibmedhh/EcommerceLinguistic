@@ -795,9 +795,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const adminId = parseInt(req.params.id);
       const { isActive } = req.body;
 
+      // Vérifier que l'admin existe
+      const existingAdmin = await storage.getAdmin(adminId);
+      if (!existingAdmin) {
+        return res.status(404).json({ message: "Administrateur non trouvé" });
+      }
+
+      // Empêcher la désactivation si c'est le seul admin actif
+      if (existingAdmin.isActive && !isActive) {
+        const allAdmins = await storage.getAllAdmins();
+        const activeAdmins = allAdmins.filter(admin => admin.isActive && admin.id !== adminId);
+        
+        if (activeAdmins.length === 0) {
+          return res.status(400).json({ message: "Impossible de désactiver le dernier administrateur actif" });
+        }
+
+        // Empêcher la désactivation du compte par défaut
+        if (existingAdmin.username === 'admin') {
+          return res.status(400).json({ message: "Le compte administrateur par défaut ne peut pas être désactivé" });
+        }
+      }
+
       const updatedAdmin = await storage.updateAdmin(adminId, { isActive });
       if (!updatedAdmin) {
-        return res.status(404).json({ message: "Admin not found" });
+        return res.status(404).json({ message: "Échec de la mise à jour" });
       }
 
       // Remove password from response
@@ -805,7 +826,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(adminResponse);
     } catch (error) {
       console.error("Error updating admin:", error);
-      res.status(500).json({ message: "Failed to update admin" });
+      res.status(500).json({ message: "Erreur lors de la modification du statut" });
     }
   });
 
@@ -818,6 +839,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const existingAdmin = await storage.getAdmin(adminId);
       if (!existingAdmin) {
         return res.status(404).json({ message: "Administrateur non trouvé" });
+      }
+
+      // Empêcher la suppression du compte par défaut
+      if (existingAdmin.username === 'admin') {
+        return res.status(400).json({ message: "Le compte administrateur par défaut ne peut pas être supprimé" });
       }
 
       // Empêcher la suppression si c'est le seul admin actif

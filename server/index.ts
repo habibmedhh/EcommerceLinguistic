@@ -12,29 +12,54 @@ app.use(express.urlencoded({ extended: false, limit: '50mb' }));
 async function createDefaultAdmin() {
   try {
     const admins = await storage.getAllAdmins();
+    const activeAdmins = admins.filter(admin => admin.isActive);
     
-    if (admins.length === 0) {
-      log("Aucun administrateur trouvé, création d'un compte par défaut...");
+    // Créer un admin par défaut si aucun admin actif n'existe
+    if (activeAdmins.length === 0) {
+      log("Aucun administrateur actif trouvé, création/activation d'un compte par défaut...");
       
-      const defaultAdmin = {
-        username: 'admin',
-        password: 'admin123',
-        email: 'admin@store.com',
-        firstName: 'Administrateur',
-        lastName: 'Principal',
-        role: 'super_admin' as const,
-        isActive: true
-      };
+      // Vérifier si un compte admin existe déjà mais est inactif
+      const existingAdmin = await storage.getAdminByUsername('admin');
+      
+      if (existingAdmin) {
+        // Activer le compte existant
+        await storage.updateAdmin(existingAdmin.id, { 
+          isActive: true,
+          firstName: 'Administrateur',
+          lastName: 'Principal'
+        });
+        log("Compte administrateur par défaut réactivé");
+      } else {
+        // Créer un nouveau compte
+        const defaultAdmin = {
+          username: 'admin',
+          password: 'admin123',
+          email: 'admin@store.com',
+          firstName: 'Administrateur',
+          lastName: 'Principal',
+          role: 'super_admin' as const,
+          isActive: true
+        };
 
-      await storage.createAdmin(defaultAdmin);
-      log("Compte administrateur par défaut créé:");
+        await storage.createAdmin(defaultAdmin);
+        log("Compte administrateur par défaut créé");
+      }
+      
+      log("Identifiants de connexion:");
       log("  - Nom d'utilisateur: admin");
       log("  - Mot de passe: admin123");
       log("  - Email: admin@store.com");
       log("IMPORTANT: Changez le mot de passe par défaut après la première connexion!");
+    } else {
+      // S'assurer que le compte admin par défaut reste actif
+      const defaultAdmin = await storage.getAdminByUsername('admin');
+      if (defaultAdmin && !defaultAdmin.isActive) {
+        await storage.updateAdmin(defaultAdmin.id, { isActive: true });
+        log("Compte administrateur par défaut réactivé pour sécurité");
+      }
     }
   } catch (error) {
-    console.error("Erreur lors de la création de l'admin par défaut:", error);
+    console.error("Erreur lors de la gestion de l'admin par défaut:", error);
   }
 }
 
